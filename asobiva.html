@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASOBIVA</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #e0e0e0;
+  --white: #ffffff;
+  --ink: #1a1a1a;
+  --ink-soft: #888;
+  --border: #e0e0e0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+.wrap {
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--bg);
+  min-height: 100vh;
+}
+
+/* ── ADMIN BUTTON ── */
+.admin-btn {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  background: none;
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  color: var(--ink-soft);
+  transition: all 0.15s;
+}
+.admin-btn:hover { border-color: var(--ink); color: var(--ink); }
+.admin-btn.active { background: var(--ink); color: var(--white); border-color: var(--ink); }
+
+/* ── SITE HEADER ── */
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 10px 16px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.burger-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: flex-end;
+  z-index: 2;
+}
+.burger-btn span {
+  display: block;
+  height: 1.5px;
+  background: var(--ink);
+  border-radius: 1px;
+  transition: width 0.15s;
+}
+.burger-btn span:nth-child(1) { width: 20px; }
+.burger-btn span:nth-child(2) { width: 14px; }
+.burger-btn span:nth-child(3) { width: 20px; }
+.burger-btn:hover span { width: 20px; }
+
+/* ── BURGER MENU DROPDOWN ── */
+.burger-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 12px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  overflow: hidden;
+  z-index: 200;
+  min-width: 120px;
+}
+.burger-menu.open { display: block; }
+.burger-menu-item {
+  display: block;
+  width: 100%;
+  padding: 14px 20px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+.burger-menu-item:last-child { border-bottom: none; }
+.burger-menu-item:hover { background: var(--bg); }
+.burger-menu-item.active { color: var(--white); background: var(--ink); }
+
+/* 管理モード以外では管理専用ボタンを非表示 */
+.admin-only { display: none; }
+body.admin-mode .admin-only { display: block; }
+
+.burger-menu-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
+
+/* ── NAV LINK items ── */
+.nav-link-item {
+  display: block;
+  width: 100%;
+  padding: 14px 20px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.nav-link-item:hover { background: var(--bg); }
+
+/* ── NAV EDITOR PANEL ── */
+.nav-editor-panel {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--white);
+  border-radius: 16px 16px 0 0;
+  padding: 28px 20px 48px;
+  z-index: 300;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.34,1.2,0.64,1);
+  max-width: 480px;
+  margin: 0 auto;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.nav-editor-panel.open { transform: translateY(0); }
+
+.nav-editor-list {
+  margin-bottom: 16px;
+}
+.nav-editor-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.nav-editor-row-label {
+  flex: 1;
+  font-size: 13px;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nav-editor-row-url {
+  font-size: 10px;
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 120px;
+}
+.nav-editor-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 11px;
+  cursor: pointer;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.nav-editor-btn:hover { border-color: var(--ink); color: var(--ink); }
+.nav-editor-btn.del { border-color: transparent; color: #c0392b; }
+.nav-editor-btn.del:hover { background: #fdf0f0; }
+
+/* ── HEADER PAIR ── */
+.header-pair {
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+}
+
+.banner-slot {
+  width: 100%;
+  position: relative;
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80px;
+}
+.banner-slot img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.slot-label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: #ccc;
+  user-select: none;
+}
+
+.banner-edit-btns {
+  display: none;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 5;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+body.admin-mode .banner-slot .banner-edit-btns { display: flex; }
+
+.banner-edit-btn {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #fff;
+  background: rgba(0,0,0,0.5);
+  border: none;
+  padding: 7px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.banner-edit-btn:hover { background: rgba(0,0,0,0.75); }
+.banner-edit-btn.del { background: rgba(192,57,43,0.7); }
+.banner-edit-btn.del:hover { background: rgba(192,57,43,0.95); }
+
+.banner-count {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 500;
+  color: #fff;
+  background: rgba(0,0,0,0.4);
+  padding: 3px 8px;
+  border-radius: 10px;
+  z-index: 3;
+  display: none;
+}
+body.admin-mode .banner-count { display: block; }
+
+.banner-file { display: none; }
+
+/* ── CARDS ── */
+.card-section {
+  background: var(--bg);
+  padding-top: 10px;
+}
+.card-section.no-gap {
+  background: var(--white);
+  padding-top: 0;
+}
+.card-gap-btn {
+  display: none;
+  position: absolute;
+  bottom: 10px; left: 10px;
+  height: 28px;
+  padding: 0 10px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.card-gap-btn:hover { background: rgba(0,0,0,0.75); }
+body.admin-mode .card-gap-btn { display: flex; }
+.card {
+  width: 100%;
+  position: relative;
+  display: block;
+  text-decoration: none;
+  background: var(--white);
+  overflow: hidden;
+}
+.card img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.35s ease;
+}
+.card:hover img { transform: scale(1.015); }
+body.admin-mode .card:hover img { transform: none; }
+
+.card-del {
+  display: none;
+  position: absolute;
+  top: 10px; right: 10px;
+  width: 30px; height: 30px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 13px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  transition: background 0.15s;
+}
+.card-del:hover { background: #c0392b; }
+body.admin-mode .card-del { display: flex; }
+
+.card-replace {
+  display: none;
+  position: absolute;
+  top: 10px; right: 50px;
+  width: 30px; height: 30px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  transition: background 0.15s;
+}
+.card-replace:hover { background: #1a6e3c; }
+body.admin-mode .card-replace { display: flex; }
+
+.card-replace-input { display: none; }
+
+/* ── LINK EDIT BUTTON ── */
+.card-link-btn {
+  display: none;
+  position: absolute;
+  top: 10px; right: 90px;
+  width: 30px; height: 30px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 13px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  transition: background 0.15s;
+}
+.card-link-btn:hover { background: #2266cc; }
+.card-link-btn.has-link { background: rgba(34,102,204,0.85); }
+body.admin-mode .card-link-btn { display: flex; }
+
+/* ── MOVE BUTTONS (bottom-left) ── */
+.card-move {
+  display: none;
+  position: absolute;
+  bottom: 10px; right: 50px;
+  flex-direction: row;
+  gap: 6px;
+  z-index: 5;
+}
+.card-move button {
+  width: 30px; height: 30px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.card-move button:hover { background: #444; }
+.card-move button:disabled { opacity: 0.3; cursor: default; }
+body.admin-mode .card-move { display: flex; }
+
+/* ── ADD BUTTON ── */
+.add-section {
+  background: var(--bg);
+  padding-top: 10px;
+}
+.add-card-btn {
+  display: flex;
+  width: 100%;
+  padding: 22px 16px;
+  background: var(--white);
+  border: none;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  transition: background 0.15s, color 0.15s;
+}
+.add-card-btn:hover { background: #f5f5f5; color: var(--ink); }
+
+/* ── EMPTY STATE ── */
+.empty-section {
+  background: var(--bg);
+  padding-top: 10px;
+}
+.empty-state {
+  padding: 60px 24px;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 2;
+  background: var(--white);
+}
+.empty-state strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+/* ── FOOTER ── */
+.footer-section {
+  background: var(--bg);
+  padding-top: 10px;
+}
+.footer-section.no-gap {
+  padding-top: 0;
+}
+.footer-gap-btn {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 10px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  text-decoration: underline;
+  letter-spacing: 0.06em;
+  margin-left: 8px;
+}
+body.admin-mode .footer-gap-btn { display: inline-block; }
+footer {
+  padding: 28px 16px;
+  text-align: center;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  background: var(--white);
+}
+
+/* ── PANEL ── */
+.overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.28);
+  z-index: 200;
+  backdrop-filter: blur(2px);
+}
+.overlay.open { display: block; }
+
+.panel {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--white);
+  border-radius: 16px 16px 0 0;
+  padding: 28px 20px 48px;
+  z-index: 201;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.34,1.2,0.64,1);
+  max-width: 480px;
+  margin: 0 auto;
+}
+.panel.open { transform: translateY(0); }
+
+.panel-handle {
+  width: 36px; height: 4px;
+  background: var(--border); border-radius: 2px;
+  margin: 0 auto 22px;
+}
+.panel-title {
+  font-size: 14px; font-weight: 600;
+  letter-spacing: 0.06em; margin-bottom: 18px; color: var(--ink);
+}
+
+.drop-zone {
+  border: 2px dashed var(--border); border-radius: 10px;
+  padding: 26px 16px; text-align: center; cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  margin-bottom: 12px; background: #fafafa; position: relative;
+}
+.drop-zone:hover, .drop-zone.drag-over { border-color: var(--ink); background: #f0f0f0; }
+.drop-zone input[type=file] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+}
+.dz-icon { font-size: 24px; margin-bottom: 6px; }
+.dz-label { font-size: 12px; font-weight: 500; color: var(--ink); display: block; margin-bottom: 4px; }
+.dz-hint { font-size: 11px; color: var(--ink-soft); }
+
+.preview-grid {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 14px;
+}
+.p-thumb { aspect-ratio: 1; border-radius: 6px; overflow: hidden; position: relative; background: var(--border); }
+.p-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.p-del {
+  position: absolute; top: 3px; right: 3px;
+  width: 18px; height: 18px; background: rgba(0,0,0,0.5); color: #fff;
+  border: none; border-radius: 50%; font-size: 9px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+
+.field-label {
+  font-size: 11px; font-weight: 400; color: var(--ink-soft);
+  letter-spacing: 0.06em; margin-bottom: 6px; display: block;
+}
+.field-input {
+  width: 100%; font-size: 14px; padding: 12px 14px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: #fafafa; color: var(--ink); outline: none;
+  transition: border-color 0.15s; margin-bottom: 16px;
+}
+.field-input:focus { border-color: var(--ink); }
+.field-input::placeholder { color: var(--ink-soft); font-size: 13px; }
+
+.btn-add {
+  width: 100%; padding: 15px;
+  background: var(--ink); color: var(--white);
+  border: none; border-radius: 10px;
+  font-size: 14px; font-weight: 600; letter-spacing: 0.06em;
+  cursor: pointer; transition: opacity 0.15s;
+}
+.btn-add:hover { opacity: 0.8; }
+.btn-add:disabled { opacity: 0.28; cursor: default; }
+
+/* ── LOADING ── */
+#loading {
+  position: fixed; inset: 0; background: var(--bg);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  z-index: 999; gap: 12px;
+}
+.loading-text {
+  font-size: 11px; letter-spacing: 0.1em; color: #aaa;
+}
+.loading-bar-wrap {
+  width: 120px; height: 3px;
+  background: #e0e0e0; border-radius: 2px; overflow: hidden;
+}
+.loading-bar {
+  height: 100%; width: 0%;
+  background: var(--ink); border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card img, .panel { transition: none; }
+}
+
+/* ── FOOTER EDIT ── */
+.footer-edit-btn {
+  display: none;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-decoration: underline;
+}
+body.admin-mode .footer-edit-btn { display: inline-block; }
+
+/* ── FOOTER EDITOR PANEL ── */
+.footer-editor-panel {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--white);
+  border-radius: 16px 16px 0 0;
+  padding: 28px 20px 48px;
+  z-index: 300;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.34,1.2,0.64,1);
+  max-width: 480px;
+  margin: 0 auto;
+}
+.footer-editor-panel.open { transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="loading-text">読み込み中…</div>
+  <div class="loading-bar-wrap"><div class="loading-bar" id="loadingBar"></div></div>
+</div>
+
+<div class="wrap">
+  <div class="site-header">
+    <button class="burger-btn" id="burgerBtn" onclick="toggleBurgerMenu()">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="burger-menu" id="burgerMenu">
+      <!-- ナビリンク一覧（動的に生成） -->
+      <div id="navLinks"></div>
+      <div class="burger-menu-divider"></div>
+      <button class="burger-menu-item" id="adminBtn" onclick="toggleAdmin()">管理</button>
+      <button class="burger-menu-item admin-only" onclick="openNavEditor(); closeBurgerMenu()">メニューを編集</button>
+      <button class="burger-menu-item admin-only" onclick="downloadEditHTML(); closeBurgerMenu()">編集用保存</button>
+      <button class="burger-menu-item admin-only" onclick="downloadHTML(); closeBurgerMenu()">公開用保存</button>
+    </div>
+  </div>
+  <div class="header-pair">
+    <div class="banner-slot" id="banner1">
+      <span class="slot-label" id="bannerPlaceholder1">HEADER 1</span>
+      <div class="banner-edit-btns" id="bannerEditBtns1">
+        <button class="banner-edit-btn" onclick="triggerBanner(1)">＋ 画像を追加</button>
+      </div>
+      <input type="file" class="banner-file" id="bannerFile1" accept="image/*" multiple onchange="onBannerFile(1,this)">
+    </div>
+    <div class="banner-slot" id="banner2">
+      <span class="slot-label" id="bannerPlaceholder2">HEADER 2</span>
+      <div class="banner-edit-btns" id="bannerEditBtns2">
+        <button class="banner-edit-btn" onclick="triggerBanner(2)">＋ 画像を追加</button>
+      </div>
+      <input type="file" class="banner-file" id="bannerFile2" accept="image/*" multiple onchange="onBannerFile(2,this)">
+    </div>
+  </div>
+
+  <div id="cardContainer"></div>
+
+  <div class="footer-section" id="footerSection">
+    <footer>
+      <span id="footerText">ASOBIVA — i.roiro</span>
+      <button class="footer-edit-btn" onclick="openFooterEditor()">編集</button>
+      <button class="footer-gap-btn" id="footerGapBtn" onclick="toggleFooterGap()">隙間あり</button>
+    </footer>
+  </div>
+</div>
+
+
+<!-- フッター編集パネル -->
+<div class="overlay" id="footerEditorOverlay" onclick="closeFooterEditor()"></div>
+<div class="footer-editor-panel" id="footerEditorPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-title">フッターを編集</div>
+  <label class="field-label">フッターテキスト</label>
+  <input class="field-input" id="footerTextInput" type="text" placeholder="例: © 2025 i.roiro">
+  <button class="btn-add" onclick="saveFooterText()">保存する</button>
+</div>
+<div class="overlay" id="overlay" onclick="closePanel()"></div>
+<div class="panel" id="panel">
+  <div class="panel-handle"></div>
+  <div class="panel-title">カードを追加</div>
+  <div class="drop-zone" id="dropZone">
+    <input type="file" id="fileInput" accept="image/*" multiple onchange="onFileSelect(this.files)">
+    <div class="dz-icon">🖼️</div>
+    <span class="dz-label">画像を選択 または ドロップ</span>
+    <span class="dz-hint">JPG · PNG · GIF · WEBP　複数選択可</span>
+  </div>
+  <div class="preview-grid" id="previewGrid"></div>
+  <label class="field-label" for="linkUrl">リンク先URL（任意）</label>
+  <input class="field-input" id="linkUrl" type="url" placeholder="https://note.com/...">
+  <button class="btn-add" id="addBtn" onclick="addCards()" disabled>追加する</button>
+</div>
+
+<!-- ナビエディタパネル -->
+<div class="overlay" id="navEditorOverlay" onclick="closeNavEditor()"></div>
+<div class="nav-editor-panel" id="navEditorPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-title">メニューを編集</div>
+  <div class="nav-editor-list" id="navEditorList"></div>
+  <label class="field-label">表示名</label>
+  <input class="field-input" id="navLabelInput" type="text" placeholder="例: PROJECT SUPANA">
+  <label class="field-label">URL</label>
+  <input class="field-input" id="navUrlInput" type="text" placeholder="例: content_supana.html">
+  <button class="btn-add" onclick="addNavItem()">追加する</button>
+</div>
+
+<!-- リンク編集パネル -->
+<div class="overlay" id="linkEditOverlay" onclick="closeLinkEditor()"></div>
+<div class="panel" id="linkEditPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-title">リンク先を設定</div>
+  <label class="field-label" for="linkEditInput">リンク先URL</label>
+  <input class="field-input" id="linkEditInput" type="url" placeholder="https://note.com/...">
+  <button class="btn-add" onclick="saveLinkEdit()">保存する</button>
+</div>
+
+<script>
+// ── IndexedDB (Base64ストレージ) ──────────────
+const DB_NAME = 'asobiva_b64';
+let db;
+
+function openDB() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = e => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains('cards'))
+        d.createObjectStore('cards', { keyPath: 'id', autoIncrement: true });
+      if (!d.objectStoreNames.contains('banners'))
+        d.createObjectStore('banners', { keyPath: 'slot' });
+    };
+    req.onsuccess = e => { db = e.target.result; res(); };
+    req.onerror = e => rej(e);
+  });
+}
+
+function dbOp(store, mode, fn) {
+  return new Promise((res, rej) => {
+    const req = fn(db.transaction(store, mode).objectStore(store));
+    req.onsuccess = e => res(e.target.result);
+    req.onerror = e => rej(e);
+  });
+}
+
+// ── ファイル → Base64 変換 ────────────────────
+function fileToBase64(file) {
+  return new Promise((res, rej) => {
+    const reader = new FileReader();
+    reader.onload = e => res(e.target.result); // "data:image/jpeg;base64,..."
+    reader.onerror = rej;
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── State ─────────────────────────────────────
+let cards = [];       // [{ id, base64, link }]
+let banners = { 1: [], 2: [] }; // base64配列
+let pendingFiles = [];
+let adminMode = false;
+
+// ── Init ──────────────────────────────────────
+async function init() {
+  setLoadingBar(10);
+  await openDB();
+  setLoadingBar(30);
+
+  // 埋め込み初期データがあれば優先
+  if (window.__ASOBIVA_INIT__) {
+    const data = window.__ASOBIVA_INIT__;
+    for (const slot of [1, 2]) {
+      const b64 = data.banners?.[slot];
+      if (b64) {
+        banners[slot] = Array.isArray(b64) ? b64 : [b64];
+        await dbOp('banners', 'readwrite', s => s.put({ slot, images: banners[slot] }));
+        applyBannerRandom(slot);
+      }
+    }
+    setLoadingBar(60);
+    const existing = await dbOp('cards', 'readonly', s => s.getAll());
+    for (const r of existing) await dbOp('cards', 'readwrite', s => s.delete(r.id));
+    cards = [];
+    let order = 1;
+    for (const c of (data.cards || [])) {
+      const record = { base64: c.base64, link: c.link || '', order: c.order ?? order++ };
+      const id = await dbOp('cards', 'readwrite', s => s.add(record));
+      cards.push({ id, base64: c.base64, link: c.link || '', order: record.order });
+    }
+    cards.sort((a, b) => a.order - b.order);
+    window.__ASOBIVA_INIT__ = null;
+  } else {
+    for (const slot of [1, 2]) {
+      try {
+        const row = await dbOp('banners', 'readonly', s => s.get(slot));
+        if (row?.images && row.images.length > 0) {
+          banners[slot] = row.images;
+        } else if (row?.base64) {
+          banners[slot] = [row.base64];
+        }
+        applyBannerRandom(slot);
+      } catch {}
+    }
+    setLoadingBar(60);
+    const rows = await dbOp('cards', 'readonly', s => s.getAll());
+    cards = rows.map(r => ({ id: r.id, base64: r.base64, link: r.link || '', order: (r.order ?? r.id), gap: r.gap !== false }));
+    cards.sort((a, b) => a.order - b.order);
+  }
+
+  setLoadingBar(100);
+  setTimeout(() => {
+    document.getElementById('loading').style.display = 'none';
+    render();
+    renderNavLinks();
+    loadFooterText();
+    loadFooterGap();
+  }, 200);
+}
+
+function setLoadingBar(pct) {
+  document.getElementById('loadingBar').style.width = pct + '%';
+}
+
+// ── Banners ───────────────────────────────────
+function triggerBanner(slot) {
+  document.getElementById('bannerFile' + slot).click();
+}
+
+async function onBannerFile(slot, input) {
+  const files = Array.from(input.files);
+  if (!files.length) return;
+  for (const f of files) {
+    const base64 = await fileToBase64(f);
+    banners[slot].push(base64);
+  }
+  await dbOp('banners', 'readwrite', s => s.put({ slot, images: banners[slot] }));
+  applyBannerRandom(slot);
+  updateBannerUI(slot);
+  input.value = '';
+}
+
+function applyBannerRandom(slot) {
+  const imgs = banners[slot] || [];
+  if (imgs.length === 0) return;
+  const base64 = imgs.length === 1 ? imgs[0] : imgs[Math.floor(Math.random() * imgs.length)];
+  applyBanner(slot, base64);
+}
+
+function applyBanner(slot, base64) {
+  const el = document.getElementById('banner' + slot);
+  document.getElementById('bannerPlaceholder' + slot)?.remove();
+  el.querySelector('img')?.remove();
+  const img = document.createElement('img');
+  img.src = base64;
+  img.alt = '';
+  el.insertBefore(img, el.querySelector('.banner-edit-btns'));
+  updateBannerUI(slot);
+}
+
+async function deleteBannerImage(slot, idx) {
+  banners[slot].splice(idx, 1);
+  await dbOp('banners', 'readwrite', s => s.put({ slot, images: banners[slot] }));
+  if (banners[slot].length === 0) {
+    const el = document.getElementById('banner' + slot);
+    el.querySelector('img')?.remove();
+    const lbl = document.createElement('span');
+    lbl.className = 'slot-label';
+    lbl.id = 'bannerPlaceholder' + slot;
+    lbl.textContent = 'HEADER ' + slot;
+    el.insertBefore(lbl, el.querySelector('.banner-edit-btns'));
+  } else {
+    applyBannerRandom(slot);
+  }
+  updateBannerUI(slot);
+}
+
+function updateBannerUI(slot) {
+  const btns = document.getElementById('bannerEditBtns' + slot);
+  if (!btns) return;
+  btns.querySelectorAll('.banner-edit-btn.del').forEach(b => b.remove());
+  const count = banners[slot]?.length || 0;
+  let countEl = document.getElementById('bannerCount' + slot);
+  if (!countEl) {
+    countEl = document.createElement('span');
+    countEl.className = 'banner-count';
+    countEl.id = 'bannerCount' + slot;
+    document.getElementById('banner' + slot).appendChild(countEl);
+  }
+  countEl.textContent = count + '枚';
+  if (count >= 1) {
+    (banners[slot] || []).forEach((_, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'banner-edit-btn del';
+      btn.textContent = count > 1 ? `${i+1}枚目を削除` : '画像を削除';
+      btn.onclick = () => deleteBannerImage(slot, i);
+      btns.insertBefore(btn, btns.querySelector('.banner-edit-btn:not(.del)'));
+    });
+  }
+}
+
+// ── Render ────────────────────────────────────
+function render() {
+  const container = document.getElementById('cardContainer');
+  container.innerHTML = '';
+
+  if (cards.length === 0 && !adminMode) {
+    const sec = document.createElement('div');
+    sec.className = 'empty-section';
+    sec.innerHTML = '<div class="empty-state"><strong>まだカードがありません</strong>右上の「管理」から追加できます</div>';
+    container.appendChild(sec);
+  }
+
+  cards.forEach((c, idx) => {
+    const sec = document.createElement('div');
+    sec.className = 'card-section' + (c.gap === false ? ' no-gap' : '');
+
+    const a = document.createElement('a');
+    a.className = 'card';
+    a.href = adminMode ? '#' : (c.link || '#');
+    if (!adminMode && c.link) a.target = '_blank';
+    a.rel = 'noopener';
+
+    const img = document.createElement('img');
+    img.src = c.base64;
+    img.alt = '';
+    img.loading = 'lazy';
+
+    const replaceBtn = document.createElement('button');
+    replaceBtn.className = 'card-replace';
+    replaceBtn.title = '差し替え';
+    replaceBtn.textContent = '⇄';
+
+    const replaceInput = document.createElement('input');
+    replaceInput.type = 'file';
+    replaceInput.accept = 'image/*';
+    replaceInput.className = 'card-replace-input';
+    replaceInput.addEventListener('change', e => {
+      e.preventDefault(); e.stopPropagation();
+      const f = e.target.files[0];
+      if (f) replaceCard(c.id, f);
+    });
+
+    replaceBtn.addEventListener('click', e => {
+      e.preventDefault(); e.stopPropagation();
+      replaceInput.click();
+    });
+
+    const linkBtn = document.createElement('button');
+    linkBtn.className = 'card-link-btn' + (c.link ? ' has-link' : '');
+    linkBtn.title = 'リンクを設定';
+    linkBtn.textContent = '🔗';
+    linkBtn.addEventListener('click', e => {
+      e.preventDefault(); e.stopPropagation();
+      openLinkEditor(c.id, c.link);
+    });
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'card-del';
+    delBtn.title = '削除';
+    delBtn.textContent = '✕';
+    delBtn.addEventListener('click', e => {
+      e.preventDefault(); e.stopPropagation();
+      deleteCard(c.id);
+    });
+
+    const moveWrap = document.createElement('div');
+    moveWrap.className = 'card-move';
+
+    const upBtn = document.createElement('button');
+    upBtn.textContent = '↑';
+    upBtn.title = '上へ移動';
+    upBtn.disabled = idx === 0;
+    upBtn.addEventListener('click', e => {
+      e.preventDefault(); e.stopPropagation();
+      moveCard(idx, idx - 1);
+    });
+
+    const downBtn = document.createElement('button');
+    downBtn.textContent = '↓';
+    downBtn.title = '下へ移動';
+    downBtn.disabled = idx === cards.length - 1;
+    downBtn.addEventListener('click', e => {
+      e.preventDefault(); e.stopPropagation();
+      moveCard(idx, idx + 1);
+    });
+
+    moveWrap.appendChild(upBtn);
+    moveWrap.appendChild(downBtn);
+
+    const gapBtn = document.createElement('button');
+    gapBtn.className = 'card-gap-btn';
+    gapBtn.textContent = c.gap === false ? '隙間なし' : '隙間あり';
+    gapBtn.addEventListener('click', e => {
+      e.preventDefault(); e.stopPropagation();
+      toggleGap(c.id);
+    });
+    a.appendChild(img);
+    a.appendChild(replaceBtn);
+    a.appendChild(replaceInput);
+    a.appendChild(linkBtn);
+    a.appendChild(delBtn);
+    a.appendChild(moveWrap);
+    a.appendChild(gapBtn);
+    sec.appendChild(a);
+    container.appendChild(sec);
+  });
+
+  if (adminMode) {
+    const addSec = document.createElement('div');
+    addSec.className = 'add-section';
+    const btn = document.createElement('button');
+    btn.className = 'add-card-btn';
+    btn.onclick = openPanel;
+    btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> カードを追加`;
+    addSec.appendChild(btn);
+    container.appendChild(addSec);
+  }
+}
+
+// ── Nav Menu (localStorage共通) ───────────────
+const NAV_KEY = 'asobiva_nav_v1';
+
+function loadNavItems() {
+  try {
+    return JSON.parse(localStorage.getItem(NAV_KEY)) || [];
+  } catch { return []; }
+}
+
+function saveNavItems(items) {
+  localStorage.setItem(NAV_KEY, JSON.stringify(items));
+}
+
+function renderNavLinks() {
+  const items = loadNavItems();
+  const container = document.getElementById('navLinks');
+  if (!container) return;
+  container.innerHTML = '';
+  items.forEach(item => {
+    const a = document.createElement('a');
+    a.className = 'nav-link-item';
+    a.href = item.url;
+    a.textContent = item.label;
+    container.appendChild(a);
+  });
+}
+
+function openNavEditor() {
+  renderNavEditorList();
+  document.getElementById('navEditorOverlay').classList.add('open');
+  document.getElementById('navEditorPanel').classList.add('open');
+}
+
+function closeNavEditor() {
+  document.getElementById('navEditorOverlay').classList.remove('open');
+  document.getElementById('navEditorPanel').classList.remove('open');
+  document.getElementById('navLabelInput').value = '';
+  document.getElementById('navUrlInput').value = '';
+}
+
+function renderNavEditorList() {
+  const items = loadNavItems();
+  const list = document.getElementById('navEditorList');
+  list.innerHTML = '';
+  if (items.length === 0) {
+    list.innerHTML = '<p style="font-size:12px;color:#999;padding:8px 0 16px;">まだ項目がありません</p>';
+    return;
+  }
+  items.forEach((item, i) => {
+    const row = document.createElement('div');
+    row.className = 'nav-editor-row';
+    row.innerHTML = `
+      <div style="flex:1;overflow:hidden;">
+        <div class="nav-editor-row-label">${item.label}</div>
+        <div class="nav-editor-row-url">${item.url}</div>
+      </div>
+      <button class="nav-editor-btn" onclick="moveNavItem(${i},-1)">↑</button>
+      <button class="nav-editor-btn" onclick="moveNavItem(${i},1)">↓</button>
+      <button class="nav-editor-btn del" onclick="deleteNavItem(${i})">✕</button>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function addNavItem() {
+  const label = document.getElementById('navLabelInput').value.trim();
+  const url = document.getElementById('navUrlInput').value.trim();
+  if (!label || !url) return;
+  const items = loadNavItems();
+  items.push({ label, url });
+  saveNavItems(items);
+  document.getElementById('navLabelInput').value = '';
+  document.getElementById('navUrlInput').value = '';
+  renderNavEditorList();
+  renderNavLinks();
+}
+
+function deleteNavItem(i) {
+  const items = loadNavItems();
+  items.splice(i, 1);
+  saveNavItems(items);
+  renderNavEditorList();
+  renderNavLinks();
+}
+
+function moveNavItem(i, dir) {
+  const items = loadNavItems();
+  const j = i + dir;
+  if (j < 0 || j >= items.length) return;
+  [items[i], items[j]] = [items[j], items[i]];
+  saveNavItems(items);
+  renderNavEditorList();
+  renderNavLinks();
+}
+
+// ── Burger menu ───────────────────────────────
+function toggleBurgerMenu() {
+  document.getElementById('burgerMenu').classList.toggle('open');
+}
+
+function closeBurgerMenu() {
+  document.getElementById('burgerMenu').classList.remove('open');
+}
+
+// 外側タップで閉じる
+document.addEventListener('click', e => {
+  const menu = document.getElementById('burgerMenu');
+  const btn = document.getElementById('burgerBtn');
+  if (menu && !menu.contains(e.target) && !btn.contains(e.target)) {
+    menu.classList.remove('open');
+  }
+});
+
+// ── Admin ─────────────────────────────────────
+
+// ── Footer gap toggle ─────────────────────────
+async function loadFooterGap() {
+  try {
+    const row = await dbOp('banners', 'readonly', s => s.get(98));
+    const noGap = row?.footerNoGap === true;
+    const sec = document.getElementById('footerSection');
+    const btn = document.getElementById('footerGapBtn');
+    if (sec) sec.classList.toggle('no-gap', noGap);
+    if (btn) btn.textContent = noGap ? '隙間なし' : '隙間あり';
+  } catch {}
+}
+
+async function toggleFooterGap() {
+  const sec = document.getElementById('footerSection');
+  const btn = document.getElementById('footerGapBtn');
+  const noGap = !sec.classList.contains('no-gap');
+  sec.classList.toggle('no-gap', noGap);
+  btn.textContent = noGap ? '隙間なし' : '隙間あり';
+  await dbOp('banners', 'readwrite', s => s.put({ slot: 98, footerNoGap: noGap }));
+}
+
+// ── Footer editor ─────────────────────────────
+async function loadFooterText() {
+  try {
+    const row = await dbOp('banners', 'readonly', s => s.get(99));
+    if (row?.footerText) {
+      document.getElementById('footerText').textContent = row.footerText;
+    }
+  } catch {}
+}
+
+function openFooterEditor() {
+  const current = document.getElementById('footerText').textContent;
+  document.getElementById('footerTextInput').value = current;
+  document.getElementById('footerEditorOverlay').classList.add('open');
+  document.getElementById('footerEditorPanel').classList.add('open');
+}
+
+function closeFooterEditor() {
+  document.getElementById('footerEditorOverlay').classList.remove('open');
+  document.getElementById('footerEditorPanel').classList.remove('open');
+}
+
+async function saveFooterText() {
+  const text = document.getElementById('footerTextInput').value.trim();
+  if (!text) return;
+  await dbOp('banners', 'readwrite', s => s.put({ slot: 99, footerText: text }));
+  document.getElementById('footerText').textContent = text;
+  closeFooterEditor();
+}
+
+function toggleAdmin() {
+  adminMode = !adminMode;
+  document.body.classList.toggle('admin-mode', adminMode);
+  document.getElementById('adminBtn').classList.toggle('active', adminMode);
+  closeBurgerMenu();
+  if (!adminMode) closePanel();
+  render();
+}
+
+// ── Panel ─────────────────────────────────────
+function openPanel() {
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('panel').classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('overlay').classList.remove('open');
+  document.getElementById('panel').classList.remove('open');
+  resetForm();
+}
+
+function resetForm() {
+  pendingFiles = [];
+  document.getElementById('fileInput').value = '';
+  document.getElementById('linkUrl').value = '';
+  document.getElementById('previewGrid').innerHTML = '';
+  document.getElementById('addBtn').disabled = true;
+}
+
+// ── File select ───────────────────────────────
+function onFileSelect(files) {
+  for (const f of files) {
+    if (f.type.startsWith('image/')) pendingFiles.push(f);
+  }
+  renderPreviews();
+}
+
+function renderPreviews() {
+  const grid = document.getElementById('previewGrid');
+  grid.innerHTML = '';
+  pendingFiles.forEach((f, i) => {
+    const url = URL.createObjectURL(f);
+    const div = document.createElement('div');
+    div.className = 'p-thumb';
+    const img = document.createElement('img');
+    img.src = url; img.alt = '';
+    const del = document.createElement('button');
+    del.className = 'p-del'; del.textContent = '✕';
+    del.onclick = () => { pendingFiles.splice(i, 1); renderPreviews(); };
+    div.appendChild(img); div.appendChild(del);
+    grid.appendChild(div);
+  });
+  document.getElementById('addBtn').disabled = pendingFiles.length === 0;
+}
+
+// drag & drop
+const dz = document.getElementById('dropZone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag-over'); onFileSelect(e.dataTransfer.files); });
+
+// ── Add cards ─────────────────────────────────
+async function addCards() {
+  const link = document.getElementById('linkUrl').value.trim();
+  const btn = document.getElementById('addBtn');
+  btn.disabled = true;
+  btn.textContent = '保存中…';
+
+  let nextOrder = cards.length ? Math.max(...cards.map(c => c.order)) + 1 : 1;
+
+  for (const f of pendingFiles) {
+    const base64 = await fileToBase64(f);
+    const order = nextOrder++;
+    const id = await dbOp('cards', 'readwrite', s => s.add({ base64, link, order }));
+    cards.push({ id, base64, link, order });
+  }
+
+  btn.textContent = '追加する';
+  closePanel();
+  render();
+}
+
+// ── Gap toggle ────────────────────────────────
+async function toggleGap(id) {
+  const c = cards.find(c => c.id === id);
+  if (!c) return;
+  c.gap = c.gap === false ? true : false;
+  await dbOp('cards', 'readwrite', s => s.put({ id: c.id, base64: c.base64, link: c.link, order: c.order, gap: c.gap }));
+  render();
+}
+
+// ── Replace ───────────────────────────────────
+async function replaceCard(id, file) {
+  const base64 = await fileToBase64(file);
+  const existing = cards.find(c => c.id === id);
+  const link = existing?.link || '';
+  const order = existing?.order ?? id;
+  await dbOp('cards', 'readwrite', s => s.put({ id, base64, link, order }));
+  const i = cards.findIndex(c => c.id === id);
+  if (i !== -1) cards[i].base64 = base64;
+  render();
+}
+
+// ── Delete ────────────────────────────────────
+async function deleteCard(id) {
+  await dbOp('cards', 'readwrite', s => s.delete(id));
+  const i = cards.findIndex(c => c.id === id);
+  if (i !== -1) cards.splice(i, 1);
+  render();
+}
+
+// ── Move (reorder) ──────────────────────────────
+async function moveCard(fromIdx, toIdx) {
+  if (toIdx < 0 || toIdx >= cards.length) return;
+  // swap in array
+  const tmp = cards[fromIdx];
+  cards[fromIdx] = cards[toIdx];
+  cards[toIdx] = tmp;
+
+  // reassign order values sequentially based on new array order
+  cards.forEach((c, i) => { c.order = i + 1; });
+
+  // persist all order changes
+  for (const c of cards) {
+    await dbOp('cards', 'readwrite', s => s.put({ id: c.id, base64: c.base64, link: c.link, order: c.order }));
+  }
+  render();
+}
+
+// ── Link editor ─────────────────────────────────
+let linkEditTargetId = null;
+
+function openLinkEditor(id, currentLink) {
+  linkEditTargetId = id;
+  document.getElementById('linkEditInput').value = currentLink || '';
+  document.getElementById('linkEditOverlay').classList.add('open');
+  document.getElementById('linkEditPanel').classList.add('open');
+}
+
+function closeLinkEditor() {
+  document.getElementById('linkEditOverlay').classList.remove('open');
+  document.getElementById('linkEditPanel').classList.remove('open');
+  linkEditTargetId = null;
+}
+
+async function saveLinkEdit() {
+  if (linkEditTargetId === null) return;
+  const link = document.getElementById('linkEditInput').value.trim();
+  const c = cards.find(c => c.id === linkEditTargetId);
+  if (!c) return;
+  c.link = link;
+  await dbOp('cards', 'readwrite', s => s.put({ id: c.id, base64: c.base64, link: c.link, order: c.order }));
+  closeLinkEditor();
+  render();
+}
+
+// ── 編集用HTMLとして保存（データ埋め込み） ─────────
+function downloadEditHTML() {
+  // 現在のページのHTMLを取得
+  const source = document.documentElement.outerHTML;
+
+  // 初期データをJSとして埋め込む
+  const initData = {
+    banners: banners,
+    cards: cards
+  };
+
+  const initScript = `
+<scr` + `ipt>
+// ── 埋め込み初期データ ──
+window.__ASOBIVA_INIT__ = ${JSON.stringify(initData)};
+</scr` + `ipt>`;
+
+  // </head>の直前に初期データを挿入
+  const output = source.replace('</head>', initScript + '\n</head>');
+
+  const blob = new Blob([output], { type: 'text/html;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const ts = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+  a.download = `asobiva_edit_${ts}.html`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+// ── HTMLとして保存（静的スナップショット） ─────────
+function downloadHTML() {
+  // banner blocks
+  let headerHTML = '';
+  [1, 2].forEach(slot => {
+    const imgs = banners[slot];
+    if (imgs && imgs.length > 0) {
+      const b64 = imgs.length === 1 ? imgs[0] : imgs[Math.floor(Math.random() * imgs.length)];
+      headerHTML += `    <div class="banner-slot"><img src="${b64}" alt=""></div>\n`;
+    } else {
+      headerHTML += `    <div class="banner-slot"><span class="slot-label">HEADER ${slot}</span></div>\n`;
+    }
+  });
+
+  // card blocks
+  let cardsHTML = '';
+  if (cards.length === 0) {
+    cardsHTML = `  <div class="empty-section"><div class="empty-state"><strong>まだカードがありません</strong></div></div>\n`;
+  } else {
+    cards.forEach(c => {
+      const gapClass = c.gap === false || c.gap === 'nogap' ? ' no-gap' : c.gap === 'line' ? ' line-gap' : '';
+      const tag = c.link
+        ? `<a class="card" href="${c.link}" target="_blank" rel="noopener"><img src="${c.base64}" alt=""></a>`
+        : `<div class="card"><img src="${c.base64}" alt=""></div>`;
+      cardsHTML += `  <div class="card-section${gapClass}">${tag}</div>\n`;
+    });
+  }
+
+  const staticCSS = `
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root { --bg:#e0e0e0; --white:#ffffff; --ink:#1a1a1a; --ink-soft:#888; --border:#e0e0e0; }
+body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
+.wrap { max-width: 480px; margin: 0 auto; background: var(--bg); min-height: 100vh; }
+.header-pair { display:flex; flex-direction:column; background:var(--white); }
+.banner-slot { width:100%; min-height:80px; background:var(--white); display:flex; align-items:center; justify-content:center; }
+.banner-slot img { width:100%; height:auto; display:block; }
+.slot-label { font-size:10px; letter-spacing:0.12em; color:#ccc; }
+.card-section { background: var(--bg); padding-top:10px; }
+.card-section.no-gap { background: var(--white); padding-top:0; }
+.card-section.line-gap { background: var(--white); padding-top:0; border-top:1px solid var(--ink); }
+.card { width:100%; display:block; text-decoration:none; background:var(--white); overflow:hidden; }
+.card img { width:100%; height:auto; display:block; }
+.empty-section { background: var(--bg); padding-top:10px; }
+.empty-state { padding:60px 24px; text-align:center; color:var(--ink-soft); font-size:13px; line-height:2; background:var(--white); }
+.empty-state strong { display:block; font-size:14px; font-weight:600; color:var(--ink); margin-bottom:6px; }
+.footer-section { background: var(--bg); padding-top:10px; }
+.footer-section.no-gap { padding-top:0; }
+footer { padding:28px 16px; text-align:center; font-size:10px; letter-spacing:0.1em; color:var(--ink-soft); background:var(--white); }
+`;
+
+  const footerText = document.getElementById('footerText')?.textContent || 'ASOBIVA — i.roiro';
+  const footerNoGap = document.getElementById('footerSection')?.classList.contains('no-gap');
+  const footerGapClass = footerNoGap ? ' no-gap' : '';
+
+  const html = `<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASOBIVA</title>
+<style>${staticCSS}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header-pair">
+${headerHTML}  </div>
+${cardsHTML}  <div class="footer-section${footerGapClass}">
+    <footer>${footerText}</footer>
+  </div>
+</div>
+</body>
+</html>
+`;
+
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const ts = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+  a.download = `asobiva_${ts}.html`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+init();
+</script>
+</body>
+</html>
