@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>架空昆虫図鑑カード ジェネレータ</title>
+<style>
+  :root{
+    --bg:#f4f1ea;
+    --ink:#262420;
+    --sub:#7a766c;
+    --line:#26242022;
+    --accent:#4a4334;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Hiragino Sans","Yu Gothic",sans-serif;
+    background:#ffffff;
+    color:var(--ink);
+    padding:16px;
+  }
+  @media (max-width: 899px){
+    body{ padding:16px 0 0; }
+  }
+  h1{
+    font-size:21px;
+    margin:0 0 4px;
+  }
+  p.lead{
+    font-size:16px;
+    color:var(--sub);
+    margin:0 0 16px;
+  }
+  .layout{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  @media (min-width:900px){
+    .layout{
+      flex-direction:row;
+      align-items:flex-start;
+    }
+    .form-pane{ width:42%; }
+    .preview-pane{ width:58%; position:sticky; top:16px; }
+  }
+
+  /* ---- フォーム ---- */
+  .form-pane{
+    background:#fff;
+    border:1px solid #d9d5c8;
+    border-radius:6px;
+    padding:14px;
+  }
+  fieldset{
+    border:none;
+    border-top:1px solid #e3e0d6;
+    padding:10px 0 4px;
+    margin:0 0 4px;
+  }
+  legend{
+    font-size:14px;
+    color:var(--sub);
+    padding:0 4px 0 0;
+    letter-spacing:.05em;
+  }
+  label{
+    display:block;
+    font-size:14px;
+    color:var(--sub);
+    margin:8px 0 2px;
+  }
+  input[type=text], textarea{
+    width:100%;
+    font-size:17px;
+    font-family:inherit;
+    padding:6px 8px;
+    border:1px solid #ccc7b8;
+    border-radius:4px;
+    background:#ffffff;
+  }
+  textarea{ resize:vertical; min-height:50px; }
+  input[type=file]{ font-size:16px; }
+  .row2{ display:flex; gap:8px; }
+  .row2 > div{ flex:1; }
+
+  .actions{
+    margin-top:14px;
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  button{
+    font-size:17px;
+    padding:8px 14px;
+    border-radius:4px;
+    border:1px solid var(--accent);
+    background:var(--accent);
+    color:#fff;
+    cursor:pointer;
+  }
+  button.secondary{
+    background:#fff;
+    color:var(--accent);
+  }
+  #status{
+    font-size:14px;
+    color:var(--sub);
+    margin-top:6px;
+    min-height:14px;
+  }
+
+  /* ---- プレビュー ---- */
+  .preview-pane{
+    background:#fff;
+    border:1px solid #d9d5c8;
+    border-radius:6px;
+    padding:14px;
+  }
+  .preview-frame{
+    width:100%;
+    max-width:520px;
+    margin:0 auto;
+  }
+  @media (max-width: 899px){
+    .preview-pane{
+      padding:0;
+      border:none;
+      border-radius:0;
+      background:transparent;
+    }
+    .preview-frame{
+      max-width:100%;
+    }
+  }
+  /* ラッパー：コンテナ幅の基準点 */
+  .zukan-card-wrap{
+    container-type: inline-size;
+    width:100%;
+    margin:0;
+    box-sizing:border-box;
+    display:block;
+  }
+
+  /* ============================================
+     カード本体（4:3 / cqw単位でスケーラブル）
+     このスタイルブロックは出力HTMLにも同梱されます
+     ============================================ */
+  .zukan-card{
+    box-sizing:border-box;
+    width:100%;
+    aspect-ratio: 4 / 3;
+    background:#ffffff;
+    
+    font-family:"Shippori Mincho","Hiragino Mincho ProN",serif;
+    color:#2c2a24;
+    display:flex;
+    flex-direction:column;
+    padding: 3.2cqw;
+    overflow:hidden;
+    position:relative;
+  }
+  .zukan-card .zc-header{
+    display:flex;
+    flex-direction:column;
+    gap:0.6cqw;
+    border-bottom: 0.25cqw solid #2c2a24;
+    padding-bottom:1.4cqw;
+    margin-bottom:1.6cqw;
+    flex-shrink:0;
+  }
+  .zukan-card .zc-classification{
+    font-family:"EB Garamond",serif;
+    font-size:2.1cqw;
+    letter-spacing:.12em;
+    color:#6b6655;
+  }
+  .zukan-card .zc-namerow{
+    display:flex;
+    align-items:baseline;
+    gap:1.6cqw;
+  }
+  .zukan-card .zc-no{
+    font-family:"EB Garamond",serif;
+    font-size:2.3cqw;
+    letter-spacing:.1em;
+    color:#6b6655;
+    flex-shrink:0;
+  }
+  .zukan-card .zc-no b{
+    display:inline;
+    font-size:2.6cqw;
+    color:#2c2a24;
+  }
+  .zukan-card .zc-name{
+    font-size:5.5cqw;
+    font-weight:700;
+    letter-spacing:.04em;
+    line-height:1.15;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .zukan-card .zc-yomi{
+    font-size:2.0cqw;
+    color:#6b6655;
+    letter-spacing:.08em;
+  }
+  .zukan-card .zc-latin{
+    font-family:"EB Garamond",serif;
+    font-style:italic;
+    font-size:2.5cqw;
+    color:#3c392f;
+  }
+
+  .zukan-card .zc-body{
+    display:flex;
+    gap:2.4cqw;
+    flex:1;
+    min-height:0;
+  }
+  .zukan-card .zc-image{
+    width:38%;
+    flex-shrink:0;
+    border:1.5px solid #2c2a24;
+    background:#ffffff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    position:relative;
+  }
+  .zukan-card .zc-image img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    padding:2cqw;
+  }
+  .zukan-card .zc-image .zc-fig{
+    position:absolute;
+    bottom:0.8cqw;
+    left:0;
+    right:0;
+    text-align:center;
+    font-family:"EB Garamond",serif;
+    font-size:1.6cqw;
+    letter-spacing:.15em;
+    color:#9a9686;
+  }
+
+  .zukan-card .zc-info{
+    flex:1;
+    min-width:0;
+    overflow:hidden;
+    display:grid;
+    grid-template-columns: auto 1fr;
+    align-content:start;
+    column-gap: 1.4cqw;
+    row-gap: 0;
+    font-size:2.0cqw;
+    line-height:1.7;
+  }
+  .zukan-card .zc-info dt{
+    color:#6b6655;
+    font-size:1.8cqw;
+    white-space:nowrap;
+    border-bottom:0.06cqw dotted #b9b5a6;
+    padding:0.45cqw 0;
+  }
+  .zukan-card .zc-info dd{
+    margin:0;
+    border-bottom:0.06cqw dotted #b9b5a6;
+    padding:0.45cqw 0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+
+  .zukan-card .zc-footer{
+    flex-shrink:0;
+    margin-top:1.8cqw;
+    border-top:0.2cqw solid #2c2a24;
+    padding-top:1.2cqw;
+    display:flex;
+    gap:1.6cqw;
+  }
+  .zukan-card .zc-footer .zc-desc-label{
+    flex-shrink:0;
+    font-family:"EB Garamond",serif;
+    font-size:1.6cqw;
+    letter-spacing:.2em;
+    color:#9a9686;
+    writing-mode: vertical-rl;
+  }
+  .zukan-card .zc-desc{
+    flex:1;
+    font-size:2.0cqw;
+    line-height:1.6;
+    letter-spacing:.02em;
+    display:-webkit-box;
+    -webkit-line-clamp:4;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+  .zukan-card .zc-corner{
+    position:absolute;
+    top:1.4cqw;
+    right:2cqw;
+    font-family:"EB Garamond",serif;
+    font-size:1.4cqw;
+    letter-spacing:.1em;
+    color:#c4c0b0;
+  }
+
+  /* ============================================
+     狭幅（スマホ表示想定）：縦積みレイアウトに切り替え
+     コンテナ幅基準（container query）。4:3固定をやめ、
+     高さは内容に応じて伸ばす。スクロール前提。
+     ============================================ */
+  @container (max-width: 480px){
+    .zukan-card{
+      aspect-ratio:auto;
+      height:auto;
+      overflow:visible;
+      padding:16px;
+    }
+    .zukan-card .zc-corner{ font-size:12px; top:12px; right:14px; }
+    .zukan-card .zc-header{
+      flex-wrap:wrap;
+      border-bottom-width:2px;
+      padding-bottom:10px;
+      margin-bottom:12px;
+    }
+    .zukan-card .zc-no{ font-size:14px; }
+    .zukan-card .zc-no b{ font-size:21px; }
+    .zukan-card .zc-name{ font-size:29px; white-space:normal; }
+    .zukan-card .zc-yomi{ font-size:14px; }
+    .zukan-card .zc-latin{ font-size:17px; }
+    .zukan-card .zc-badge{ font-size:13px; padding:4px 8px;  }
+    .zukan-card .zc-badge b{ font-size:16px; }
+
+    .zukan-card .zc-body{
+      flex-direction:column;
+      gap:14px;
+    }
+    .zukan-card .zc-image{
+      width:100%;
+      aspect-ratio:1/1;
+      
+    }
+    .zukan-card .zc-image .zc-fig{ font-size:12px; bottom:6px; }
+
+    .zukan-card .zc-info{
+      font-size:17px;
+      line-height:1.8;
+      grid-template-columns:5.5em 1fr;
+      column-gap:10px;
+    }
+    .zukan-card .zc-info dt{ font-size:14px; white-space:normal; }
+    .zukan-card .zc-info dd{
+      white-space:normal;
+      overflow:visible;
+      text-overflow:clip;
+    }
+
+    .zukan-card .zc-footer{
+      margin-top:14px;
+      padding-top:10px;
+      border-top-width:1px;
+      flex-direction:column;
+      gap:6px;
+    }
+    .zukan-card .zc-footer .zc-desc-label{
+      writing-mode:horizontal-tb;
+      font-size:13px;
+      letter-spacing:.15em;
+    }
+    .zukan-card .zc-desc{
+      font-size:18px;
+      line-height:1.75;
+      -webkit-line-clamp:unset;
+      display:block;
+      overflow:visible;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1>架空昆虫図鑑カード ジェネレータ</h1>
+<p class="lead">項目を入力してプレビューを確認し、カードのHTMLコードをコピー／ダウンロードしてください。1件＝1枚のカードとして書き出します。</p>
+
+<div class="layout">
+
+  <div class="form-pane">
+
+    <fieldset>
+      <legend>一括テキスト読み込み</legend>
+      <label>テキストファイルを選択するか、直接貼り付けてください</label>
+      <div style="margin-bottom:8px;">
+        <input type="file" id="f_txt_file" accept=".txt" style="display:none;">
+        <button type="button" id="btn_txt_select" style="width:100%;padding:12px;font-size:15px;background:#fff;border:1px solid #4a4334;color:#4a4334;border-radius:4px;cursor:pointer;">
+          📄 テキストファイルを選択
+        </button>
+        <div id="txt_file_name" style="font-size:12px;color:#7a766c;margin-top:4px;"></div>
+      </div>
+      <textarea id="f_bulk" style="min-height:90px;" placeholder="【図鑑No.】001&#10;【和名】○○○○&#10;【読み】○○○○&#10;...（テンプレート参照）"></textarea>
+      <div class="actions" style="margin-top:8px;">
+        <button id="btn_parse" type="button">テキストを各項目に反映</button>
+      </div>
+      <div id="parse_status" style="font-size:14px;color:#7a766c;margin-top:4px;"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>基本情報</legend>
+      <div class="row2">
+        <div>
+          <label>図鑑No.</label>
+          <input type="text" id="f_no" value="001">
+        </div>
+        <div>
+          <label>分類</label>
+          <input type="text" id="f_classification" value="架空昆虫網 ナナフシ目（仮）">
+        </div>
+      </div>
+      <label>和名</label>
+      <input type="text" id="f_name_ja" value="ヨアケミノムシ">
+      <div class="row2">
+        <div>
+          <label>読み</label>
+          <input type="text" id="f_yomi" value="よあけみのむし">
+        </div>
+        <div>
+          <label>学名（異世界名）</label>
+          <input type="text" id="f_latin" value="Pseudolarva auroris">
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>イラスト</legend>
+      <input type="file" id="f_image" accept="image/*">
+      <div id="img_status" style="font-size:14px;color:#7a766c;margin-top:4px;"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>生態情報</legend>
+      <div class="row2">
+        <div>
+          <label>全長</label>
+          <input type="text" id="f_length" value="約4〜6cm">
+        </div>
+        <div>
+          <label>活動時間</label>
+          <input type="text" id="f_active" value="薄明薄暮性">
+        </div>
+      </div>
+      <div class="row2">
+        <div>
+          <label>分布</label>
+          <input type="text" id="f_distribution" value="霧谷地方一帯">
+        </div>
+        <div>
+          <label>生息環境</label>
+          <input type="text" id="f_habitat" value="朝霧の降りる雑木林">
+        </div>
+      </div>
+      <div class="row2">
+        <div>
+          <label>食性</label>
+          <input type="text" id="f_diet" value="朝露・苔">
+        </div>
+        <div>
+          <label>繁殖</label>
+          <input type="text" id="f_reproduction" value="夜明け前に発光し求愛する">
+        </div>
+      </div>
+      <div class="row2">
+        <div>
+          <label>防御能力</label>
+          <input type="text" id="f_defense" value="殻を石そっくりに擬態">
+        </div>
+        <div>
+          <label>天敵</label>
+          <input type="text" id="f_predator" value="霧ガラスの一種">
+        </div>
+      </div>
+      <label>特徴</label>
+      <input type="text" id="f_feature" value="日の出の瞬間だけ殻がうっすら発光する">
+      <label>備考</label>
+      <input type="text" id="f_note" value="現地の子供たちには「夜明けの石ころ」と呼ばれている">
+    </fieldset>
+
+    <fieldset>
+      <legend>解説文（100〜200字目安）</legend>
+      <textarea id="f_desc">霧谷地方の雑木林にひっそりと生息する小型の蓑虫型生物。普段は石に擬態してじっと動かないが、夜明けの一瞬だけ殻がうっすらと発光し、互いの居場所を知らせ合う。発光は数秒で終わるため、目撃情報は非常に少ない。</textarea>
+    </fieldset>
+
+    <div class="actions">
+      <button id="btn_copy">カードHTMLをコピー</button>
+      <button id="btn_download" class="secondary">HTMLファイルをダウンロード</button>
+    </div>
+    <div id="status"></div>
+  </div>
+
+  <div class="preview-pane">
+    <div class="preview-frame">
+      <div class="zukan-card-wrap">
+      <div class="zukan-card" id="card">
+        <div class="zc-corner">SPECIMEN RECORD</div>
+        <div class="zc-header">
+          <div class="zc-classification" id="o_classification">架空昆虫網 ナナフシ目（仮）</div>
+          <div class="zc-namerow">
+            <span class="zc-no">No.<b id="o_no">001</b></span>
+            <span class="zc-name" id="o_name">ヨアケミノムシ</span>
+          </div>
+          <div class="zc-yomi" id="o_yomi">よあけみのむし</div>
+          <div class="zc-latin" id="o_latin">Pseudolarva auroris</div>
+        </div>
+        <div class="zc-body">
+          <div class="zc-image">
+            <img id="o_image" src="" alt="">
+            <div class="zc-fig">FIG. — OBSERVATION RECORD</div>
+          </div>
+          <dl class="zc-info">
+            <dt>全長</dt><dd id="o_length"></dd>
+            <dt>分布</dt><dd id="o_distribution"></dd>
+            <dt>生息環境</dt><dd id="o_habitat"></dd>
+            <dt>活動時間</dt><dd id="o_active"></dd>
+            <dt>食性</dt><dd id="o_diet"></dd>
+            <dt>特徴</dt><dd id="o_feature"></dd>
+            <dt>防御能力</dt><dd id="o_defense"></dd>
+            <dt>繁殖</dt><dd id="o_reproduction"></dd>
+            <dt>天敵</dt><dd id="o_predator"></dd>
+            <dt>備考</dt><dd id="o_note"></dd>
+          </dl>
+        </div>
+        <div class="zc-footer">
+          <div class="zc-desc-label">解説</div>
+          <div class="zc-desc" id="o_desc"></div>
+        </div>
+      </div>
+    </div>
+    </div><!-- /zukan-card-wrap -->
+  </div>
+
+</div>
+
+<script>
+const fields = ['no','classification','name_ja','yomi','latin','length','active','distribution','habitat','diet','reproduction','defense','predator','feature','note','desc'];
+const map = {
+  no:'f_no', classification:'f_classification', name_ja:'f_name_ja', yomi:'f_yomi', latin:'f_latin',
+  length:'f_length', active:'f_active', distribution:'f_distribution', habitat:'f_habitat',
+  diet:'f_diet', reproduction:'f_reproduction', defense:'f_defense', predator:'f_predator',
+  feature:'f_feature', note:'f_note', desc:'f_desc'
+};
+const outMap = {
+  no:'o_no', classification:'o_classification', name_ja:'o_name', yomi:'o_yomi', latin:'o_latin',
+  length:'o_length', active:'o_active', distribution:'o_distribution', habitat:'o_habitat',
+  diet:'o_diet', reproduction:'o_reproduction', defense:'o_defense', predator:'o_predator',
+  feature:'o_feature', note:'o_note', desc:'o_desc'
+};
+
+let imageData = "";
+
+function refresh(){
+  fields.forEach(key=>{
+    const val = document.getElementById(map[key]).value;
+    document.getElementById(outMap[key]).textContent = val;
+  });
+  document.getElementById('o_image').src = imageData;
+}
+
+fields.forEach(key=>{
+  document.getElementById(map[key]).addEventListener('input', refresh);
+});
+
+document.getElementById('f_image').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev)=>{
+    imageData = ev.target.result;
+    document.getElementById('img_status').textContent = '画像を読み込みました：' + file.name;
+    refresh();
+  };
+  reader.readAsDataURL(file);
+});
+
+const keyMap = {
+  '図鑑No.': 'f_no',
+  '和名': 'f_name_ja',
+  '読み': 'f_yomi',
+  '学名': 'f_latin',
+  '分類': 'f_classification',
+  '全長': 'f_length',
+  '分布': 'f_distribution',
+  '生息環境': 'f_habitat',
+  '活動時間': 'f_active',
+  '食性': 'f_diet',
+  '特徴': 'f_feature',
+  '防御能力': 'f_defense',
+  '繁殖': 'f_reproduction',
+  '天敵': 'f_predator',
+  '備考': 'f_note',
+  '解説文': 'f_desc'
+};
+
+// テキストファイル選択ボタン
+document.getElementById('btn_txt_select').addEventListener('click', ()=>{
+  document.getElementById('f_txt_file').click();
+});
+
+// テキストファイル選択→テキストエリアに自動展開
+document.getElementById('f_txt_file').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev)=>{
+    document.getElementById('f_bulk').value = ev.target.result;
+    document.getElementById('txt_file_name').textContent = '選択中：' + file.name;
+    document.getElementById('parse_status').textContent = 'ファイルを読み込みました。→「テキストを各項目に反映」を押してください';
+  };
+  reader.readAsText(file, 'UTF-8');
+});
+
+document.getElementById('btn_parse').addEventListener('click', ()=>{
+  const raw = document.getElementById('f_bulk').value;
+  if(!raw.trim()){
+    document.getElementById('parse_status').textContent = 'テキストが空です。';
+    return;
+  }
+  const matches = [...raw.matchAll(/【([^】]+)】([\s\S]*?)(?=【[^】]+】|$)/g)];
+  if(matches.length === 0){
+    document.getElementById('parse_status').textContent = '【キー】形式が見つかりませんでした。テンプレート形式を確認してください。';
+    return;
+  }
+  let filled = 0;
+  matches.forEach(m=>{
+    const key = m[1].trim();
+    const value = m[2].trim();
+    const fieldId = keyMap[key];
+    if(fieldId){
+      document.getElementById(fieldId).value = value;
+      filled++;
+    }
+  });
+  refresh();
+  document.getElementById('parse_status').textContent = `${filled}項目を反映しました。内容は下のフォームでそのまま編集できます。`;
+});
+
+refresh();
+
+const CARD_CSS = `
+.zukan-card-wrap{container-type:inline-size;width:100%;margin:0;box-sizing:border-box;display:block;}
+.zukan-card{box-sizing:border-box;width:100%;aspect-ratio:4/3;background:#ffffff;font-family:"Shippori Mincho","Hiragino Mincho ProN",serif;color:#2c2a24;display:flex;flex-direction:column;padding:3.2cqw;overflow:hidden;position:relative;}
+.zukan-card .zc-header{display:flex;align-items:baseline;gap:2cqw;border-bottom:0.25cqw solid #2c2a24;padding-bottom:1.4cqw;margin-bottom:1.6cqw;flex-shrink:0;}
+.zukan-card .zc-classification{font-family:"EB Garamond",serif;font-size:2.1cqw;letter-spacing:.12em;color:#6b6655;}
+.zukan-card .zc-namerow{display:flex;align-items:baseline;gap:1.6cqw;}
+.zukan-card .zc-no{font-family:"EB Garamond",serif;font-size:2.3cqw;letter-spacing:.1em;color:#6b6655;flex-shrink:0;}
+.zukan-card .zc-no b{display:inline;font-size:2.6cqw;color:#2c2a24;}
+.zukan-card .zc-name{font-size:5.5cqw;font-weight:700;letter-spacing:.04em;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.zukan-card .zc-yomi{font-size:2.0cqw;color:#6b6655;letter-spacing:.08em;}
+.zukan-card .zc-latin{font-family:"EB Garamond",serif;font-style:italic;font-size:2.5cqw;color:#3c392f;}
+.zukan-card .zc-body{display:flex;gap:2.4cqw;flex:1;min-height:0;}
+.zukan-card .zc-image{width:38%;flex-shrink:0;border:1.5px solid #2c2a24;background:#ffffff;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+.zukan-card .zc-image img{width:100%;height:100%;object-fit:contain;padding:2cqw;}
+.zukan-card .zc-image .zc-fig{position:absolute;bottom:0.8cqw;left:0;right:0;text-align:center;font-family:"EB Garamond",serif;font-size:1.6cqw;letter-spacing:.15em;color:#9a9686;}
+.zukan-card .zc-info{flex:1;min-width:0;overflow:hidden;display:grid;grid-template-columns:auto 1fr;align-content:start;column-gap:1.4cqw;row-gap:0;font-size:2.0cqw;line-height:1.7;}
+.zukan-card .zc-info dt{color:#6b6655;font-size:1.8cqw;white-space:nowrap;border-bottom:0.06cqw dotted #b9b5a6;padding:0.45cqw 0;}
+.zukan-card .zc-info dd{margin:0;border-bottom:0.06cqw dotted #b9b5a6;padding:0.45cqw 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.zukan-card .zc-footer{flex-shrink:0;margin-top:1.8cqw;border-top:0.2cqw solid #2c2a24;padding-top:1.2cqw;display:flex;gap:1.6cqw;}
+.zukan-card .zc-footer .zc-desc-label{flex-shrink:0;font-family:"EB Garamond",serif;font-size:1.6cqw;letter-spacing:.2em;color:#9a9686;writing-mode:vertical-rl;}
+.zukan-card .zc-desc{flex:1;font-size:2.0cqw;line-height:1.6;letter-spacing:.02em;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;}
+.zukan-card .zc-corner{position:absolute;top:1.4cqw;right:2cqw;font-family:"EB Garamond",serif;font-size:1.4cqw;letter-spacing:.1em;color:#c4c0b0;}
+@container (max-width: 480px){
+.zukan-card{aspect-ratio:auto;height:auto;overflow:visible;padding:16px;}
+.zukan-card .zc-corner{font-size:12px;top:12px;right:14px;}
+.zukan-card .zc-header{flex-wrap:wrap;border-bottom-width:2px;padding-bottom:10px;margin-bottom:12px;}
+.zukan-card .zc-classification{font-size:14px;}
+.zukan-card .zc-no{font-size:14px;}
+.zukan-card .zc-no b{font-size:14px;}
+.zukan-card .zc-name{font-size:34px;white-space:normal;}
+.zukan-card .zc-yomi{font-size:14px;}
+.zukan-card .zc-latin{font-size:17px;}
+.zukan-card .zc-body{flex-direction:column;gap:14px;}
+.zukan-card .zc-image{width:100%;aspect-ratio:1/1;border:1px solid #2c2a24;}
+.zukan-card .zc-image .zc-fig{font-size:12px;bottom:6px;}
+.zukan-card .zc-info{font-size:17px;line-height:1.8;grid-template-columns:5.5em 1fr;column-gap:10px;}
+.zukan-card .zc-info dt{font-size:14px;white-space:normal;}
+.zukan-card .zc-info dd{white-space:normal;overflow:visible;text-overflow:clip;}
+.zukan-card .zc-footer{margin-top:14px;padding-top:10px;border-top-width:1px;flex-direction:column;gap:6px;}
+.zukan-card .zc-footer .zc-desc-label{writing-mode:horizontal-tb;font-size:13px;letter-spacing:.15em;}
+.zukan-card .zc-desc{font-size:18px;line-height:1.75;-webkit-line-clamp:unset;display:block;overflow:visible;}
+}
+`;
+
+function buildCardHTML(){
+  const wrapEl = document.querySelector('.zukan-card-wrap');
+  return `<style>${CARD_CSS}</style>\n${wrapEl.outerHTML}`;
+}
+
+document.getElementById('btn_copy').addEventListener('click', async ()=>{
+  const html = buildCardHTML();
+  try{
+    await navigator.clipboard.writeText(html);
+    document.getElementById('status').textContent = 'コピーしました。ASOBIVAページのカードコードとして貼り付けてください。';
+  }catch(e){
+    document.getElementById('status').textContent = 'コピーに失敗しました。ダウンロードをご利用ください。';
+  }
+});
+
+document.getElementById('btn_download').addEventListener('click', ()=>{
+  const html = buildCardHTML();
+  const full = `<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>図鑑カード</title></head><body style="margin:0;padding:20px;background:#ffffff;display:flex;justify-content:center;"><div style="width:100%;max-width:640px;">${html}</div></body></html>`;
+  const blob = new Blob([full], {type:'text/html'});
+  const a = document.createElement('a');
+  const no = document.getElementById('f_no').value || 'card';
+  a.href = URL.createObjectURL(blob);
+  a.download = `zukan_card_${no}.html`;
+  a.click();
+  document.getElementById('status').textContent = 'ダウンロードしました。';
+});
+
+refresh();
+</script>
+
+</body>
+</html>
