@@ -268,6 +268,8 @@ body.admin-mode .card:hover img { transform: none; }
 
 /* ── HTML CARD ── */
 .html-card {
+  display: block;
+  text-decoration: none;
   width: 100%;
   position: relative;
   background: var(--white);
@@ -434,6 +436,27 @@ body.admin-mode .card-replace { display: flex; }
 
 .card-replace-input { display: none; }
 
+/* ── LINK EDIT BUTTON ── */
+.card-link-btn {
+  display: none;
+  position: absolute;
+  top: 10px; right: 90px;
+  width: 30px; height: 30px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 13px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  transition: background 0.15s;
+}
+.card-link-btn:hover { background: #2266cc; }
+.card-link-btn.has-link { background: rgba(34,102,204,0.85); }
+body.admin-mode .card-link-btn { display: flex; }
+
 /* ── ADD BUTTON ── */
 .add-section {
   background: var(--bg);
@@ -554,7 +577,7 @@ footer {
   text-align: center;
   font-size: 10px;
   letter-spacing: 0.1em;
-  color: var(--ink-soft);
+  color: var(--ink);
   background: var(--white);
 }
 
@@ -865,6 +888,16 @@ body.admin-mode .footer-edit-btn { display: inline-block; }
   <input class="field-input" id="footerTextInput" type="text" placeholder="例: © 2025 i.roiro">
   <button class="btn-add" onclick="saveFooterText()">保存する</button>
 </div>
+
+<!-- リンク編集パネル -->
+<div class="overlay" id="linkEditOverlay" onclick="closeLinkEditor()"></div>
+<div class="panel" id="linkEditPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-title">リンク先を設定</div>
+  <label class="field-label" for="linkEditInput">リンク先URL</label>
+  <input class="field-input" id="linkEditInput" type="url" placeholder="https://note.com/...">
+  <button class="btn-add" onclick="saveLinkEdit()">保存する</button>
+</div>
 <div class="overlay" id="overlay" onclick="closePanel()"></div>
 <div class="panel" id="panel">
   <div class="panel-handle"></div>
@@ -1122,6 +1155,17 @@ function applyBanner(slot, base64) {
 }
 
 // ── Render ────────────────────────────────────
+function isExternalLink(url) {
+  if (!url) return false;
+  if (!/^https?:\/\//i.test(url)) return false;
+  try {
+    const host = new URL(url).hostname;
+    return !host.endsWith('i-roiro.com');
+  } catch (e) {
+    return true;
+  }
+}
+
 function render() {
   const container = document.getElementById('cardContainer');
   container.innerHTML = '';
@@ -1176,7 +1220,7 @@ function render() {
       wrap = document.createElement('a');
       wrap.className = 'card';
       wrap.href = adminMode ? '#' : (c.link || '#');
-      if (!adminMode && c.link) wrap.target = '_blank';
+      if (!adminMode && c.link && isExternalLink(c.link)) wrap.target = '_blank';
       wrap.rel = 'noopener';
 
       const img = document.createElement('img');
@@ -1310,6 +1354,14 @@ function render() {
 
       wrap.appendChild(label);
       wrap.appendChild(iframe);
+      if (!adminMode && c.link) {
+        const linkOverlay = document.createElement('a');
+        linkOverlay.href = c.link;
+        if (isExternalLink(c.link)) linkOverlay.target = '_blank';
+        linkOverlay.rel = 'noopener';
+        linkOverlay.style.cssText = 'position:absolute;inset:0;z-index:4;';
+        wrap.appendChild(linkOverlay);
+      }
       replaceAccept = 'image/*,text/html,.html';
     }
 
@@ -1335,6 +1387,15 @@ function render() {
         replaceInput.click();
       });
     }
+
+    const linkBtn = document.createElement('button');
+    linkBtn.className = 'card-link-btn' + (c.link ? ' has-link' : '');
+    linkBtn.title = 'リンクを設定';
+    linkBtn.textContent = '🔗';
+    linkBtn.addEventListener('click', e => {
+      e.preventDefault(); e.stopPropagation();
+      openLinkEditor(c.id, c.link);
+    });
 
     const delBtn = document.createElement('button');
     delBtn.className = 'card-del';
@@ -1365,6 +1426,7 @@ function render() {
       e.preventDefault(); e.stopPropagation();
       toggleGap(c.id);
     });
+    if (!['game','game-carousel','carousel'].includes(c.type)) wrap.appendChild(linkBtn);
     if (supportsReplace) {
       wrap.appendChild(replaceBtn);
       wrap.appendChild(replaceInput);
@@ -1689,6 +1751,32 @@ async function saveFooterText() {
   closeFooterEditor();
 }
 
+let linkEditTargetId = null;
+
+function openLinkEditor(id, currentLink) {
+  linkEditTargetId = id;
+  document.getElementById('linkEditInput').value = currentLink || '';
+  document.getElementById('linkEditOverlay').classList.add('open');
+  document.getElementById('linkEditPanel').classList.add('open');
+}
+
+function closeLinkEditor() {
+  document.getElementById('linkEditOverlay').classList.remove('open');
+  document.getElementById('linkEditPanel').classList.remove('open');
+  linkEditTargetId = null;
+}
+
+async function saveLinkEdit() {
+  if (linkEditTargetId === null) return;
+  const link = document.getElementById('linkEditInput').value.trim();
+  const c = cards.find(c => c.id === linkEditTargetId);
+  if (!c) return;
+  c.link = link;
+  await dbOp('cards', 'readwrite', s => s.put({ ...c }));
+  closeLinkEditor();
+  render();
+}
+
 function toggleAdmin() {
   adminMode = !adminMode;
   document.body.classList.toggle('admin-mode', adminMode);
@@ -1987,7 +2075,7 @@ async function downloadHTML() {
       } else if (c.type === 'image') {
         const compressedB64 = await compressImage(c.base64);
         const tag = c.link
-          ? `<a class="card" href="${c.link}" target="_blank" rel="noopener"><img src="${compressedB64}" alt=""></a>`
+          ? `<a class="card" href="${c.link}"${isExternalLink(c.link) ? ' target="_blank" rel="noopener"' : ''}><img src="${compressedB64}" alt=""></a>`
           : `<div class="card"><img src="${compressedB64}" alt=""></div>`;
         cardsHTML += `  <div class="card-section${gapClass}">${tag}</div>\n`;
       } else if (c.type === 'carousel') {
@@ -1998,7 +2086,8 @@ async function downloadHTML() {
         cardsHTML += `  <div class="card-section${gapClass}"><div class="carousel-card" data-images="${imgsJson}" data-index="0" onclick="cyclerCarousel(this)"><img src="${compressedImgs[0]}" alt="">${compressedImgs.length > 1 ? `<div class="carousel-dots">${dots}</div><div class="carousel-count">1 / ${compressedImgs.length}</div>` : ''}</div></div>\n`;
       } else {
         const escaped = injectAutoResize(c.html).replace(/"/g, '&quot;');
-        cardsHTML += `  <div class="card-section${gapClass}"><div class="html-card"><iframe srcdoc="${escaped}" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" style="height:60px" scrolling="no" onload="try{var h=this.contentDocument.documentElement.scrollHeight||this.contentDocument.body.scrollHeight;if(h>0)this.style.height=h+'px';}catch(e){}"></iframe></div></div>\n`;
+        const linkOverlay = c.link ? `<a href="${c.link}"${isExternalLink(c.link) ? ' target="_blank" rel="noopener"' : ''} style="position:absolute;inset:0;z-index:4;"></a>` : '';
+        cardsHTML += `  <div class="card-section${gapClass}"><div class="html-card"><iframe srcdoc="${escaped}" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" style="height:60px" scrolling="no" onload="try{var h=this.contentDocument.documentElement.scrollHeight||this.contentDocument.body.scrollHeight;if(h>0)this.style.height=h+'px';}catch(e){}"></iframe>${linkOverlay}</div></div>\n`;
       }
     }
   }
@@ -2020,7 +2109,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: v
 .card-section.dot-gap { background: var(--white); padding-top:0; border-top:1px dashed rgba(0,0,0,0.2); }
 .card { width:100%; display:block; text-decoration:none; background:var(--white); overflow:hidden; }
 .card img { width:100%; height:auto; display:block; }
-.html-card { width:100%; position:relative; background:var(--white); overflow:hidden; }
+.html-card { display:block; width:100%; position:relative; background:var(--white); overflow:hidden; text-decoration:none; }
 .html-card iframe { display:block; width:100%; height:480px; border:none; background:var(--white); }
 .game-card { width:100%; position:relative; background:#ffffff; overflow:hidden; }
 .game-card-frame-wrap { width:100%; background:#ffffff; position:relative; overflow:hidden; line-height:0; }
@@ -2042,7 +2131,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: v
 .footer-section.no-gap { padding-top:0; }
 .footer-section.line-gap { padding-top:0; background:var(--white); border-top:1px solid var(--ink); }
 .footer-section.dot-gap { padding-top:0; background:var(--white); border-top:1px dashed rgba(0,0,0,0.2); }
-.site-header { display:flex; align-items:center; justify-content:flex-end; padding:10px 16px; background:var(--white); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; }
 .burger-btn { background:none; border:none; cursor:pointer; padding:4px; display:flex; flex-direction:column; gap:5px; align-items:flex-end; }
 .burger-btn span { display:block; height:1.5px; background:var(--ink); border-radius:1px; }
 .burger-btn span:nth-child(1) { width:20px; }
@@ -2052,7 +2140,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: v
 .burger-menu.open { display:block; }
 .nav-link-item { display:block; width:100%; padding:14px 20px; background:none; border:none; border-bottom:1px solid var(--border); font-size:13px; font-weight:500; color:var(--ink); cursor:pointer; text-align:left; text-decoration:none; }
 .nav-link-item:last-child { border-bottom:none; }
-footer { padding:16px; text-align:center; font-size:10px; letter-spacing:0.1em; color:var(--ink-soft); background:var(--white); }
+footer { padding:16px; text-align:center; font-size:10px; letter-spacing:0.1em; color:var(--ink); background:var(--white); }
 .fullscreen-overlay { position:fixed; inset:0; background:#0a0a12; z-index:500; display:none; flex-direction:column; }
 .fullscreen-overlay.open { display:flex; }
 .fullscreen-topbar { flex-shrink:0; display:flex; justify-content:flex-end; padding:10px 12px; padding-top:max(10px, env(safe-area-inset-top)); background:#0a0a12; position:relative; z-index:20; }
@@ -2066,8 +2154,11 @@ footer { padding:16px; text-align:center; font-size:10px; letter-spacing:0.1em; 
 `;
 
   const footerTextVal = document.getElementById('footerText')?.textContent || 'ASOBIVA — i.roiro';
-  const footerNoGap = document.getElementById('footerSection')?.classList.contains('no-gap');
-  const footerGapClass = footerNoGap ? ' no-gap' : '';
+  const footerSectionEl = document.getElementById('footerSection');
+  const footerGapClass = footerSectionEl?.classList.contains('no-gap') ? ' no-gap'
+    : footerSectionEl?.classList.contains('line-gap') ? ' line-gap'
+    : footerSectionEl?.classList.contains('dot-gap') ? ' dot-gap'
+    : '';
 
   const html = `<!DOCTYPE html>
 <html lang="ja">
@@ -2080,12 +2171,14 @@ footer { padding:16px; text-align:center; font-size:10px; letter-spacing:0.1em; 
 <body>
 <div class="wrap">
   <div class="site-header">
-    <button class="burger-btn" id="burgerBtnStatic" onclick="document.getElementById('burgerMenuStatic').classList.toggle('open')">
-      <span></span><span></span><span></span>
-    </button>
-    <div class="burger-menu" id="burgerMenuStatic">${navLinksHTML}</div>
+    <a href="asobiva.html" class="back-link">← トップへ戻る</a>
+    <div style="position:relative;">
+      <button class="burger-btn" id="burgerBtnStatic" onclick="document.getElementById('burgerMenuStatic').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="burger-menu" id="burgerMenuStatic">${navLinksHTML}</div>
+    </div>
   </div>
-  <div class="site-header-back"><a href="asobiva.html" class="back-link">← トップへ戻る</a></div>
   <div class="header-pair">
 ${headerHTML}  </div>
 ${cardsHTML}  <div class="footer-section${footerGapClass}">

@@ -260,28 +260,51 @@ body.admin-mode .admin-only { display: block; }
   user-select: none;
 }
 
-.banner-edit {
+/* 管理モードのバナー操作エリア */
+.banner-edit-btns {
   display: none;
   position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.25);
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 2;
+  bottom: 10px;
+  right: 10px;
+  z-index: 5;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
 }
-.banner-edit span {
+body.admin-mode .banner-slot .banner-edit-btns { display: flex; }
+
+.banner-edit-btn {
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   color: #fff;
-  background: rgba(0,0,0,0.45);
-  padding: 8px 18px;
+  background: rgba(0,0,0,0.5);
+  border: none;
+  padding: 7px 14px;
   border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.4);
-  pointer-events: none;
+  cursor: pointer;
+  white-space: nowrap;
 }
-body.admin-mode .banner-slot .banner-edit { display: flex; }
+.banner-edit-btn:hover { background: rgba(0,0,0,0.75); }
+.banner-edit-btn.del { background: rgba(192,57,43,0.7); }
+.banner-edit-btn.del:hover { background: rgba(192,57,43,0.95); }
+
+/* バナー枚数インジケーター */
+.banner-count {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 500;
+  color: #fff;
+  background: rgba(0,0,0,0.4);
+  padding: 3px 8px;
+  border-radius: 10px;
+  z-index: 3;
+  display: none;
+}
+body.admin-mode .banner-count { display: block; }
+
 .banner-file { display: none; }
 
 /* ── CARDS ── */
@@ -302,6 +325,37 @@ body.admin-mode .banner-slot .banner-edit { display: flex; }
   background: var(--white);
   padding-top: 0;
   border-top: 1px solid var(--ink);
+}
+.card-gap-btn {
+  display: none;
+  position: absolute;
+  bottom: 10px; left: 10px;
+  height: 28px;
+  padding: 0 10px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.card-gap-btn:hover { background: rgba(0,0,0,0.75); }
+body.admin-mode .card-gap-btn { display: flex; }
+.card-section.no-gap {
+  background: var(--white);
+  padding-top: 0;
+}
+.card-section.dot-gap {
+  background: var(--white);
+  padding-top: 0;
+  border-top: 1px dashed rgba(0,0,0,0.2);
 }
 .card-gap-btn {
   display: none;
@@ -431,6 +485,31 @@ body.admin-mode .html-card-label { display: block; }
 }
 .card-del:hover { background: #c0392b; }
 body.admin-mode .card-del { display: flex; }
+.card-move {
+  display: none;
+  position: absolute;
+  bottom: 10px; right: 50px;
+  flex-direction: row;
+  gap: 6px;
+  z-index: 5;
+}
+.card-move button {
+  width: 30px; height: 30px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.card-move button:hover { background: #444; }
+.card-move button:disabled { opacity: 0.3; cursor: default; }
+body.admin-mode .card-move { display: flex; }
+
 
 .card-replace {
   display: none;
@@ -713,32 +792,6 @@ body.admin-mode .footer-edit-btn { display: inline-block; }
   margin: 0 auto;
 }
 .footer-editor-panel.open { transform: translateY(0); }
-
-/* ── MOVE BUTTONS ── */
-.card-move {
-  display: none;
-  position: absolute;
-  bottom: 10px; right: 50px;
-  flex-direction: row;
-  gap: 6px;
-  z-index: 5;
-}
-.card-move button {
-  width: 30px; height: 30px;
-  background: rgba(0,0,0,0.5);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s;
-}
-.card-move button:hover { background: #444; }
-.card-move button:disabled { opacity: 0.3; cursor: default; }
-body.admin-mode .card-move { display: flex; }
 </style>
 </head>
 <body>
@@ -766,15 +819,17 @@ body.admin-mode .card-move { display: flex; }
         <button class="burger-menu-item admin-only" onclick="openNavEditor(); closeBurgerMenu()">メニューを編集</button>
         <button class="burger-menu-item admin-only" onclick="downloadEditHTML(); closeBurgerMenu()">編集用保存</button>
         <button class="burger-menu-item admin-only" id="downloadHtmlBtn" onclick="handleDownloadClick()">公開用保存</button>
-        <div class="burger-menu-item admin-only" style="font-size:10px;color:#aaa;text-align:right;padding:8px 20px;cursor:default;border:none;">v2.5</div>
+        <div class="burger-menu-item admin-only" style="font-size:10px;color:#aaa;text-align:right;padding:8px 20px;cursor:default;border:none;">v2.1</div>
       </div>
     </div>
   </div>
   <div class="header-pair">
     <div class="banner-slot" id="banner1">
-      <span class="slot-label">HEADER</span>
-      <div class="banner-edit" onclick="triggerBanner(1)"><span>画像を設定</span></div>
-      <input type="file" class="banner-file" id="bannerFile1" accept="image/*" onchange="onBannerFile(1,this)">
+      <span class="slot-label" id="bannerPlaceholder1">HEADER</span>
+      <div class="banner-edit-btns" id="bannerEditBtns1">
+        <button class="banner-edit-btn" onclick="triggerBanner(1)">＋ 画像を追加</button>
+      </div>
+      <input type="file" class="banner-file" id="bannerFile1" accept="image/*" multiple onchange="onBannerFile(1,this)">
     </div>
   </div>
 
@@ -832,7 +887,7 @@ body.admin-mode .card-move { display: flex; }
 
 <script>
 // ── IndexedDB (Base64ストレージ) ──────────────
-const DB_NAME = 'asobiva_content_asobiva_b64';
+const DB_NAME = 'asobiva_content_horabana_b64';
 let db;
 
 function openDB() {
@@ -926,7 +981,7 @@ window.addEventListener('message', e => {
 
 // ── State ─────────────────────────────────────
 let cards = [];       // [{ id, type: 'image'|'html'|'carousel', html?, base64?, images?, name?, link }]
-let banners = { 1: null }; // base64 strings
+let banners = { 1: [] }; // base64配列
 let pendingFiles = [];
 let adminMode = false;
 
@@ -945,26 +1000,30 @@ async function init() {
     }
     if (d.cards && d.cards.length > 0) {
       cards = d.cards;
-      for (const c of cards) {
-        try { await dbOp('cards', 'readwrite', s => s.put(c)); } catch {}
+      for (const card of cards) {
+        try { await dbOp('cards', 'readwrite', s => s.put(card)); } catch {}
       }
     }
-    // フッター情報を復元
-    if (data.footerText) {
-      await dbOp('banners', 'readwrite', s => s.put({ slot: 99, footerText: data.footerText }));
+    if (d.footerText) {
+      try { await dbOp('banners', 'readwrite', s => s.put({ slot: 99, footerText: d.footerText })); } catch {}
     }
-    if (data.footerNoGap !== undefined) {
-      await dbOp('banners', 'readwrite', s => s.put({ slot: 98, footerNoGap: data.footerNoGap }));
+    if (d.footerNoGap !== undefined) {
+      try { await dbOp('banners', 'readwrite', s => s.put({ slot: 98, footerNoGap: d.footerNoGap })); } catch {}
     }
     window.__ASOBIVA_INIT__ = null;
   }
-
     setLoadingBar(30);
 
-    // banner (single header)
+    // banner (複数枚対応)
     try {
       const row = await dbOp('banners', 'readonly', s => s.get(1));
-      if (row?.base64) { banners[1] = row.base64; applyBanner(1, row.base64); }
+      if (row?.images && row.images.length > 0) {
+        banners[1] = row.images;
+      } else if (row?.base64) {
+        // 旧形式（1枚）からの移行
+        banners[1] = [row.base64];
+      }
+      applyBannerRandom(1);
     } catch {}
     setLoadingBar(60);
 
@@ -978,10 +1037,15 @@ async function init() {
       images: r.images,
       name: r.name || '',
       link: r.link || '',
-      gap: r.gap !== undefined ? r.gap : true,
-      order: (r.order ?? r.id)
+      gap: r.gap !== false,
+      htmls: r.htmls,
+      names: r.names,
+      ytId: r.ytId,
+      title: r.title || '',
+      thumbB64: r.thumbB64 || null,
+      musicUrl: r.musicUrl || '',
+      artist: r.artist || '',
     }));
-    cards.sort((a, b) => a.order - b.order);
     setLoadingBar(100);
   } catch (err) {
     console.error('init error:', err);
@@ -1006,22 +1070,84 @@ function triggerBanner(slot) {
 }
 
 async function onBannerFile(slot, input) {
-  const f = input.files[0];
-  if (!f) return;
-  const base64 = await fileToBase64(f);
-  await dbOp('banners', 'readwrite', s => s.put({ slot, base64 }));
-  banners[slot] = base64;
+  const files = Array.from(input.files);
+  if (!files.length) return;
+  for (const f of files) {
+    const base64 = await fileToBase64(f);
+    banners[slot].push(base64);
+  }
+  await dbOp('banners', 'readwrite', s => s.put({ slot, images: banners[slot] }));
+  applyBannerRandom(slot);
+  updateBannerUI(slot);
+  input.value = '';
+}
+
+function applyBannerRandom(slot) {
+  const imgs = banners[slot] || [];
+  if (imgs.length === 0) return;
+  const base64 = imgs.length === 1 ? imgs[0] : imgs[Math.floor(Math.random() * imgs.length)];
   applyBanner(slot, base64);
 }
 
 function applyBanner(slot, base64) {
   const el = document.getElementById('banner' + slot);
-  el.querySelector('.slot-label')?.remove();
+  document.getElementById('bannerPlaceholder' + slot)?.remove();
   el.querySelector('img')?.remove();
   const img = document.createElement('img');
   img.src = base64;
   img.alt = '';
-  el.insertBefore(img, el.querySelector('.banner-edit'));
+  el.insertBefore(img, el.querySelector('.banner-edit-btns'));
+  updateBannerUI(slot);
+}
+
+async function deleteBannerImage(slot, idx) {
+  banners[slot].splice(idx, 1);
+  await dbOp('banners', 'readwrite', s => s.put({ slot, images: banners[slot] }));
+  if (banners[slot].length === 0) {
+    const el = document.getElementById('banner' + slot);
+    el.querySelector('img')?.remove();
+    const lbl = document.createElement('span');
+    lbl.className = 'slot-label';
+    lbl.id = 'bannerPlaceholder' + slot;
+    lbl.textContent = 'HEADER';
+    el.insertBefore(lbl, el.querySelector('.banner-edit-btns'));
+  } else {
+    applyBannerRandom(slot);
+  }
+  updateBannerUI(slot);
+}
+
+function updateBannerUI(slot) {
+  const btns = document.getElementById('bannerEditBtns' + slot);
+  if (!btns) return;
+  // 削除ボタンを再描画
+  btns.querySelectorAll('.banner-edit-btn.del').forEach(b => b.remove());
+  const count = banners[slot]?.length || 0;
+  // カウント表示
+  let countEl = document.getElementById('bannerCount' + slot);
+  if (!countEl) {
+    countEl = document.createElement('span');
+    countEl.className = 'banner-count';
+    countEl.id = 'bannerCount' + slot;
+    document.getElementById('banner' + slot).appendChild(countEl);
+  }
+  countEl.textContent = count + '枚';
+  // 削除ボタン（複数枚の時のみ）
+  if (count > 1) {
+    (banners[slot] || []).forEach((_, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'banner-edit-btn del';
+      btn.textContent = `${i+1}枚目を削除`;
+      btn.onclick = () => deleteBannerImage(slot, i);
+      btns.insertBefore(btn, btns.querySelector('.banner-edit-btn:not(.del)'));
+    });
+  } else if (count === 1) {
+    const btn = document.createElement('button');
+    btn.className = 'banner-edit-btn del';
+    btn.textContent = '画像を削除';
+    btn.onclick = () => deleteBannerImage(slot, 0);
+    btns.insertBefore(btn, btns.querySelector('.banner-edit-btn:not(.del)'));
+  }
 }
 
 // ── Render ────────────────────────────────────
@@ -1081,9 +1207,9 @@ function render() {
       if (c.images.length > 1) {
         const dots = document.createElement('div');
         dots.className = 'carousel-dots';
-        c.images.forEach((_, i) => {
+        c.images.forEach((_, idx) => {
           const dot = document.createElement('span');
-          if (i === 0) dot.classList.add('active');
+          if (idx === 0) dot.classList.add('active');
           dots.appendChild(dot);
         });
         wrap.appendChild(dots);
@@ -1178,6 +1304,19 @@ function render() {
       e.preventDefault(); e.stopPropagation();
       deleteCard(c.id);
     });
+    const moveWrap = document.createElement('div');
+    moveWrap.className = 'card-move';
+    const upBtn = document.createElement('button');
+    upBtn.textContent = '↑';
+    upBtn.disabled = idx === 0;
+    upBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); moveCard(idx, idx - 1); });
+    const downBtn = document.createElement('button');
+    downBtn.textContent = '↓';
+    downBtn.disabled = idx === cards.length - 1;
+    downBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); moveCard(idx, idx + 1); });
+    moveWrap.appendChild(upBtn);
+    moveWrap.appendChild(downBtn);
+    wrap.appendChild(moveWrap);
 
     const gapBtn = document.createElement('button');
     gapBtn.className = 'card-gap-btn';
@@ -1187,19 +1326,6 @@ function render() {
       e.preventDefault(); e.stopPropagation();
       toggleGap(c.id);
     });
-    const moveWrap = document.createElement('div');
-    moveWrap.className = 'card-move';
-    const upBtn = document.createElement('button');
-    upBtn.textContent = '↑'; upBtn.title = '上へ移動';
-    upBtn.disabled = idx === 0;
-    upBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); moveCard(idx, idx - 1); });
-    const downBtn = document.createElement('button');
-    downBtn.textContent = '↓'; downBtn.title = '下へ移動';
-    downBtn.disabled = idx === cards.length - 1;
-    downBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); moveCard(idx, idx + 1); });
-    moveWrap.appendChild(upBtn);
-    moveWrap.appendChild(downBtn);
-
     if (c.type !== 'carousel') wrap.appendChild(linkBtn);
     if (supportsReplace) {
       wrap.appendChild(replaceBtn);
@@ -1207,7 +1333,6 @@ function render() {
     }
     wrap.appendChild(delBtn);
     wrap.appendChild(gapBtn);
-    wrap.appendChild(moveWrap);
     sec.appendChild(wrap);
     container.appendChild(sec);
   });
@@ -1565,6 +1690,7 @@ async function replaceCard(id, file) {
 }
 
 // ── Gap toggle ────────────────────────────────
+// ── Gap toggle ────────────────────────────────
 async function toggleGap(id) {
   const c = cards.find(c => c.id === id);
   if (!c) return;
@@ -1574,28 +1700,24 @@ async function toggleGap(id) {
   else c.gap = true;
   await dbOp('cards', 'readwrite', s => s.put({
     id: c.id, type: c.type, html: c.html, base64: c.base64,
-    images: c.images, name: c.name, link: c.link, gap: c.gap, order: c.order
+    images: c.images, name: c.name, link: c.link, gap: c.gap
   }));
   render();
 }
 
-// ── Move ─────────────────────────────────────
+// ── Delete ────────────────────────────────────
 async function moveCard(fromIdx, toIdx) {
   if (toIdx < 0 || toIdx >= cards.length) return;
   const tmp = cards[fromIdx];
   cards[fromIdx] = cards[toIdx];
   cards[toIdx] = tmp;
   cards.forEach((c, i) => { c.order = i + 1; });
-  for (const c of cards) {
-    await dbOp('cards', 'readwrite', s => s.put({
-      id: c.id, type: c.type, html: c.html, base64: c.base64,
-      images: c.images, name: c.name, link: c.link, gap: c.gap, order: c.order
-    }));
+  for (const card of cards) {
+    try { await dbOp('cards', 'readwrite', s => s.put({ ...card })); } catch {}
   }
   render();
 }
 
-// ── Delete ────────────────────────────────────
 async function deleteCard(id) {
   await dbOp('cards', 'readwrite', s => s.delete(id));
   const i = cards.findIndex(c => c.id === id);
@@ -1606,16 +1728,14 @@ async function deleteCard(id) {
 // ── 編集用HTMLとして保存（データ埋め込み） ─────────
 function downloadEditHTML() {
   const source = document.documentElement.outerHTML.replace(' class="admin-mode"', '').replace(' admin-mode', '');
-  let footerTextVal = document.getElementById('footerText')?.textContent || '';
-  let footerNoGapVal = document.getElementById('footerSection')?.classList.contains('no-gap') || false;
-  const initData = { banners: banners, cards: cards, footerText: footerTextVal, footerNoGap: footerNoGapVal };
+  const initData = { banners: banners, cards: cards };
   const initScript = `<scr` + `ipt>window.__ASOBIVA_INIT__ = ${JSON.stringify(initData).split('\n').join(' ').split('\r').join(' ').split('\t').join(' ')};</scr` + `ipt>`;
   const output = source.replace('</head>', initScript + '\n</head>');
   const blob = new Blob([output], { type: 'text/html;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   const ts = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
-  a.download = `content_asobiva_edit_${ts}.html`;
+  a.download = `content_horabana_edit_${ts}.html`;
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -1660,10 +1780,11 @@ async function handleDownloadClick() {
 }
 
 async function downloadHTML() {
-  // banner block (single header, 圧縮してから出力)
+  // banner block (複数枚対応、圧縮してから出力)
   let headerHTML;
-  if (banners[1]) {
-    const b64 = await compressImage(banners[1]);
+  if (banners[1] && banners[1].length > 0) {
+    const original = banners[1].length === 1 ? banners[1][0] : banners[1][Math.floor(Math.random() * banners[1].length)];
+    const b64 = await compressImage(original);
     headerHTML = `    <div class="banner-slot"><img src="${b64}" alt=""></div>\n`;
   } else {
     headerHTML = `    <div class="banner-slot"><span class="slot-label">HEADER</span></div>\n`;

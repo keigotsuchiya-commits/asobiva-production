@@ -345,11 +345,11 @@ body.admin-mode .card:hover img { transform: none; }
 /* ── HTML CARD ── */
 .html-card {
   display: block;
+  text-decoration: none;
   width: 100%;
   position: relative;
   background: var(--white);
   overflow: hidden;
-  text-decoration: none;
 }
 .html-card iframe {
   display: block;
@@ -431,6 +431,31 @@ body.admin-mode .html-card-label { display: block; }
 }
 .card-del:hover { background: #c0392b; }
 body.admin-mode .card-del { display: flex; }
+.card-move {
+  display: none;
+  position: absolute;
+  bottom: 10px; right: 50px;
+  flex-direction: row;
+  gap: 6px;
+  z-index: 5;
+}
+.card-move button {
+  width: 30px; height: 30px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.card-move button:hover { background: #444; }
+.card-move button:disabled { opacity: 0.3; cursor: default; }
+body.admin-mode .card-move { display: flex; }
+
 
 .card-replace {
   display: none;
@@ -497,6 +522,15 @@ body.admin-mode .card-link-btn { display: flex; }
 }
 .add-card-btn:hover { background: #f5f5f5; color: var(--ink); }
 
+/* ── YOKAI CAROUSEL ── */
+.yokai-carousel-card { width:100%; background:var(--white); overflow:hidden; position:relative; }
+.yokai-carousel-img { width:100%; height:auto; display:block; }
+.yokai-carousel-html { line-height:0; } .yokai-carousel-html iframe { display:block; width:100%; height:60px; border:none; background:var(--white); overflow:hidden; }
+.yokai-carousel-footer { display:flex; align-items:center; justify-content:space-between; padding:6px 12px; background:var(--white); border-top:1px solid var(--border); font-size:11px; letter-spacing:0.08em; color:var(--ink-soft); }
+.yokai-carousel-footer span { font-size:11px; letter-spacing:0.08em; color:var(--ink-soft); }
+.yokai-carousel-nav { background:none; color:var(--ink); border:none; width:32px; height:32px; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; opacity:0.5; }
+.yokai-carousel-nav:hover { opacity:1; }
+
 /* ── EMPTY STATE ── */
 .empty-section {
   background: var(--bg);
@@ -535,6 +569,21 @@ body.admin-mode .card-link-btn { display: flex; }
   padding-top: 0;
   background: var(--white);
   border-top: 1px dashed rgba(0,0,0,0.2);
+}
+.footer-gap-btn {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 10px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  text-decoration: underline;
+  letter-spacing: 0.06em;
+  margin-left: 8px;
+}
+body.admin-mode .footer-gap-btn { display: inline-block; }
+.footer-section.no-gap {
+  padding-top: 0;
 }
 .footer-gap-btn {
   display: none;
@@ -713,32 +762,6 @@ body.admin-mode .footer-edit-btn { display: inline-block; }
   margin: 0 auto;
 }
 .footer-editor-panel.open { transform: translateY(0); }
-
-/* ── MOVE BUTTONS ── */
-.card-move {
-  display: none;
-  position: absolute;
-  bottom: 10px; right: 50px;
-  flex-direction: row;
-  gap: 6px;
-  z-index: 5;
-}
-.card-move button {
-  width: 30px; height: 30px;
-  background: rgba(0,0,0,0.5);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s;
-}
-.card-move button:hover { background: #444; }
-.card-move button:disabled { opacity: 0.3; cursor: default; }
-body.admin-mode .card-move { display: flex; }
 </style>
 </head>
 <body>
@@ -766,7 +789,7 @@ body.admin-mode .card-move { display: flex; }
         <button class="burger-menu-item admin-only" onclick="openNavEditor(); closeBurgerMenu()">メニューを編集</button>
         <button class="burger-menu-item admin-only" onclick="downloadEditHTML(); closeBurgerMenu()">編集用保存</button>
         <button class="burger-menu-item admin-only" id="downloadHtmlBtn" onclick="handleDownloadClick()">公開用保存</button>
-        <div class="burger-menu-item admin-only" style="font-size:10px;color:#aaa;text-align:right;padding:8px 20px;cursor:default;border:none;">v2.5</div>
+        <div class="burger-menu-item admin-only" style="font-size:10px;color:#aaa;text-align:right;padding:8px 20px;cursor:default;border:none;">v3.5</div>
       </div>
     </div>
   </div>
@@ -827,12 +850,18 @@ body.admin-mode .card-move { display: flex; }
   </label>
   <label class="field-label" for="linkUrl">リンク先URL（任意）</label>
   <input class="field-input" id="linkUrl" type="url" placeholder="https://note.com/...">
+  <div id="yokaiSetSection" style="display:none;margin-bottom:16px;padding:16px;border:1.5px dashed var(--border);border-radius:12px;">
+    <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;color:var(--ink-soft);margin-bottom:8px;">🎴 画像+HTMLをセットで追加</div>
+    <div id="yokaiSetStatus" style="font-size:11px;color:var(--ink-soft);margin-bottom:8px;"></div>
+    <button class="tab-edit-btn" id="yokaiSetAddBtn" onclick="addYokaiSet()" style="width:100%;text-align:center;">このセットを追加</button>
+  </div>
+  <div id="yokaiSetsPreview" style="margin-bottom:16px;"></div>
   <button class="btn-add" id="addBtn" onclick="addCards()" disabled>追加する</button>
 </div>
 
 <script>
 // ── IndexedDB (Base64ストレージ) ──────────────
-const DB_NAME = 'asobiva_content_asobiva_b64';
+const DB_NAME = 'asobiva_content_yokai_b64';
 let db;
 
 function openDB() {
@@ -893,7 +922,13 @@ function injectAutoResize(html) {
 <scr` + `ipt>
 (function(){
   function reportHeight(){
-    var h = document.body.offsetHeight;
+    var els = document.body.children;
+    var h = 0;
+    for (var i = 0; i < els.length; i++) {
+      var r = els[i].getBoundingClientRect();
+      if (r.bottom > h) h = r.bottom;
+    }
+    if (h === 0) h = document.body.offsetHeight;
     parent.postMessage({ type: 'asobiva-resize', height: h }, '*');
   }
   window.addEventListener('message', function(e){
@@ -928,6 +963,7 @@ window.addEventListener('message', e => {
 let cards = [];       // [{ id, type: 'image'|'html'|'carousel', html?, base64?, images?, name?, link }]
 let banners = { 1: null }; // base64 strings
 let pendingFiles = [];
+let yokaiSets = [];
 let adminMode = false;
 
 // ── Init ──────────────────────────────────────
@@ -976,12 +1012,17 @@ async function init() {
       html: r.html,
       base64: r.base64,
       images: r.images,
+      htmls: r.htmls,
       name: r.name || '',
       link: r.link || '',
       gap: r.gap !== undefined ? r.gap : true,
-      order: (r.order ?? r.id)
+      names: r.names,
+      ytId: r.ytId,
+      title: r.title || '',
+      thumbB64: r.thumbB64 || null,
+      musicUrl: r.musicUrl || '',
+      artist: r.artist || '',
     }));
-    cards.sort((a, b) => a.order - b.order);
     setLoadingBar(100);
   } catch (err) {
     console.error('init error:', err);
@@ -1067,6 +1108,73 @@ function render() {
       img.loading = 'lazy';
       wrap.appendChild(img);
       replaceAccept = 'image/*,text/html,.html';
+    } else if (c.type === 'yokai-carousel') {
+      wrap = document.createElement('div');
+      wrap.className = 'yokai-carousel-card';
+      wrap.dataset.index = '0';
+
+      const imgEl = document.createElement('img');
+      imgEl.src = c.images[0];
+      imgEl.alt = '';
+      imgEl.className = 'yokai-carousel-img';
+      wrap.appendChild(imgEl);
+
+      const htmlWrap = document.createElement('div');
+      htmlWrap.className = 'yokai-carousel-html';
+      const iframe = document.createElement('iframe');
+      iframe.srcdoc = injectAutoResize(c.htmls[0]);
+      iframe.loading = 'lazy';
+      iframe.scrolling = 'no';
+      iframe.style.cssText = 'width:100%;border:none;height:0px;display:block;';
+      iframe.sandbox = 'allow-scripts allow-popups allow-forms allow-same-origin';
+      iframe.addEventListener('load', function() {
+        try {
+          const doc = iframe.contentDocument;
+          const body = doc.body;
+          const style = doc.defaultView.getComputedStyle(body);
+          const marginTop = parseFloat(style.marginTop) || 0;
+          const marginBottom = parseFloat(style.marginBottom) || 0;
+          const h = body.offsetHeight + marginTop + marginBottom;
+          if (h > 0) iframe.style.height = h + 'px';
+        } catch(e) {}
+        iframe.contentWindow.postMessage({ type: 'asobiva-init' }, '*');
+      });
+      htmlWrap.appendChild(iframe);
+      wrap.appendChild(htmlWrap);
+
+      if (c.images.length > 1) {
+        const footer = document.createElement('div');
+        footer.className = 'yokai-carousel-footer';
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'yokai-carousel-nav';
+        prevBtn.textContent = '‹';
+        const count = document.createElement('span');
+        count.textContent = `1 / ${c.images.length}`;
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'yokai-carousel-nav';
+        nextBtn.textContent = '›';
+        footer.appendChild(prevBtn);
+        footer.appendChild(count);
+        footer.appendChild(nextBtn);
+        wrap.appendChild(footer);
+
+        function updateYokai(idx) {
+          wrap.dataset.index = String(idx);
+          imgEl.src = c.images[idx];
+          iframe.srcdoc = injectAutoResize(c.htmls[idx]);
+          count.textContent = `${idx + 1} / ${c.images.length}`;
+        }
+        prevBtn.addEventListener('click', e => {
+          e.preventDefault(); e.stopPropagation();
+          updateYokai((parseInt(wrap.dataset.index,10) - 1 + c.images.length) % c.images.length);
+        });
+        nextBtn.addEventListener('click', e => {
+          e.preventDefault(); e.stopPropagation();
+          updateYokai((parseInt(wrap.dataset.index,10) + 1) % c.images.length);
+        });
+      }
+      supportsReplace = false;
+
     } else if (c.type === 'carousel') {
       wrap = document.createElement('div');
       wrap.className = 'carousel-card';
@@ -1081,9 +1189,9 @@ function render() {
       if (c.images.length > 1) {
         const dots = document.createElement('div');
         dots.className = 'carousel-dots';
-        c.images.forEach((_, i) => {
+        c.images.forEach((_, idx) => {
           const dot = document.createElement('span');
-          if (i === 0) dot.classList.add('active');
+          if (idx === 0) dot.classList.add('active');
           dots.appendChild(dot);
         });
         wrap.appendChild(dots);
@@ -1119,7 +1227,12 @@ function render() {
       iframe.sandbox = 'allow-scripts allow-popups allow-forms allow-same-origin';
       iframe.addEventListener('load', function() {
         try {
-          const h = iframe.contentDocument.documentElement.scrollHeight || iframe.contentDocument.body.scrollHeight;
+          const doc = iframe.contentDocument;
+          const body = doc.body;
+          const style = doc.defaultView.getComputedStyle(body);
+          const marginTop = parseFloat(style.marginTop) || 0;
+          const marginBottom = parseFloat(style.marginBottom) || 0;
+          const h = body.offsetHeight + marginTop + marginBottom;
           if (h > 0) iframe.style.height = h + 'px';
         } catch(e) {}
         iframe.contentWindow.postMessage({ type: 'asobiva-init' }, '*');
@@ -1178,6 +1291,19 @@ function render() {
       e.preventDefault(); e.stopPropagation();
       deleteCard(c.id);
     });
+    const moveWrap = document.createElement('div');
+    moveWrap.className = 'card-move';
+    const upBtn = document.createElement('button');
+    upBtn.textContent = '↑';
+    upBtn.disabled = idx === 0;
+    upBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); moveCard(idx, idx - 1); });
+    const downBtn = document.createElement('button');
+    downBtn.textContent = '↓';
+    downBtn.disabled = idx === cards.length - 1;
+    downBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); moveCard(idx, idx + 1); });
+    moveWrap.appendChild(upBtn);
+    moveWrap.appendChild(downBtn);
+    wrap.appendChild(moveWrap);
 
     const gapBtn = document.createElement('button');
     gapBtn.className = 'card-gap-btn';
@@ -1187,27 +1313,13 @@ function render() {
       e.preventDefault(); e.stopPropagation();
       toggleGap(c.id);
     });
-    const moveWrap = document.createElement('div');
-    moveWrap.className = 'card-move';
-    const upBtn = document.createElement('button');
-    upBtn.textContent = '↑'; upBtn.title = '上へ移動';
-    upBtn.disabled = idx === 0;
-    upBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); moveCard(idx, idx - 1); });
-    const downBtn = document.createElement('button');
-    downBtn.textContent = '↓'; downBtn.title = '下へ移動';
-    downBtn.disabled = idx === cards.length - 1;
-    downBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); moveCard(idx, idx + 1); });
-    moveWrap.appendChild(upBtn);
-    moveWrap.appendChild(downBtn);
-
-    if (c.type !== 'carousel') wrap.appendChild(linkBtn);
+    if (c.type !== 'carousel' && c.type !== 'yokai-carousel') wrap.appendChild(linkBtn);
     if (supportsReplace) {
       wrap.appendChild(replaceBtn);
       wrap.appendChild(replaceInput);
     }
     wrap.appendChild(delBtn);
     wrap.appendChild(gapBtn);
-    wrap.appendChild(moveWrap);
     sec.appendChild(wrap);
     container.appendChild(sec);
   });
@@ -1367,6 +1479,9 @@ async function toggleFooterGap() {
   await dbOp('banners', 'readwrite', s => s.put({ slot: 98, footerGap: next }));
 }
 
+// ── Footer gap toggle ─────────────────────────
+
+
 // ── Footer editor ─────────────────────────────
 async function loadFooterText() {
   try {
@@ -1452,6 +1567,9 @@ function resetForm() {
   document.getElementById('addBtn').disabled = true;
   document.getElementById('carouselToggleWrap').style.display = 'none';
   document.getElementById('carouselToggle').checked = false;
+  yokaiSets = [];
+  if(document.getElementById('yokaiSetsPreview')) document.getElementById('yokaiSetsPreview').innerHTML = '';
+  document.getElementById('addBtn').textContent = '追加する';
 }
 
 // ── File select ───────────────────────────────
@@ -1498,11 +1616,20 @@ function renderPreviews() {
   const imgCount = pendingFiles.filter(f => !isHtmlFile(f)).length;
   const htmlCount = pendingFiles.filter(isHtmlFile).length;
   const toggleWrap = document.getElementById('carouselToggleWrap');
-  if (imgCount >= 2 && htmlCount === 0) {
-    toggleWrap.style.display = 'flex';
-  } else {
+  const yokaiSection = document.getElementById('yokaiSetSection');
+  if (imgCount === 1 && htmlCount === 1) {
     toggleWrap.style.display = 'none';
     document.getElementById('carouselToggle').checked = false;
+    yokaiSection.style.display = 'block';
+    updateYokaiSetStatus();
+  } else {
+    yokaiSection.style.display = 'none';
+    if (imgCount >= 2 && htmlCount === 0) {
+      toggleWrap.style.display = 'flex';
+    } else {
+      toggleWrap.style.display = 'none';
+      document.getElementById('carouselToggle').checked = false;
+    }
   }
 }
 
@@ -1513,7 +1640,88 @@ dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
 dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag-over'); onFileSelect(e.dataTransfer.files); });
 
 // ── Add cards ─────────────────────────────────
+function updateYokaiSetStatus() {
+  const imgFile = pendingFiles.find(f => !isHtmlFile(f));
+  const htmlFile = pendingFiles.find(f => isHtmlFile(f));
+  const status = document.getElementById('yokaiSetStatus');
+  const btn = document.getElementById('yokaiSetAddBtn');
+  if (imgFile && htmlFile) {
+    status.textContent = `📷 ${imgFile.name}  +  📄 ${htmlFile.name}`;
+    btn.disabled = false;
+  } else {
+    status.textContent = '画像1枚とHTMLファイル1つを選択してください';
+    btn.disabled = true;
+  }
+}
+
+async function addYokaiSet() {
+  const imgFile = pendingFiles.find(f => !isHtmlFile(f));
+  const htmlFile = pendingFiles.find(f => isHtmlFile(f));
+  if (!imgFile || !htmlFile) return;
+  const base64 = await fileToBase64(imgFile);
+  const html = await fileToText(htmlFile);
+  yokaiSets.push({ base64, html });
+  renderYokaiSetsPreview();
+  document.getElementById('addBtn').disabled = false;
+  document.getElementById('addBtn').textContent = `妖怪カルーセルを追加（${yokaiSets.length}セット）`;
+  pendingFiles = [];
+  document.getElementById('fileInput').value = '';
+  document.getElementById('previewGrid').innerHTML = '';
+  document.getElementById('yokaiSetSection').style.display = 'none';
+  document.getElementById('carouselToggleWrap').style.display = 'none';
+}
+
+function renderYokaiSetsPreview() {
+  const container = document.getElementById('yokaiSetsPreview');
+  container.innerHTML = '';
+  if (yokaiSets.length === 0) return;
+  const label = document.createElement('div');
+  label.style.cssText = 'font-size:11px;color:var(--ink-soft);margin-bottom:8px;';
+  label.textContent = `追加予定: ${yokaiSets.length}セット`;
+  container.appendChild(label);
+  yokaiSets.forEach((s, i) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);';
+    const img = document.createElement('img');
+    img.src = s.base64;
+    img.style.cssText = 'width:40px;height:40px;object-fit:cover;border-radius:4px;flex-shrink:0;';
+    const lbl = document.createElement('span');
+    lbl.style.cssText = 'font-size:11px;color:var(--ink);flex:1;';
+    lbl.textContent = `セット ${i + 1}`;
+    const del = document.createElement('button');
+    del.className = 'p-del';
+    del.style.cssText = 'position:static;width:20px;height:20px;flex-shrink:0;';
+    del.textContent = '✕';
+    del.onclick = () => {
+      yokaiSets.splice(i, 1);
+      renderYokaiSetsPreview();
+      if (yokaiSets.length === 0) {
+        document.getElementById('addBtn').disabled = true;
+        document.getElementById('addBtn').textContent = '追加する';
+      } else {
+        document.getElementById('addBtn').textContent = `妖怪カルーセルを追加（${yokaiSets.length}セット）`;
+      }
+    };
+    row.appendChild(img); row.appendChild(lbl); row.appendChild(del);
+    container.appendChild(row);
+  });
+}
+
 async function addCards() {
+  // 妖怪カルーセル
+  if (yokaiSets.length > 0) {
+    const images = yokaiSets.map(s => s.base64);
+    const htmls = yokaiSets.map(s => s.html);
+    const id = await dbOp('cards', 'readwrite', s => s.add({ type: 'yokai-carousel', images, htmls, gap: true }));
+    cards.push({ id, type: 'yokai-carousel', images, htmls, gap: true });
+    yokaiSets = [];
+    document.getElementById('yokaiSetsPreview').innerHTML = '';
+    document.getElementById('addBtn').textContent = '追加する';
+    closePanel();
+    render();
+    return;
+  }
+
   const link = document.getElementById('linkUrl').value.trim();
   const isCarousel = document.getElementById('carouselToggle').checked;
   const btn = document.getElementById('addBtn');
@@ -1568,34 +1776,31 @@ async function replaceCard(id, file) {
 async function toggleGap(id) {
   const c = cards.find(c => c.id === id);
   if (!c) return;
+  // 隙間あり → ライン → 隙間なし → 隙間あり
   if (c.gap === true || c.gap === undefined) c.gap = 'line';
   else if (c.gap === 'line') c.gap = 'dot';
   else if (c.gap === 'dot') c.gap = false;
   else c.gap = true;
   await dbOp('cards', 'readwrite', s => s.put({
     id: c.id, type: c.type, html: c.html, base64: c.base64,
-    images: c.images, name: c.name, link: c.link, gap: c.gap, order: c.order
+    images: c.images, name: c.name, link: c.link, gap: c.gap
   }));
   render();
 }
 
-// ── Move ─────────────────────────────────────
+// ── Delete ────────────────────────────────────
 async function moveCard(fromIdx, toIdx) {
   if (toIdx < 0 || toIdx >= cards.length) return;
   const tmp = cards[fromIdx];
   cards[fromIdx] = cards[toIdx];
   cards[toIdx] = tmp;
   cards.forEach((c, i) => { c.order = i + 1; });
-  for (const c of cards) {
-    await dbOp('cards', 'readwrite', s => s.put({
-      id: c.id, type: c.type, html: c.html, base64: c.base64,
-      images: c.images, name: c.name, link: c.link, gap: c.gap, order: c.order
-    }));
+  for (const card of cards) {
+    try { await dbOp('cards', 'readwrite', s => s.put({ ...card })); } catch {}
   }
   render();
 }
 
-// ── Delete ────────────────────────────────────
 async function deleteCard(id) {
   await dbOp('cards', 'readwrite', s => s.delete(id));
   const i = cards.findIndex(c => c.id === id);
@@ -1615,7 +1820,7 @@ function downloadEditHTML() {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   const ts = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
-  a.download = `content_asobiva_edit_${ts}.html`;
+  a.download = `content_yokai_edit_${ts}.html`;
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -1728,6 +1933,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: v
 .footer-section.no-gap { padding-top:0; }
 .footer-section.line-gap { padding-top:0; background:var(--white); border-top:1px solid var(--ink); }
 .footer-section.dot-gap { padding-top:0; background:var(--white); border-top:1px dashed rgba(0,0,0,0.2); }
+.site-header { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; background:var(--white); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; }
 .burger-btn { background:none; border:none; cursor:pointer; padding:4px; display:flex; flex-direction:column; gap:5px; align-items:flex-end; }
 .burger-btn span { display:block; height:1.5px; background:var(--ink); border-radius:1px; }
 .burger-btn span:nth-child(1) { width:20px; }
