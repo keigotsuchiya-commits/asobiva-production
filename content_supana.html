@@ -31,44 +31,22 @@ body {
 
 /* ── ADMIN BUTTON ── */
 .admin-btn {
-  position: fixed;
-  top: 14px; right: 14px;
-  z-index: 100;
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.06em;
-  background: rgba(255,255,255,0.92);
+  background: none;
   border: 1px solid var(--border);
   padding: 6px 14px;
   border-radius: 20px;
   cursor: pointer;
   color: var(--ink-soft);
-  backdrop-filter: blur(4px);
   transition: all 0.15s;
 }
 .admin-btn:hover { border-color: var(--ink); color: var(--ink); }
 .admin-btn.active { background: var(--ink); color: var(--white); border-color: var(--ink); }
 
 /* ── DOWNLOAD BUTTON ── */
-.download-btn {
-  position: fixed;
-  top: 14px; right: 78px;
-  z-index: 100;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  background: rgba(255,255,255,0.92);
-  border: 1px solid var(--border);
-  padding: 6px 14px;
-  border-radius: 20px;
-  cursor: pointer;
-  color: var(--ink-soft);
-  backdrop-filter: blur(4px);
-  transition: all 0.15s;
-  display: none;
-}
-body.admin-mode .download-btn { display: inline-block; }
-.download-btn:hover { border-color: var(--ink); color: var(--ink); }
+.download-btn { display: none; }
 
 /* ── HEADER PAIR ── */
 .header-pair {
@@ -293,16 +271,18 @@ body.admin-mode .banner-slot .banner-edit { display: flex; }
   background: var(--white);
   padding-top: 0;
 }
-.card-section.dot-gap {
-  background: var(--white);
-  padding-top: 0;
-  border-top: 1px dashed rgba(0,0,0,0.2);
-}
 .card-section.line-gap {
   background: var(--white);
   padding-top: 0;
   border-top: 1px solid var(--ink);
 }
+.card-section.dot-gap {
+  background: var(--white);
+  padding-top: 0;
+  border-top: 1px dashed rgba(0,0,0,0.2);
+}
+
+/* ── GAP TOGGLE BUTTON ── */
 .card-gap-btn {
   display: none;
   position: absolute;
@@ -354,9 +334,9 @@ body.admin-mode .card:hover img { transform: none; }
 .html-card iframe {
   display: block;
   width: 100%;
-  height: 60px;
   border: none;
   background: var(--white);
+  overflow: hidden;
 }
 .html-card-label {
   display: none;
@@ -381,37 +361,40 @@ body.admin-mode .card:hover img { transform: none; }
   height: auto;
   display: block;
 }
-.carousel-dots {
-  position: absolute;
-  bottom: 10px;
-  left: 0; right: 0;
-  display: flex;
-  justify-content: center;
-  gap: 6px;
-  pointer-events: none;
-}
-.carousel-dots span {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.55);
-  transition: background 0.2s, transform 0.2s;
-}
-.carousel-dots span.active {
-  background: #fff;
-  transform: scale(1.25);
-}
-.carousel-count {
-  position: absolute;
-  top: 10px; right: 10px;
-  font-size: 10px;
-  letter-spacing: 0.05em;
-  color: #fff;
-  background: rgba(0,0,0,0.45);
-  padding: 3px 8px;
-  border-radius: 20px;
-  pointer-events: none;
-}
 body.admin-mode .html-card-label { display: block; }
+
+/* ── CAROUSEL FOOTER ── */
+.carousel-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+.carousel-footer span {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+.carousel-nav {
+  background: none;
+  color: var(--ink);
+  border: none;
+  width: 32px;
+  height: 32px;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+  transition: opacity 0.15s;
+}
+.carousel-nav:hover { opacity: 1; }
 
 .card-del {
   display: none;
@@ -431,6 +414,31 @@ body.admin-mode .html-card-label { display: block; }
 }
 .card-del:hover { background: #c0392b; }
 body.admin-mode .card-del { display: flex; }
+.card-move {
+  display: none;
+  position: absolute;
+  bottom: 10px; right: 50px;
+  flex-direction: row;
+  gap: 6px;
+  z-index: 5;
+}
+.card-move button {
+  width: 30px; height: 30px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.card-move button:hover { background: #444; }
+.card-move button:disabled { opacity: 0.3; cursor: default; }
+body.admin-mode .card-move { display: flex; }
+
 
 .card-replace {
   display: none;
@@ -557,7 +565,71 @@ footer {
   background: var(--white);
 }
 
-/* ── PANEL ── */
+/* ── TOP SECTION (タブ上部・独立カードエリア) ── */
+.top-section-wrap {
+  margin-top: 0;
+  background: var(--bg);
+}
+
+/* ── COMMON SECTION ── */
+.common-section-wrap {
+  margin-top: 0;
+  background: var(--bg);
+}
+.common-section-label { display: none; }
+.common-section-wrap.has-cards .common-section-label { display: none; }
+body.admin-mode .common-section-label { display: none; }
+
+/* ── TABS ── */
+.tab-bar {
+  display: flex;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  border-top: 10px solid var(--bg);
+  position: sticky;
+  top: 45px;
+  z-index: 90;
+}
+.tab-bar.no-gap { border-top: none; }
+.tab-bar.line-gap { border-top: 1px solid var(--ink); }
+.tab-bar.dot-gap { border-top: 1px dashed rgba(0,0,0,0.2); }
+.tab-gap-btn {
+  display: none;
+  flex: none;
+  align-self: center;
+  margin: 0 6px 0 2px;
+  padding: 4px 8px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 9px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  white-space: nowrap;
+}
+body.admin-mode .tab-gap-btn { display: inline-block; }
+.tab-btn {
+  flex: 1;
+  padding: 12px 2px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tab-btn.active {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
+.tab-btn:hover { color: var(--ink); }
 .overlay {
   display: none;
   position: fixed; inset: 0;
@@ -713,32 +785,6 @@ body.admin-mode .footer-edit-btn { display: inline-block; }
   margin: 0 auto;
 }
 .footer-editor-panel.open { transform: translateY(0); }
-
-/* ── MOVE BUTTONS ── */
-.card-move {
-  display: none;
-  position: absolute;
-  bottom: 10px; right: 50px;
-  flex-direction: row;
-  gap: 6px;
-  z-index: 5;
-}
-.card-move button {
-  width: 30px; height: 30px;
-  background: rgba(0,0,0,0.5);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s;
-}
-.card-move button:hover { background: #444; }
-.card-move button:disabled { opacity: 0.3; cursor: default; }
-body.admin-mode .card-move { display: flex; }
 </style>
 </head>
 <body>
@@ -747,8 +793,6 @@ body.admin-mode .card-move { display: flex; }
   <div class="loading-text">読み込み中…</div>
   <div class="loading-bar-wrap"><div class="loading-bar" id="loadingBar"></div></div>
 </div>
-
-<button class="admin-btn" id="adminBtn" onclick="toggleAdmin()">管理</button>
 
 
 <div class="wrap">
@@ -766,7 +810,7 @@ body.admin-mode .card-move { display: flex; }
         <button class="burger-menu-item admin-only" onclick="openNavEditor(); closeBurgerMenu()">メニューを編集</button>
         <button class="burger-menu-item admin-only" onclick="downloadEditHTML(); closeBurgerMenu()">編集用保存</button>
         <button class="burger-menu-item admin-only" id="downloadHtmlBtn" onclick="handleDownloadClick()">公開用保存</button>
-        <div class="burger-menu-item admin-only" style="font-size:10px;color:#aaa;text-align:right;padding:8px 20px;cursor:default;border:none;">v2.8</div>
+        <div class="burger-menu-item admin-only" style="font-size:10px;color:#aaa;text-align:right;padding:8px 20px;cursor:default;border:none;">v4.1</div>
       </div>
     </div>
   </div>
@@ -778,7 +822,30 @@ body.admin-mode .card-move { display: flex; }
     </div>
   </div>
 
-  <div id="cardContainer"></div>
+  <!-- タブ上部・独立カードエリア -->
+  <div class="top-section-wrap" id="topSectionWrap">
+    <div id="tabContent-top"></div>
+  </div>
+
+  <!-- タブバー -->
+  <div class="tab-bar" id="tabBar">
+    <button class="tab-btn active" data-tab="chara" onclick="switchTab('chara')">Characters</button>
+    <button class="tab-btn" data-tab="dougu" onclick="switchTab('dougu')">Vehicles&amp;Gear</button>
+    <button class="tab-btn" data-tab="haikei" onclick="switchTab('haikei')">Locations</button>
+    <button class="tab-btn" data-tab="poster" onclick="switchTab('poster')">Posters</button>
+    <button class="tab-gap-btn" id="tabGapBtn" onclick="toggleTabGap()">隙間あり</button>
+  </div>
+
+  <div id="tabContent-chara" class="tab-content"></div>
+  <div id="tabContent-dougu" class="tab-content" style="display:none;"></div>
+  <div id="tabContent-haikei" class="tab-content" style="display:none;"></div>
+  <div id="tabContent-poster" class="tab-content" style="display:none;"></div>
+
+  <!-- 独立カードエリア -->
+  <div class="common-section-wrap" id="commonSectionWrap">
+    <div class="common-section-label" id="commonSectionLabel"></div>
+    <div id="tabContent-common"></div>
+  </div>
 
   <div class="footer-section" id="footerSection">
     <footer>
@@ -832,7 +899,7 @@ body.admin-mode .card-move { display: flex; }
 
 <script>
 // ── IndexedDB (Base64ストレージ) ──────────────
-const DB_NAME = 'asobiva_content_asobiva_b64';
+const DB_NAME = 'asobiva_content_supana_b64';
 let db;
 
 function openDB() {
@@ -893,7 +960,7 @@ function injectAutoResize(html) {
 <scr` + `ipt>
 (function(){
   function reportHeight(){
-    var h = document.body.offsetHeight;
+    var h = document.documentElement.scrollHeight;
     parent.postMessage({ type: 'asobiva-resize', height: h }, '*');
   }
   window.addEventListener('message', function(e){
@@ -925,10 +992,11 @@ window.addEventListener('message', e => {
 });
 
 // ── State ─────────────────────────────────────
-let cards = [];       // [{ id, type: 'image'|'html'|'carousel', html?, base64?, images?, name?, link }]
+let cards = [];       // [{ id, type: 'image'|'html'|'carousel', html?, base64?, images?, name?, link, tab }]
 let banners = { 1: null }; // base64 strings
 let pendingFiles = [];
 let adminMode = false;
+let activeTab = 'chara';
 
 // ── Init ──────────────────────────────────────
 async function init() {
@@ -945,23 +1013,21 @@ async function init() {
     }
     if (d.cards && d.cards.length > 0) {
       cards = d.cards;
-      for (const c of cards) {
-        try { await dbOp('cards', 'readwrite', s => s.put(c)); } catch {}
+      for (const card of cards) {
+        try { await dbOp('cards', 'readwrite', s => s.put(card)); } catch {}
       }
-    }
-    // フッター情報を復元
-    if (d.footerText) {
-      await dbOp('banners', 'readwrite', s => s.put({ slot: 99, footerText: data.footerText }));
-    }
-    if (d.footerNoGap !== undefined) {
-      await dbOp('banners', 'readwrite', s => s.put({ slot: 98, footerNoGap: data.footerNoGap }));
     }
     if (d.navItems) {
       try { saveNavItems(d.navItems); } catch {}
     }
+    if (d.footerText) {
+      try { await dbOp('banners', 'readwrite', s => s.put({ slot: 99, footerText: d.footerText })); } catch {}
+    }
+    if (d.footerNoGap !== undefined) {
+      try { await dbOp('banners', 'readwrite', s => s.put({ slot: 98, footerNoGap: d.footerNoGap })); } catch {}
+    }
     window.__ASOBIVA_INIT__ = null;
   }
-
     setLoadingBar(30);
 
     // banner (single header)
@@ -969,6 +1035,7 @@ async function init() {
       const row = await dbOp('banners', 'readonly', s => s.get(1));
       if (row?.base64) { banners[1] = row.base64; applyBanner(1, row.base64); }
     } catch {}
+
     setLoadingBar(60);
 
     // cards
@@ -981,10 +1048,16 @@ async function init() {
       images: r.images,
       name: r.name || '',
       link: r.link || '',
-      gap: r.gap !== undefined ? r.gap : true,
-      order: (r.order ?? r.id)
+      tab: r.tab || 'chara',
+      gap: r.gap !== false,
+      htmls: r.htmls,
+      names: r.names,
+      ytId: r.ytId,
+      title: r.title || '',
+      thumbB64: r.thumbB64 || null,
+      musicUrl: r.musicUrl || '',
+      artist: r.artist || '',
     }));
-    cards.sort((a, b) => a.order - b.order);
     setLoadingBar(100);
   } catch (err) {
     console.error('init error:', err);
@@ -996,6 +1069,7 @@ async function init() {
     renderNavLinks();
     loadFooterText();
     loadFooterGap();
+    loadTabGap();
   }, 200);
 }
 
@@ -1028,6 +1102,8 @@ function applyBanner(slot, base64) {
 }
 
 // ── Render ────────────────────────────────────
+const TABS = ['top', 'chara', 'dougu', 'haikei', 'poster', 'common'];
+
 function isExternalLink(url) {
   if (!url) return false;
   if (!/^https?:\/\//i.test(url)) return false;
@@ -1040,20 +1116,45 @@ function isExternalLink(url) {
 }
 
 function render() {
-  const container = document.getElementById('cardContainer');
+  TABS.forEach(tab => renderTab(tab));
+
+  // タブ上部エリアの表示制御
+  const topCards = cards.filter(c => (c.tab || 'chara') === 'top');
+  const topWrap = document.getElementById('topSectionWrap');
+  if (topWrap) {
+    const showTop = topCards.length > 0 || adminMode;
+    topWrap.style.display = showTop ? '' : 'none';
+  }
+
+  // 独立カードエリアの表示制御
+  const commonCards = cards.filter(c => (c.tab || 'chara') === 'common');
+  const wrap = document.getElementById('commonSectionWrap');
+  const label = document.getElementById('commonSectionLabel');
+  if (wrap) {
+    const show = commonCards.length > 0 || adminMode;
+    wrap.style.display = show ? '' : 'none';
+    wrap.classList.toggle('has-cards', commonCards.length > 0);
+    if (label) label.textContent = show ? 'その他' : '';
+  }
+}
+
+function renderTab(tab) {
+  const container = document.getElementById('tabContent-' + tab);
+  if (!container) return;
   container.innerHTML = '';
 
-  if (cards.length === 0 && !adminMode) {
+  const filtered = cards.filter(c => (c.tab || 'chara') === tab);
+
+  if (filtered.length === 0 && !adminMode) {
     const sec = document.createElement('div');
     sec.className = 'empty-section';
     sec.innerHTML = '<div class="empty-state"><strong>まだカードがありません</strong>右上の「管理」から追加できます</div>';
     container.appendChild(sec);
   }
 
-  cards.forEach((c, idx) => {
+  filtered.forEach((c, idx) => {
     const sec = document.createElement('div');
-    const gapClass = c.gap === false || c.gap === 'nogap' ? ' no-gap' : c.gap === 'line' ? ' line-gap' : c.gap === 'dot' ? ' dot-gap' : '';
-    sec.className = 'card-section' + gapClass;
+    sec.className = 'card-section' + (c.gap === false || c.gap === 'nogap' ? ' no-gap' : c.gap === 'line' ? ' line-gap' : c.gap === 'dot' ? ' dot-gap' : '');
 
     let wrap, replaceAccept, supportsReplace = true;
 
@@ -1082,27 +1183,37 @@ function render() {
       wrap.appendChild(img);
 
       if (c.images.length > 1) {
-        const dots = document.createElement('div');
-        dots.className = 'carousel-dots';
-        c.images.forEach((_, i) => {
-          const dot = document.createElement('span');
-          if (i === 0) dot.classList.add('active');
-          dots.appendChild(dot);
-        });
-        wrap.appendChild(dots);
+        const footer = document.createElement('div');
+        footer.className = 'carousel-footer';
 
-        const count = document.createElement('div');
-        count.className = 'carousel-count';
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'carousel-nav';
+        prevBtn.textContent = '‹';
+
+        const count = document.createElement('span');
         count.textContent = `1 / ${c.images.length}`;
-        wrap.appendChild(count);
 
-        wrap.addEventListener('click', e => {
-          if (adminMode) return; // avoid conflicting with admin controls
-          e.preventDefault();
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'carousel-nav';
+        nextBtn.textContent = '›';
+
+        footer.appendChild(prevBtn);
+        footer.appendChild(count);
+        footer.appendChild(nextBtn);
+        wrap.appendChild(footer);
+
+        prevBtn.addEventListener('click', e => {
+          e.preventDefault(); e.stopPropagation();
+          let idx = (parseInt(wrap.dataset.index, 10) - 1 + c.images.length) % c.images.length;
+          wrap.dataset.index = String(idx);
+          img.src = c.images[idx];
+          count.textContent = `${idx + 1} / ${c.images.length}`;
+        });
+        nextBtn.addEventListener('click', e => {
+          e.preventDefault(); e.stopPropagation();
           let idx = (parseInt(wrap.dataset.index, 10) + 1) % c.images.length;
           wrap.dataset.index = String(idx);
           img.src = c.images[idx];
-          dots.querySelectorAll('span').forEach((d, i) => d.classList.toggle('active', i === idx));
           count.textContent = `${idx + 1} / ${c.images.length}`;
         });
       }
@@ -1119,11 +1230,12 @@ function render() {
       iframe.srcdoc = injectAutoResize(c.html);
       iframe.loading = 'lazy';
       iframe.scrolling = 'no';
+      iframe.style.overflow = 'hidden';
       iframe.sandbox = 'allow-scripts allow-popups allow-forms allow-same-origin';
       iframe.addEventListener('load', function() {
         try {
-          const h = iframe.contentDocument.documentElement.scrollHeight || iframe.contentDocument.body.scrollHeight;
-          if (h > 0) iframe.style.height = h + 'px';
+          const h = iframe.contentDocument?.body?.scrollHeight || iframe.contentDocument?.documentElement?.scrollHeight;
+          if (h && h > 0) iframe.style.height = h + 'px';
         } catch(e) {}
         iframe.contentWindow.postMessage({ type: 'asobiva-init' }, '*');
       });
@@ -1181,6 +1293,19 @@ function render() {
       e.preventDefault(); e.stopPropagation();
       deleteCard(c.id);
     });
+    const moveWrap = document.createElement('div');
+    moveWrap.className = 'card-move';
+    const upBtn = document.createElement('button');
+    upBtn.textContent = '↑';
+    upBtn.disabled = idx === 0;
+    upBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); moveCard(idx, idx - 1); });
+    const downBtn = document.createElement('button');
+    downBtn.textContent = '↓';
+    downBtn.disabled = idx === cards.length - 1;
+    downBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); moveCard(idx, idx + 1); });
+    moveWrap.appendChild(upBtn);
+    moveWrap.appendChild(downBtn);
+    wrap.appendChild(moveWrap);
 
     const gapBtn = document.createElement('button');
     gapBtn.className = 'card-gap-btn';
@@ -1190,18 +1315,6 @@ function render() {
       e.preventDefault(); e.stopPropagation();
       toggleGap(c.id);
     });
-    const moveWrap = document.createElement('div');
-    moveWrap.className = 'card-move';
-    const upBtn = document.createElement('button');
-    upBtn.textContent = '↑'; upBtn.title = '上へ移動';
-    upBtn.disabled = idx === 0;
-    upBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); moveCard(idx, idx - 1); });
-    const downBtn = document.createElement('button');
-    downBtn.textContent = '↓'; downBtn.title = '下へ移動';
-    downBtn.disabled = idx === cards.length - 1;
-    downBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); moveCard(idx, idx + 1); });
-    moveWrap.appendChild(upBtn);
-    moveWrap.appendChild(downBtn);
 
     if (c.type !== 'carousel') wrap.appendChild(linkBtn);
     if (supportsReplace) {
@@ -1210,7 +1323,6 @@ function render() {
     }
     wrap.appendChild(delBtn);
     wrap.appendChild(gapBtn);
-    wrap.appendChild(moveWrap);
     sec.appendChild(wrap);
     container.appendChild(sec);
   });
@@ -1220,7 +1332,7 @@ function render() {
     addSec.className = 'add-section';
     const btn = document.createElement('button');
     btn.className = 'add-card-btn';
-    btn.onclick = openPanel;
+    btn.onclick = () => { activeTab = tab; openPanel(); };
     btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> カードを追加`;
     addSec.appendChild(btn);
     container.appendChild(addSec);
@@ -1340,6 +1452,36 @@ function moveNavItem(i, dir) {
 }
 
 
+// ── Tab-bar gap toggle ─────────────────────────
+async function loadTabGap() {
+  try {
+    const row = await dbOp('banners', 'readonly', s => s.get(96));
+    const gap = row?.tabGap || 'gap';
+    const bar = document.getElementById('tabBar');
+    const btn = document.getElementById('tabGapBtn');
+    if (bar) {
+      bar.classList.remove('no-gap','line-gap','dot-gap');
+      if (gap === 'nogap') bar.classList.add('no-gap');
+      else if (gap === 'line') bar.classList.add('line-gap');
+      else if (gap === 'dot') bar.classList.add('dot-gap');
+    }
+    if (btn) btn.textContent = gap === 'gap' ? '隙間あり' : gap === 'line' ? 'ライン' : gap === 'dot' ? '点線' : '隙間なし';
+  } catch {}
+}
+
+async function toggleTabGap() {
+  const bar = document.getElementById('tabBar');
+  const btn = document.getElementById('tabGapBtn');
+  const cur = bar.classList.contains('no-gap') ? 'nogap' : bar.classList.contains('line-gap') ? 'line' : bar.classList.contains('dot-gap') ? 'dot' : 'gap';
+  const next = cur === 'gap' ? 'line' : cur === 'line' ? 'dot' : cur === 'dot' ? 'nogap' : 'gap';
+  bar.classList.remove('no-gap','line-gap','dot-gap');
+  if (next === 'nogap') bar.classList.add('no-gap');
+  else if (next === 'line') bar.classList.add('line-gap');
+  else if (next === 'dot') bar.classList.add('dot-gap');
+  btn.textContent = next === 'gap' ? '隙間あり' : next === 'line' ? 'ライン' : next === 'dot' ? '点線' : '隙間なし';
+  await dbOp('banners', 'readwrite', s => s.put({ slot: 96, tabGap: next }));
+}
+
 // ── Footer gap toggle ─────────────────────────
 async function loadFooterGap() {
   try {
@@ -1373,7 +1515,7 @@ async function toggleFooterGap() {
 // ── Footer editor ─────────────────────────────
 async function loadFooterText() {
   try {
-    const row = await dbOp('banners', 'readonly', s => s.get(99));
+    const row = await dbOp('banners', 'readonly', s => s.get(97));
     if (row?.footerText) {
       document.getElementById('footerText').textContent = row.footerText;
     }
@@ -1395,7 +1537,7 @@ function closeFooterEditor() {
 async function saveFooterText() {
   const text = document.getElementById('footerTextInput').value.trim();
   if (!text) return;
-  await dbOp('banners', 'readwrite', s => s.put({ slot: 99, footerText: text }));
+  await dbOp('banners', 'readwrite', s => s.put({ slot: 97, footerText: text }));
   document.getElementById('footerText').textContent = text;
   closeFooterEditor();
 }
@@ -1432,6 +1574,41 @@ function toggleAdmin() {
   document.getElementById('adminBtn').classList.toggle('active', adminMode);
   closeBurgerMenu();
   if (!adminMode) closePanel();
+  render();
+}
+
+// ── Tab ───────────────────────────────────────
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tab);
+  });
+  // top・commonは常に表示を維持し、タブ切り替えの対象外
+  TABS.filter(t => t !== 'common' && t !== 'top').forEach(t => {
+    const el = document.getElementById('tabContent-' + t);
+    if (el) el.style.display = t === tab ? '' : 'none';
+  });
+  // タブ表示後にiframeの高さを再計算
+  requestAnimationFrame(() => {
+    document.querySelectorAll('#tabContent-' + tab + ' .html-card iframe').forEach(f => {
+      try { f.contentWindow.postMessage({ type: 'asobiva-init' }, '*'); } catch(e) {}
+    });
+  });
+}
+
+
+// ── Gap toggle ────────────────────────────────
+async function toggleGap(id) {
+  const c = cards.find(c => c.id === id);
+  if (!c) return;
+  if (c.gap === true || c.gap === undefined) c.gap = 'line';
+  else if (c.gap === 'line') c.gap = 'dot';
+  else if (c.gap === 'dot') c.gap = false;
+  else c.gap = true;
+  await dbOp('cards', 'readwrite', s => s.put({
+    id: c.id, type: c.type, html: c.html, base64: c.base64,
+    images: c.images, name: c.name, link: c.link, tab: c.tab, gap: c.gap
+  }));
   render();
 }
 
@@ -1527,19 +1704,19 @@ async function addCards() {
     const images = pendingFiles.filter(f => !isHtmlFile(f));
     const images64 = [];
     for (const f of images) images64.push(await fileToBase64(f));
-    const id = await dbOp('cards', 'readwrite', s => s.add({ type: 'carousel', images: images64, link: '' }));
-    cards.push({ id, type: 'carousel', images: images64, link: '' });
+    const id = await dbOp('cards', 'readwrite', s => s.add({ type: 'carousel', images: images64, link: '', tab: activeTab }));
+    cards.push({ id, type: 'carousel', images: images64, link: '', tab: activeTab });
   } else {
     for (const f of pendingFiles) {
       if (isHtmlFile(f)) {
         const html = await fileToText(f);
         const name = f.name;
-        const id = await dbOp('cards', 'readwrite', s => s.add({ type: 'html', html, name, link }));
-        cards.push({ id, type: 'html', html, name, link });
+        const id = await dbOp('cards', 'readwrite', s => s.add({ type: 'html', html, name, link, tab: activeTab }));
+        cards.push({ id, type: 'html', html, name, link, tab: activeTab });
       } else {
         const base64 = await fileToBase64(f);
-        const id = await dbOp('cards', 'readwrite', s => s.add({ type: 'image', base64, link }));
-        cards.push({ id, type: 'image', base64, link });
+        const id = await dbOp('cards', 'readwrite', s => s.add({ type: 'image', base64, link, tab: activeTab }));
+        cards.push({ id, type: 'image', base64, link, tab: activeTab });
       }
     }
   }
@@ -1551,54 +1728,40 @@ async function addCards() {
 
 // ── Replace ───────────────────────────────────
 async function replaceCard(id, file) {
-  const link = cards.find(c => c.id === id)?.link || '';
+  const existing = cards.find(c => c.id === id) || {};
+  const link = existing.link || '';
+  const tab = existing.tab || 'chara';
+  const gap = existing.gap;
   const i = cards.findIndex(c => c.id === id);
 
   if (isHtmlFile(file)) {
     const html = await fileToText(file);
     const name = file.name;
-    await dbOp('cards', 'readwrite', s => s.put({ id, type: 'html', html, name, link }));
-    if (i !== -1) { cards[i] = { id, type: 'html', html, name, link }; }
+    const record = { id, type: 'html', html, name, link, tab, gap };
+    await dbOp('cards', 'readwrite', s => s.put(record));
+    if (i !== -1) { cards[i] = record; }
   } else {
     const base64 = await fileToBase64(file);
-    await dbOp('cards', 'readwrite', s => s.put({ id, type: 'image', base64, link }));
-    if (i !== -1) { cards[i] = { id, type: 'image', base64, link }; }
+    const record = { id, type: 'image', base64, link, tab, gap };
+    await dbOp('cards', 'readwrite', s => s.put(record));
+    if (i !== -1) { cards[i] = record; }
   }
   render();
 }
 
-// ── Gap toggle ────────────────────────────────
-async function toggleGap(id) {
-  const c = cards.find(c => c.id === id);
-  if (!c) return;
-  if (c.gap === true || c.gap === undefined) c.gap = 'line';
-  else if (c.gap === 'line') c.gap = 'dot';
-  else if (c.gap === 'dot') c.gap = false;
-  else c.gap = true;
-  await dbOp('cards', 'readwrite', s => s.put({
-    id: c.id, type: c.type, html: c.html, base64: c.base64,
-    images: c.images, name: c.name, link: c.link, gap: c.gap, order: c.order
-  }));
-  render();
-}
-
-// ── Move ─────────────────────────────────────
+// ── Delete ────────────────────────────────────
 async function moveCard(fromIdx, toIdx) {
   if (toIdx < 0 || toIdx >= cards.length) return;
   const tmp = cards[fromIdx];
   cards[fromIdx] = cards[toIdx];
   cards[toIdx] = tmp;
   cards.forEach((c, i) => { c.order = i + 1; });
-  for (const c of cards) {
-    await dbOp('cards', 'readwrite', s => s.put({
-      id: c.id, type: c.type, html: c.html, base64: c.base64,
-      images: c.images, name: c.name, link: c.link, gap: c.gap, order: c.order
-    }));
+  for (const card of cards) {
+    try { await dbOp('cards', 'readwrite', s => s.put({ ...card })); } catch {}
   }
   render();
 }
 
-// ── Delete ────────────────────────────────────
 async function deleteCard(id) {
   await dbOp('cards', 'readwrite', s => s.delete(id));
   const i = cards.findIndex(c => c.id === id);
@@ -1609,16 +1772,14 @@ async function deleteCard(id) {
 // ── 編集用HTMLとして保存（データ埋め込み） ─────────
 function downloadEditHTML() {
   const source = document.documentElement.outerHTML.replace(' class="admin-mode"', '').replace(' admin-mode', '');
-  let footerTextVal = document.getElementById('footerText')?.textContent || '';
-  let footerNoGapVal = document.getElementById('footerSection')?.classList.contains('no-gap') || false;
-  const initData = { banners: banners, cards: cards, footerText: footerTextVal, footerNoGap: footerNoGapVal, navItems: loadNavItems() };
+  const initData = { banners: banners, cards: cards, navItems: loadNavItems() };
   const initScript = `<scr` + `ipt>window.__ASOBIVA_INIT__ = ${JSON.stringify(initData).split('\n').join(' ').split('\r').join(' ').split('\t').join(' ')};</scr` + `ipt>`;
   const output = source.replace('</head>', initScript + '\n</head>');
   const blob = new Blob([output], { type: 'text/html;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   const ts = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
-  a.download = 'content_asobiva_e.html';
+  a.download = 'content_supana_e.html';
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -1663,7 +1824,7 @@ async function handleDownloadClick() {
 }
 
 async function downloadHTML() {
-  // banner block (single header, 圧縮してから出力)
+  // banner block (圧縮してから出力)
   let headerHTML;
   if (banners[1]) {
     const b64 = await compressImage(banners[1]);
@@ -1672,31 +1833,67 @@ async function downloadHTML() {
     headerHTML = `    <div class="banner-slot"><span class="slot-label">HEADER</span></div>\n`;
   }
 
-  // card blocks（画像のみ圧縮してから出力）
-  let cardsHTML = '';
-  if (cards.length === 0) {
-    cardsHTML = `  <div class="empty-section"><div class="empty-state"><strong>まだカードがありません</strong></div></div>\n`;
-  } else {
-    for (const c of cards) {
-      const gapClass = c.gap === false || c.gap === 'nogap' ? ' no-gap' : c.gap === 'line' ? ' line-gap' : c.gap === 'dot' ? ' dot-gap' : '';
-      if (c.type === 'image') {
-        const compressedB64 = await compressImage(c.base64);
-        const tag = c.link
-          ? `<a class="card" href="${c.link}"${isExternalLink(c.link) ? ' target="_blank" rel="noopener"' : ''}><img src="${compressedB64}" alt=""></a>`
-          : `<div class="card"><img src="${compressedB64}" alt=""></div>`;
-        cardsHTML += `  <div class="card-section${gapClass}">${tag}</div>\n`;
-      } else if (c.type === 'carousel') {
-        const compressedImgs = [];
-        for (const im of c.images) compressedImgs.push(await compressImage(im));
-        const dots = compressedImgs.map((_, idx) => `<span class="${idx===0?'active':''}"></span>`).join('');
-        const imgsJson = JSON.stringify(compressedImgs).replace(/"/g, '&quot;');
-        cardsHTML += `  <div class="card-section${gapClass}"><div class="carousel-card" data-images="${imgsJson}" data-index="0" onclick="cyclerCarousel(this)"><img src="${compressedImgs[0]}" alt="">${compressedImgs.length > 1 ? `<div class="carousel-dots">${dots}</div><div class="carousel-count">1 / ${compressedImgs.length}</div>` : ''}</div></div>\n`;
-      } else {
-        const escaped = injectAutoResize(c.html).replace(/"/g, '&quot;');
-        const linkOverlay = c.link ? `<a href="${c.link}"${isExternalLink(c.link) ? ' target="_blank" rel="noopener"' : ''} style="position:absolute;inset:0;z-index:4;"></a>` : '';
-        cardsHTML += `  <div class="card-section${gapClass}"><div class="html-card"><iframe srcdoc="${escaped}" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" style="height:60px" scrolling="no" onload="try{var h=this.contentDocument.documentElement.scrollHeight||this.contentDocument.body.scrollHeight;if(h>0)this.style.height=h+'px';}catch(e){}"></iframe>${linkOverlay}</div></div>\n`;
-      }
+
+  // カード1枚を出力するヘルパー
+  async function buildCardHTML(c) {
+    const gapClass = c.gap === false || c.gap === 'nogap' ? ' no-gap' : c.gap === 'line' ? ' line-gap' : c.gap === 'dot' ? ' dot-gap' : '';
+    if (c.type === 'image') {
+      const b = await compressImage(c.base64);
+      const tag = c.link
+        ? `<a class="card" href="${c.link}"${isExternalLink(c.link) ? ' target="_blank" rel="noopener"' : ''}><img src="${b}" alt=""></a>`
+        : `<div class="card"><img src="${b}" alt=""></div>`;
+      return `  <div class="card-section${gapClass}">${tag}</div>\n`;
+    } else if (c.type === 'carousel') {
+      const imgs = [];
+      for (const im of c.images) imgs.push(await compressImage(im));
+      const dots = imgs.map((_, i) => `<span class="${i===0?'active':''}"></span>`).join('');
+      const imgsJson = JSON.stringify(imgs).replace(/"/g, '&quot;');
+      return `  <div class="card-section${gapClass}"><div class="carousel-card" data-index="0"><img src="${imgs[0]}" alt="">${imgs.length > 1 ? `<div class="carousel-footer"><button class="carousel-nav" onclick="(function(el){var idx=(parseInt(el.closest('.carousel-card').dataset.index,10)-1+${imgs.length})%${imgs.length};el.closest('.carousel-card').dataset.index=String(idx);el.closest('.carousel-card').querySelector('img').src=${JSON.stringify(imgs)}[idx];el.closest('.carousel-card').querySelector('span').textContent=(idx+1)+' / ${imgs.length}';})(this)">&#8249;</button><span>1 / ${imgs.length}</span><button class="carousel-nav" onclick="(function(el){var idx=(parseInt(el.closest('.carousel-card').dataset.index,10)+1)%${imgs.length};el.closest('.carousel-card').dataset.index=String(idx);el.closest('.carousel-card').querySelector('img').src=${JSON.stringify(imgs)}[idx];el.closest('.carousel-card').querySelector('span').textContent=(idx+1)+' / ${imgs.length}';})(this)">&#8250;</button></div>` : ''}</div></div>\n`;
+    } else {
+      const escaped = injectAutoResize(c.html).replace(/"/g, '&quot;');
+      const linkOverlay = c.link ? `<a href="${c.link}"${isExternalLink(c.link) ? ' target="_blank" rel="noopener"' : ''} style="position:absolute;inset:0;z-index:4;"></a>` : '';
+      return `  <div class="card-section${gapClass}"><div class="html-card"><iframe srcdoc="${escaped}" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" style="height:60px" scrolling="no" onload="try{var h=this.contentDocument.body.offsetHeight;if(h>0)this.style.height=h+'px';}catch(e){}" ></iframe>${linkOverlay}</div></div>\n`;
     }
+  }
+
+  // タブごとにカードを出力
+  const TAB_DEFS = [
+    { id: 'chara',  label: 'Characters' },
+    { id: 'dougu',  label: 'Vehicles&amp;Gear' },
+    { id: 'haikei', label: 'Locations' },
+    { id: 'poster', label: 'Posters' },
+  ];
+
+  const tabBtns = TAB_DEFS.map((t, i) =>
+    `<button class="tab-btn${i===0?' active':''}" data-tab="${t.id}" onclick="switchTab('${t.id}')">${t.label}</button>`
+  ).join('');
+
+  let tabContents = '';
+  for (let i = 0; i < TAB_DEFS.length; i++) {
+    const { id } = TAB_DEFS[i];
+    const filtered = cards.filter(c => (c.tab || 'chara') === id);
+    let inner = '';
+    for (const c of filtered) inner += await buildCardHTML(c);
+    if (!inner) inner = '<div class="empty-section"><div class="empty-state"><strong>まだカードがありません</strong></div></div>';
+    tabContents += `  <div id="tabContent-${id}" class="tab-content"${i > 0 ? ' style="display:none;"' : ''}>\n${inner}  </div>\n`;
+  }
+
+  // topカード（タブ上部）
+  const topCards = cards.filter(c => (c.tab || 'chara') === 'top');
+  let topHTML = '';
+  if (topCards.length > 0) {
+    topHTML = '  <div class="common-wrap">\n';
+    for (const c of topCards) topHTML += await buildCardHTML(c);
+    topHTML += '  </div>\n';
+  }
+
+  // commonカード
+  const commonCards = cards.filter(c => (c.tab || 'chara') === 'common');
+  let commonHTML = '';
+  if (commonCards.length > 0) {
+    commonHTML = '  <div class="common-wrap">\n';
+    for (const c of commonCards) commonHTML += await buildCardHTML(c);
+    commonHTML += '  </div>\n';
   }
 
   const staticCSS = `
@@ -1704,62 +1901,69 @@ async function downloadHTML() {
 :root { --bg:#e0e0e0; --white:#ffffff; --ink:#1a1a1a; --ink-soft:#888; --border:#e0e0e0; }
 body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
 .wrap { max-width: 480px; margin: 0 auto; background: var(--bg); min-height: 100vh; }
-.site-header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:var(--white); border-bottom:1px solid var(--border); position:sticky; top:0; }
+.site-header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:var(--white); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; }
 .back-link { font-size:12px; font-weight:500; letter-spacing:0.04em; color:var(--ink-soft); text-decoration:none; }
-.header-pair { display:flex; flex-direction:column; background:var(--white); }
-.banner-slot { width:100%; min-height:80px; background:var(--white); display:flex; align-items:center; justify-content:center; }
-.banner-slot img { width:100%; height:auto; display:block; }
-.slot-label { font-size:10px; letter-spacing:0.12em; color:#ccc; }
-.card-section { background: var(--bg); padding-top:10px; }
-.card-section.no-gap { background: var(--white); padding-top:0; }
-.card-section.line-gap { background: var(--white); padding-top:0; border-top:1px solid var(--ink); }
-.card-section.dot-gap { background: var(--white); padding-top:0; border-top:1px dashed rgba(0,0,0,0.2); }
-.card { width:100%; display:block; text-decoration:none; background:var(--white); overflow:hidden; }
-.card img { width:100%; height:auto; display:block; }
-.html-card { display:block; width:100%; position:relative; background:var(--white); overflow:hidden; text-decoration:none; }
-.html-card iframe { display:block; width:100%; height:480px; border:none; background:var(--white); }
-.carousel-card { width:100%; position:relative; background:var(--white); overflow:hidden; cursor:pointer; }
-.carousel-card img { width:100%; height:auto; display:block; }
-.carousel-dots { position:absolute; bottom:10px; left:0; right:0; display:flex; justify-content:center; gap:6px; pointer-events:none; }
-.carousel-dots span { width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,0.55); }
-.carousel-dots span.active { background:#fff; transform:scale(1.25); }
-.carousel-count { position:absolute; top:10px; right:10px; font-size:10px; letter-spacing:0.05em; color:#fff; background:rgba(0,0,0,0.45); padding:3px 8px; border-radius:20px; pointer-events:none; }
-.empty-section { background: var(--bg); padding-top:10px; }
-.empty-state { padding:60px 24px; text-align:center; color:var(--ink-soft); font-size:13px; line-height:2; background:var(--white); }
-.empty-state strong { display:block; font-size:14px; font-weight:600; color:var(--ink); margin-bottom:6px; }
-.footer-section { background: var(--bg); padding-top:10px; }
-.footer-section.no-gap { padding-top:0; }
-.footer-section.line-gap { padding-top:0; background:var(--white); border-top:1px solid var(--ink); }
-.footer-section.dot-gap { padding-top:0; background:var(--white); border-top:1px dashed rgba(0,0,0,0.2); }
 .burger-btn { background:none; border:none; cursor:pointer; padding:4px; display:flex; flex-direction:column; gap:5px; align-items:flex-end; }
 .burger-btn span { display:block; height:1.5px; background:var(--ink); border-radius:1px; }
 .burger-btn span:nth-child(1) { width:20px; }
 .burger-btn span:nth-child(2) { width:14px; }
 .burger-btn span:nth-child(3) { width:20px; }
-.burger-menu { display:none; position:absolute; top:100%; right:12px; background:var(--white); border:1px solid var(--border); border-radius:10px; box-shadow:0 4px 16px rgba(0,0,0,0.1); overflow:hidden; z-index:200; min-width:140px; }
+.burger-menu { display:none; position:absolute; top:100%; right:0; background:var(--white); border:1px solid var(--border); border-radius:10px; box-shadow:0 4px 16px rgba(0,0,0,0.1); overflow:hidden; z-index:200; min-width:140px; }
 .burger-menu.open { display:block; }
-.nav-link-item { display:block; width:100%; padding:14px 20px; background:none; border:none; border-bottom:1px solid var(--border); font-size:13px; font-weight:500; color:var(--ink); cursor:pointer; text-align:left; text-decoration:none; }
+.nav-link-item { display:block; width:100%; padding:14px 20px; background:none; border:none; border-bottom:1px solid var(--border); font-size:13px; font-weight:500; color:var(--ink); text-align:left; text-decoration:none; }
 .nav-link-item:last-child { border-bottom:none; }
+.banner-slot { width:100%; min-height:80px; background:var(--white); display:flex; align-items:center; justify-content:center; }
+.banner-slot img { width:100%; height:auto; display:block; }
+.slot-label { font-size:10px; letter-spacing:0.12em; color:#ccc; }
+.tab-bar { display:flex; background:var(--white); border-bottom:1px solid var(--border); border-top:10px solid var(--bg); position:sticky; top:45px; z-index:90; }
+.tab-bar.no-gap { border-top:none; }
+.tab-bar.line-gap { border-top:1px solid var(--ink); }
+.tab-bar.dot-gap { border-top:1px dashed rgba(0,0,0,0.2); }
+.tab-btn { flex:1; padding:12px 2px; background:none; border:none; border-bottom:2px solid transparent; font-size:10px; font-weight:500; letter-spacing:0.02em; color:var(--ink-soft); cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tab-btn.active { color:var(--ink); border-bottom-color:var(--ink); font-weight:700; }
+.tab-content { background:var(--bg); }
+.common-wrap { background:var(--bg); }
+.card-section { background:var(--bg); padding-top:10px; }
+.card-section.no-gap { background:var(--white); padding-top:0; }
+.card-section.line-gap { background:var(--white); padding-top:0; border-top:1px solid var(--ink); }
+.card { width:100%; display:block; text-decoration:none; background:var(--white); overflow:hidden; }
+.card img { width:100%; height:auto; display:block; }
+.html-card { display:block; width:100%; position:relative; background:var(--white); overflow:hidden; text-decoration:none; }
+.html-card iframe { display:block; width:100%; height:60px; border:none; background:var(--white); overflow:hidden; }
+.carousel-card { width:100%; position:relative; background:var(--white); cursor:pointer; }
+.carousel-card img { width:100%; height:auto; display:block; }
+.carousel-footer { display:flex; align-items:center; justify-content:space-between; padding:6px 12px; background:var(--white); border-top:1px solid var(--border); font-size:11px; letter-spacing:0.08em; color:var(--ink-soft); }
+.carousel-footer span { font-size:11px; letter-spacing:0.08em; color:var(--ink-soft); }
+.carousel-nav { background:none; color:var(--ink); border:none; width:32px; height:32px; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; opacity:0.5; }
+.empty-section { background:var(--bg); padding-top:10px; }
+.empty-state { padding:60px 24px; text-align:center; color:var(--ink-soft); font-size:13px; line-height:2; background:var(--white); }
+.empty-state strong { display:block; font-size:14px; font-weight:600; color:var(--ink); margin-bottom:6px; }
+.footer-section { background:var(--bg); padding-top:10px; }
+.footer-section.no-gap { padding-top:0; }
+.footer-section.line-gap { padding-top:0; background:var(--white); border-top:1px solid var(--ink); }
+.footer-section.dot-gap { padding-top:0; background:var(--white); border-top:1px dashed rgba(0,0,0,0.2); }
 footer { padding:16px; text-align:center; font-size:10px; letter-spacing:0.1em; color:var(--ink); background:var(--white); }
 `;
 
-
-  let navItems = [];
-  try { navItems = JSON.parse(localStorage.getItem('asobiva_nav_v1')) || []; } catch {}
-  const navLinksHTML = navItems.map(item => `<a class="nav-link-item" href="${item.url}">${item.label}</a>`).join('');
   const footerText = document.getElementById('footerText')?.textContent || 'ASOBIVA — i.roiro';
   const footerSectionEl = document.getElementById('footerSection');
   const footerGapClass = footerSectionEl?.classList.contains('no-gap') ? ' no-gap'
     : footerSectionEl?.classList.contains('line-gap') ? ' line-gap'
     : footerSectionEl?.classList.contains('dot-gap') ? ' dot-gap'
     : '';
+  const tabBarEl = document.getElementById('tabBar');
+  const tabGapClass = tabBarEl?.classList.contains('no-gap') ? ' no-gap' : tabBarEl?.classList.contains('line-gap') ? ' line-gap' : tabBarEl?.classList.contains('dot-gap') ? ' dot-gap' : '';
+
+  let navItems = [];
+  try { navItems = JSON.parse(localStorage.getItem('asobiva_nav_v1')) || []; } catch {}
+  const navLinksHTML = navItems.map(item => `<a class="nav-link-item" href="${item.url}">${item.label}</a>`).join('');
 
   const html = `<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ASOBIVA — HTMLコンテンツ</title>
+<title>ASOBIVA — PROJECT SUPANA</title>
 <style>${staticCSS}</style>
 </head>
 <body>
@@ -1773,36 +1977,27 @@ footer { padding:16px; text-align:center; font-size:10px; letter-spacing:0.1em; 
       <div class="burger-menu" id="burgerMenuStatic">${navLinksHTML}</div>
     </div>
   </div>
-  <div class="header-pair">
+  <div style="display:flex;flex-direction:column;background:var(--white);">
 ${headerHTML}  </div>
-${cardsHTML}  <div class="footer-section${footerGapClass}">
+${topHTML}  <div class="tab-bar${tabGapClass}">${tabBtns}</div>
+${tabContents}${commonHTML}  <div class="footer-section${footerGapClass}">
     <footer>${footerText}</footer>
   </div>
 </div>
 <scr` + `ipt>
+
+
 window.addEventListener('message', function(e){
-  if (e.data && e.data.type === 'asobiva-resize') {
+  if(e.data && e.data.type === 'asobiva-resize'){
     document.querySelectorAll('.html-card iframe').forEach(function(f){
-      if (f.contentWindow === e.source) f.style.height = e.data.height + 'px';
+      if(f.contentWindow === e.source) f.style.height = e.data.height + 'px';
     });
   }
 });
-function cyclerCarousel(el){
-  var images = JSON.parse(el.dataset.images);
-  var idx = (parseInt(el.dataset.index, 10) + 1) % images.length;
-  el.dataset.index = String(idx);
-  el.querySelector('img').src = images[idx];
-  var dots = el.querySelectorAll('.carousel-dots span');
-  dots.forEach(function(d, i){ d.classList.toggle('active', i === idx); });
-  var count = el.querySelector('.carousel-count');
-  if (count) count.textContent = (idx + 1) + ' / ' + images.length;
-}
-</scr` + `ipt>
-<scr` + `ipt>
 document.addEventListener('click', function(e){
   var menu = document.getElementById('burgerMenuStatic');
   var btn = document.getElementById('burgerBtnStatic');
-  if (menu && !menu.contains(e.target) && !btn.contains(e.target)) menu.classList.remove('open');
+  if(menu && !menu.contains(e.target) && !btn.contains(e.target)) menu.classList.remove('open');
 });
 </scr` + `ipt>
 </body>
@@ -1813,7 +2008,7 @@ document.addEventListener('click', function(e){
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   const ts = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
-  a.download = 'content_asobiva.html';
+  a.download = 'content_supana.html';
   document.body.appendChild(a);
   a.click();
   a.remove();

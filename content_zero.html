@@ -345,11 +345,11 @@ body.admin-mode .card:hover img { transform: none; }
 /* ── HTML CARD ── */
 .html-card {
   display: block;
+  text-decoration: none;
   width: 100%;
   position: relative;
   background: var(--white);
   overflow: hidden;
-  text-decoration: none;
 }
 .html-card iframe {
   display: block;
@@ -426,7 +426,7 @@ body.admin-mode .html-card-label { display: block; }
   cursor: pointer;
   align-items: center;
   justify-content: center;
-  z-index: 5;
+  z-index: 20;
   transition: background 0.15s;
 }
 .card-del:hover { background: #c0392b; }
@@ -496,6 +496,81 @@ body.admin-mode .card-link-btn { display: flex; }
   transition: background 0.15s, color 0.15s;
 }
 .add-card-btn:hover { background: #f5f5f5; color: var(--ink); }
+
+/* ── YOUTUBE CARD ── */
+.yt-card {
+  width: 100%;
+  background: var(--white);
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+}
+.yt-thumb {
+  width: 100%;
+  position: relative;
+  background: #000;
+  overflow: hidden;
+}
+.yt-thumb img {
+  width: 100%;
+  height: auto;
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+.yt-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.2);
+  transition: background 0.2s;
+  z-index: 2;
+  cursor: pointer;
+}
+.yt-play:hover { background: rgba(0,0,0,0.35); }
+.yt-play svg { width: 60px; height: 60px; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4)); }
+.yt-iframe-wrap {
+  width: 100%;
+  aspect-ratio: 16/9;
+  display: none;
+}
+.yt-iframe-wrap iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+.yt-title {
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--white);
+}
+
+/* ── MUSIC CARD ── */
+.music-card {
+  width: 100%;
+  background: var(--white);
+  overflow: hidden;
+  padding: 16px;
+}
+.music-card audio {
+  width: 100%;
+  display: block;
+  margin-top: 8px;
+}
+.music-card-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.music-card-artist {
+  font-size: 11px;
+  color: var(--ink-soft);
+}
 
 /* ── EMPTY STATE ── */
 .empty-section {
@@ -574,6 +649,9 @@ footer {
   border-radius: 16px 16px 0 0;
   padding: 28px 20px 48px;
   z-index: 201;
+  max-height: 85vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   transform: translateY(100%);
   transition: transform 0.3s cubic-bezier(0.34,1.2,0.64,1);
   max-width: 480px;
@@ -766,7 +844,7 @@ body.admin-mode .card-move { display: flex; }
         <button class="burger-menu-item admin-only" onclick="openNavEditor(); closeBurgerMenu()">メニューを編集</button>
         <button class="burger-menu-item admin-only" onclick="downloadEditHTML(); closeBurgerMenu()">編集用保存</button>
         <button class="burger-menu-item admin-only" id="downloadHtmlBtn" onclick="handleDownloadClick()">公開用保存</button>
-        <div class="burger-menu-item admin-only" style="font-size:10px;color:#aaa;text-align:right;padding:8px 20px;cursor:default;border:none;">v2.8</div>
+        <div class="burger-menu-item admin-only" style="font-size:10px;color:#aaa;text-align:right;padding:8px 20px;cursor:default;border:none;">v3.8</div>
       </div>
     </div>
   </div>
@@ -825,14 +903,27 @@ body.admin-mode .card-move { display: flex; }
     <input type="checkbox" id="carouselToggle">
     <span>選んだ画像を1枚のカードにまとめる（カルーセル）</span>
   </label>
-  <label class="field-label" for="linkUrl">リンク先URL（任意）</label>
-  <input class="field-input" id="linkUrl" type="url" placeholder="https://note.com/...">
-  <button class="btn-add" id="addBtn" onclick="addCards()" disabled>追加する</button>
+  <label class="field-label" for="linkUrl">リンク先URL（任意・画像カード用）</label>
+  <input class="field-input" id="linkUrl" type="url" placeholder="https://...">
+  <div style="margin-top:8px;margin-bottom:16px;padding:16px;border:1.5px dashed var(--border);border-radius:12px;">
+    <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;color:var(--ink-soft);margin-bottom:12px;">▶ YouTubeカードを追加</div>
+    <input class="field-input" id="ytUrl" type="url" placeholder="https://youtube.com/watch?v=...">
+    <input class="field-input" id="ytTitle" type="text" placeholder="タイトル（任意）" style="margin-top:8px;">
+    <button class="tab-edit-btn" onclick="addYouTubeCard()" style="margin-top:8px;width:100%;text-align:center;">YouTubeカードを追加</button>
+  </div>
+  <div style="margin-top:8px;margin-bottom:16px;padding:16px;border:1.5px dashed var(--border);border-radius:12px;">
+    <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;color:var(--ink-soft);margin-bottom:12px;">🎵 音楽カードを追加</div>
+    <input class="field-input" id="musicUrl" type="url" placeholder="GitHubのMP3/MP4 URL">
+    <input class="field-input" id="musicTitle" type="text" placeholder="タイトル（任意）" style="margin-top:8px;">
+    <input class="field-input" id="musicArtist" type="text" placeholder="アーティスト名（任意）" style="margin-top:8px;">
+    <button class="tab-edit-btn" onclick="addMusicCard()" style="margin-top:8px;width:100%;text-align:center;">音楽カードを追加</button>
+  </div>
+  <button class="btn-add" id="addBtn" onclick="addCards()" disabled>画像/HTMLカードを追加</button>
 </div>
 
 <script>
 // ── IndexedDB (Base64ストレージ) ──────────────
-const DB_NAME = 'asobiva_content_asobiva_b64';
+const DB_NAME = 'asobiva_content_zero_b64';
 let db;
 
 function openDB() {
@@ -949,13 +1040,6 @@ async function init() {
         try { await dbOp('cards', 'readwrite', s => s.put(c)); } catch {}
       }
     }
-    // フッター情報を復元
-    if (d.footerText) {
-      await dbOp('banners', 'readwrite', s => s.put({ slot: 99, footerText: data.footerText }));
-    }
-    if (d.footerNoGap !== undefined) {
-      await dbOp('banners', 'readwrite', s => s.put({ slot: 98, footerNoGap: data.footerNoGap }));
-    }
     if (d.navItems) {
       try { saveNavItems(d.navItems); } catch {}
     }
@@ -979,10 +1063,17 @@ async function init() {
       html: r.html,
       base64: r.base64,
       images: r.images,
+      htmls: r.htmls,
       name: r.name || '',
       link: r.link || '',
       gap: r.gap !== undefined ? r.gap : true,
-      order: (r.order ?? r.id)
+      order: (r.order ?? r.id),
+      ytId: r.ytId,
+      title: r.title || '',
+      thumbB64: r.thumbB64 || null,
+      musicUrl: r.musicUrl || '',
+      artist: r.artist || '',
+      names: r.names,
     }));
     cards.sort((a, b) => a.order - b.order);
     setLoadingBar(100);
@@ -1070,6 +1161,145 @@ function render() {
       img.loading = 'lazy';
       wrap.appendChild(img);
       replaceAccept = 'image/*,text/html,.html';
+    } else if (c.type === 'music') {
+      wrap = document.createElement('div');
+      wrap.className = 'music-card';
+      if (c.title) {
+        const titleEl = document.createElement('div');
+        titleEl.className = 'music-card-title';
+        titleEl.textContent = c.title;
+        wrap.appendChild(titleEl);
+      }
+      if (c.artist) {
+        const artistEl = document.createElement('div');
+        artistEl.className = 'music-card-artist';
+        artistEl.textContent = c.artist;
+        wrap.appendChild(artistEl);
+      }
+      const audio = document.createElement('audio');
+      audio.controls = true;
+      audio.src = c.musicUrl;
+      audio.preload = 'none';
+      wrap.appendChild(audio);
+      supportsReplace = false;
+
+    } else if (c.type === 'music') {
+      return `  <div class="card-section${gapClass}"><div class="music-card">${c.title ? `<div class="music-card-title">${c.title}</div>` : ''}${c.artist ? `<div class="music-card-artist">${c.artist}</div>` : ''}<audio controls src="${c.musicUrl}" preload="none" style="width:100%;display:block;margin-top:8px;"></audio></div></div>\n`;
+    } else if (c.type === 'youtube') {
+      wrap = document.createElement('div');
+      wrap.className = 'yt-card';
+
+      // サムネイル（カスタムまたはYouTube自動取得）
+      const thumbSrc = c.thumbB64 || `https://img.youtube.com/vi/${c.ytId}/hqdefault.jpg`;
+
+      const thumbDiv = document.createElement('div');
+      thumbDiv.className = 'yt-thumb';
+      thumbDiv.style.cssText = 'width:100%;position:relative;background:#000;overflow:hidden;';
+
+      const thumbImg = document.createElement('img');
+      thumbImg.src = thumbSrc;
+      thumbImg.alt = c.title || '';
+
+      thumbDiv.appendChild(thumbImg);
+
+      const playOverlay = document.createElement('div');
+      playOverlay.style.cssText = 'position:absolute;inset:0;z-index:10;cursor:pointer;';
+      thumbDiv.appendChild(playOverlay);
+
+      const iframeWrap = document.createElement('div');
+      iframeWrap.style.cssText = 'width:100%;aspect-ratio:16/9;min-height:200px;display:none;';
+
+      playOverlay.addEventListener('click', e => {
+        if (adminMode) return;
+        e.preventDefault(); e.stopPropagation();
+        thumbDiv.style.display = 'none';
+        iframeWrap.innerHTML = '';
+        iframeWrap.style.display = 'block';
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube.com/embed/${c.ytId}`;
+        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+        iframe.allowFullscreen = true;
+        iframe.style.cssText = 'width:100%;height:100%;border:none;';
+        iframeWrap.appendChild(iframe);
+      });
+
+      wrap.appendChild(thumbDiv);
+      wrap.appendChild(iframeWrap);
+
+      // タイトル + YouTubeボタン
+      const infoRow = document.createElement('div');
+      infoRow.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:12px;padding:10px 16px;background:var(--white);';
+      const ytLink = document.createElement('a');
+      ytLink.href = `https://www.youtube.com/watch?v=${c.ytId}`;
+      ytLink.target = '_blank';
+      ytLink.rel = 'noopener';
+      ytLink.innerHTML = '<svg viewBox="0 0 24 24" fill="none" style="width:28px;height:28px;"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29.94 29.94 0 0 0 1 12a29.94 29.94 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29.94 29.94 0 0 0 23 12a29.94 29.94 0 0 0-.46-5.58z" stroke="#000" stroke-width="1.8"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#000"/></svg>';
+      ytLink.style.cssText = 'display:flex;align-items:center;flex-shrink:0;';
+      ytLink.addEventListener('click', e => e.stopPropagation());
+      infoRow.appendChild(ytLink);
+      if (c.title) {
+        const titleEl = document.createElement('div');
+        titleEl.className = 'yt-title';
+        titleEl.style.cssText = 'font-size:13px;font-weight:500;color:var(--ink);margin:0;padding:0;';
+        titleEl.textContent = c.title;
+        infoRow.appendChild(titleEl);
+      }
+      wrap.appendChild(infoRow);
+
+      // 管理モード: サムネイル差し替え
+      const thumbReplaceInput = document.createElement('input');
+      thumbReplaceInput.type = 'file';
+      thumbReplaceInput.accept = 'image/*';
+      thumbReplaceInput.style.display = 'none';
+      thumbReplaceInput.addEventListener('change', async e => {
+        const f = e.target.files[0];
+        if (!f) return;
+        const b64 = await fileToBase64(f);
+        const existing = cards.find(cd => cd.id === c.id);
+        if (existing) {
+          existing.thumbB64 = b64;
+          await dbOp('cards', 'readwrite', s => s.put({ ...existing }));
+          thumbImg.src = b64;
+        }
+      });
+      wrap.appendChild(thumbReplaceInput);
+
+      const thumbReplaceBtn = document.createElement('button');
+      thumbReplaceBtn.className = 'card-replace';
+      thumbReplaceBtn.title = 'サムネイルを差し替え';
+      thumbReplaceBtn.textContent = '🖼';
+      thumbReplaceBtn.style.cssText = 'display:none;position:absolute;top:10px;right:48px;width:30px;height:30px;background:rgba(0,0,0,0.5);color:#fff;border:none;border-radius:50%;font-size:14px;cursor:pointer;align-items:center;justify-content:center;z-index:20;';
+      thumbReplaceBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); thumbReplaceInput.click(); });
+      wrap.appendChild(thumbReplaceBtn);
+      thumbReplaceBtn.className = 'card-replace';
+      if (adminMode) thumbReplaceBtn.style.display = 'flex';
+
+      // YouTube URL編集ボタン
+      const ytEditBtn = document.createElement('button');
+      ytEditBtn.title = 'YouTube URLを編集';
+      ytEditBtn.textContent = '✎';
+      ytEditBtn.style.cssText = 'display:none;position:absolute;top:10px;right:88px;width:30px;height:30px;background:rgba(0,0,0,0.5);color:#fff;border:none;border-radius:50%;font-size:14px;cursor:pointer;align-items:center;justify-content:center;z-index:20;';
+      ytEditBtn.addEventListener('click', async e => {
+        e.preventDefault(); e.stopPropagation();
+        const url = prompt('YouTube URLを入力', `https://www.youtube.com/watch?v=${c.ytId}`);
+        if (!url) return;
+        const m = url.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+        if (!m) { alert('正しいYouTube URLを入力してください'); return; }
+        const newYtId = m[1];
+        const newTitle = prompt('タイトルを入力', c.title || '');
+        const existing = cards.find(cd => cd.id === c.id);
+        if (existing) {
+          existing.ytId = newYtId;
+          if (newTitle !== null) existing.title = newTitle;
+          await dbOp('cards', 'readwrite', s => s.put({ ...existing }));
+          render();
+        }
+      });
+      wrap.appendChild(ytEditBtn);
+      if (adminMode) ytEditBtn.style.display = 'flex';
+
+      supportsReplace = false;
+
     } else if (c.type === 'carousel') {
       wrap = document.createElement('div');
       wrap.className = 'carousel-card';
@@ -1203,7 +1433,7 @@ function render() {
     moveWrap.appendChild(upBtn);
     moveWrap.appendChild(downBtn);
 
-    if (c.type !== 'carousel') wrap.appendChild(linkBtn);
+    if (!['carousel','music','youtube'].includes(c.type)) wrap.appendChild(linkBtn);
     if (supportsReplace) {
       wrap.appendChild(replaceBtn);
       wrap.appendChild(replaceInput);
@@ -1567,6 +1797,50 @@ async function replaceCard(id, file) {
   render();
 }
 
+// ── YouTube ───────────────────────────────────
+function extractYouTubeId(url) {
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/
+  ];
+  for (const p of patterns) {
+    const m = url.match(p);
+    if (m) return m[1];
+  }
+  return null;
+}
+
+async function addYouTubeCard() {
+  const url = document.getElementById('ytUrl').value.trim();
+  const title = document.getElementById('ytTitle').value.trim();
+  if (!url) return;
+  const ytId = extractYouTubeId(url);
+  if (!ytId) { alert('YouTubeのURLを正しく入力してください'); return; }
+  const card = { type: 'youtube', ytId, title, thumbB64: null, link: url, gap: true };
+  const id = await dbOp('cards', 'readwrite', s => s.add(card));
+  cards.push({ ...card, id });
+  document.getElementById('ytUrl').value = '';
+  document.getElementById('ytTitle').value = '';
+  closePanel();
+  render();
+}
+
+// ── Music Card ───────────────────────────────
+async function addMusicCard() {
+  const url = document.getElementById('musicUrl').value.trim();
+  const title = document.getElementById('musicTitle').value.trim();
+  const artist = document.getElementById('musicArtist').value.trim();
+  if (!url) return;
+  const card = { type: 'music', musicUrl: url, title, artist, gap: true };
+  const id = await dbOp('cards', 'readwrite', s => s.add(card));
+  cards.push({ ...card, id });
+  document.getElementById('musicUrl').value = '';
+  document.getElementById('musicTitle').value = '';
+  document.getElementById('musicArtist').value = '';
+  closePanel();
+  render();
+}
+
 // ── Gap toggle ────────────────────────────────
 async function toggleGap(id) {
   const c = cards.find(c => c.id === id);
@@ -1577,7 +1851,8 @@ async function toggleGap(id) {
   else c.gap = true;
   await dbOp('cards', 'readwrite', s => s.put({
     id: c.id, type: c.type, html: c.html, base64: c.base64,
-    images: c.images, name: c.name, link: c.link, gap: c.gap, order: c.order
+    images: c.images, name: c.name, link: c.link, gap: c.gap, order: c.order,
+    ytId: c.ytId, thumbB64: c.thumbB64, musicUrl: c.musicUrl, artist: c.artist, title: c.title
   }));
   render();
 }
@@ -1592,7 +1867,8 @@ async function moveCard(fromIdx, toIdx) {
   for (const c of cards) {
     await dbOp('cards', 'readwrite', s => s.put({
       id: c.id, type: c.type, html: c.html, base64: c.base64,
-      images: c.images, name: c.name, link: c.link, gap: c.gap, order: c.order
+      images: c.images, name: c.name, link: c.link, gap: c.gap, order: c.order,
+      ytId: c.ytId, thumbB64: c.thumbB64, musicUrl: c.musicUrl, artist: c.artist, title: c.title
     }));
   }
   render();
@@ -1609,16 +1885,14 @@ async function deleteCard(id) {
 // ── 編集用HTMLとして保存（データ埋め込み） ─────────
 function downloadEditHTML() {
   const source = document.documentElement.outerHTML.replace(' class="admin-mode"', '').replace(' admin-mode', '');
-  let footerTextVal = document.getElementById('footerText')?.textContent || '';
-  let footerNoGapVal = document.getElementById('footerSection')?.classList.contains('no-gap') || false;
-  const initData = { banners: banners, cards: cards, footerText: footerTextVal, footerNoGap: footerNoGapVal, navItems: loadNavItems() };
+  const initData = { banners: banners, cards: cards, navItems: loadNavItems() };
   const initScript = `<scr` + `ipt>window.__ASOBIVA_INIT__ = ${JSON.stringify(initData).split('\n').join(' ').split('\r').join(' ').split('\t').join(' ')};</scr` + `ipt>`;
-  const output = source.replace('</head>', initScript + '\n</head>');
+  const output = '<!DOCTYPE html>\n' + source.replace('</head>', initScript + '\n</head>');
   const blob = new Blob([output], { type: 'text/html;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   const ts = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
-  a.download = 'content_asobiva_e.html';
+  a.download = 'content_zero_e.html';
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -1685,7 +1959,146 @@ async function downloadHTML() {
           ? `<a class="card" href="${c.link}"${isExternalLink(c.link) ? ' target="_blank" rel="noopener"' : ''}><img src="${compressedB64}" alt=""></a>`
           : `<div class="card"><img src="${compressedB64}" alt=""></div>`;
         cardsHTML += `  <div class="card-section${gapClass}">${tag}</div>\n`;
-      } else if (c.type === 'carousel') {
+      } else if (c.type === 'music') {
+      wrap = document.createElement('div');
+      wrap.className = 'music-card';
+      if (c.title) {
+        const titleEl = document.createElement('div');
+        titleEl.className = 'music-card-title';
+        titleEl.textContent = c.title;
+        wrap.appendChild(titleEl);
+      }
+      if (c.artist) {
+        const artistEl = document.createElement('div');
+        artistEl.className = 'music-card-artist';
+        artistEl.textContent = c.artist;
+        wrap.appendChild(artistEl);
+      }
+      const audio = document.createElement('audio');
+      audio.controls = true;
+      audio.src = c.musicUrl;
+      audio.preload = 'none';
+      wrap.appendChild(audio);
+      supportsReplace = false;
+
+    } else if (c.type === 'music') {
+      return `  <div class="card-section${gapClass}"><div class="music-card">${c.title ? `<div class="music-card-title">${c.title}</div>` : ''}${c.artist ? `<div class="music-card-artist">${c.artist}</div>` : ''}<audio controls src="${c.musicUrl}" preload="none" style="width:100%;display:block;margin-top:8px;"></audio></div></div>\n`;
+    } else if (c.type === 'youtube') {
+      wrap = document.createElement('div');
+      wrap.className = 'yt-card';
+
+      // サムネイル（カスタムまたはYouTube自動取得）
+      const thumbSrc = c.thumbB64 || `https://img.youtube.com/vi/${c.ytId}/hqdefault.jpg`;
+
+      const thumbDiv = document.createElement('div');
+      thumbDiv.className = 'yt-thumb';
+      thumbDiv.style.cssText = 'width:100%;position:relative;background:#000;overflow:hidden;';
+
+      const thumbImg = document.createElement('img');
+      thumbImg.src = thumbSrc;
+      thumbImg.alt = c.title || '';
+
+      thumbDiv.appendChild(thumbImg);
+
+      const playOverlay = document.createElement('div');
+      playOverlay.style.cssText = 'position:absolute;inset:0;z-index:10;cursor:pointer;';
+      thumbDiv.appendChild(playOverlay);
+
+      const iframeWrap = document.createElement('div');
+      iframeWrap.style.cssText = 'width:100%;aspect-ratio:16/9;min-height:200px;display:none;';
+
+      playOverlay.addEventListener('click', e => {
+        if (adminMode) return;
+        e.preventDefault(); e.stopPropagation();
+        thumbDiv.style.display = 'none';
+        iframeWrap.innerHTML = '';
+        iframeWrap.style.display = 'block';
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube.com/embed/${c.ytId}`;
+        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+        iframe.allowFullscreen = true;
+        iframe.style.cssText = 'width:100%;height:100%;border:none;';
+        iframeWrap.appendChild(iframe);
+      });
+
+      wrap.appendChild(thumbDiv);
+      wrap.appendChild(iframeWrap);
+
+      // タイトル + YouTubeボタン
+      const infoRow = document.createElement('div');
+      infoRow.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:12px;padding:10px 16px;background:var(--white);';
+      const ytLink = document.createElement('a');
+      ytLink.href = `https://www.youtube.com/watch?v=${c.ytId}`;
+      ytLink.target = '_blank';
+      ytLink.rel = 'noopener';
+      ytLink.innerHTML = '<svg viewBox="0 0 24 24" fill="none" style="width:28px;height:28px;"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29.94 29.94 0 0 0 1 12a29.94 29.94 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29.94 29.94 0 0 0 23 12a29.94 29.94 0 0 0-.46-5.58z" stroke="#000" stroke-width="1.8"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#000"/></svg>';
+      ytLink.style.cssText = 'display:flex;align-items:center;flex-shrink:0;';
+      ytLink.addEventListener('click', e => e.stopPropagation());
+      infoRow.appendChild(ytLink);
+      if (c.title) {
+        const titleEl = document.createElement('div');
+        titleEl.className = 'yt-title';
+        titleEl.style.cssText = 'font-size:13px;font-weight:500;color:var(--ink);margin:0;padding:0;';
+        titleEl.textContent = c.title;
+        infoRow.appendChild(titleEl);
+      }
+      wrap.appendChild(infoRow);
+
+      // 管理モード: サムネイル差し替え
+      const thumbReplaceInput = document.createElement('input');
+      thumbReplaceInput.type = 'file';
+      thumbReplaceInput.accept = 'image/*';
+      thumbReplaceInput.style.display = 'none';
+      thumbReplaceInput.addEventListener('change', async e => {
+        const f = e.target.files[0];
+        if (!f) return;
+        const b64 = await fileToBase64(f);
+        const existing = cards.find(cd => cd.id === c.id);
+        if (existing) {
+          existing.thumbB64 = b64;
+          await dbOp('cards', 'readwrite', s => s.put({ ...existing }));
+          thumbImg.src = b64;
+        }
+      });
+      wrap.appendChild(thumbReplaceInput);
+
+      const thumbReplaceBtn = document.createElement('button');
+      thumbReplaceBtn.className = 'card-replace';
+      thumbReplaceBtn.title = 'サムネイルを差し替え';
+      thumbReplaceBtn.textContent = '🖼';
+      thumbReplaceBtn.style.cssText = 'display:none;position:absolute;top:10px;right:48px;width:30px;height:30px;background:rgba(0,0,0,0.5);color:#fff;border:none;border-radius:50%;font-size:14px;cursor:pointer;align-items:center;justify-content:center;z-index:20;';
+      thumbReplaceBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); thumbReplaceInput.click(); });
+      wrap.appendChild(thumbReplaceBtn);
+      thumbReplaceBtn.className = 'card-replace';
+      if (adminMode) thumbReplaceBtn.style.display = 'flex';
+
+      // YouTube URL編集ボタン
+      const ytEditBtn = document.createElement('button');
+      ytEditBtn.title = 'YouTube URLを編集';
+      ytEditBtn.textContent = '✎';
+      ytEditBtn.style.cssText = 'display:none;position:absolute;top:10px;right:88px;width:30px;height:30px;background:rgba(0,0,0,0.5);color:#fff;border:none;border-radius:50%;font-size:14px;cursor:pointer;align-items:center;justify-content:center;z-index:20;';
+      ytEditBtn.addEventListener('click', async e => {
+        e.preventDefault(); e.stopPropagation();
+        const url = prompt('YouTube URLを入力', `https://www.youtube.com/watch?v=${c.ytId}`);
+        if (!url) return;
+        const m = url.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+        if (!m) { alert('正しいYouTube URLを入力してください'); return; }
+        const newYtId = m[1];
+        const newTitle = prompt('タイトルを入力', c.title || '');
+        const existing = cards.find(cd => cd.id === c.id);
+        if (existing) {
+          existing.ytId = newYtId;
+          if (newTitle !== null) existing.title = newTitle;
+          await dbOp('cards', 'readwrite', s => s.put({ ...existing }));
+          render();
+        }
+      });
+      wrap.appendChild(ytEditBtn);
+      if (adminMode) ytEditBtn.style.display = 'flex';
+
+      supportsReplace = false;
+
+    } else if (c.type === 'carousel') {
         const compressedImgs = [];
         for (const im of c.images) compressedImgs.push(await compressImage(im));
         const dots = compressedImgs.map((_, idx) => `<span class="${idx===0?'active':''}"></span>`).join('');
@@ -1731,6 +2144,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: v
 .footer-section.no-gap { padding-top:0; }
 .footer-section.line-gap { padding-top:0; background:var(--white); border-top:1px solid var(--ink); }
 .footer-section.dot-gap { padding-top:0; background:var(--white); border-top:1px dashed rgba(0,0,0,0.2); }
+.site-header { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; background:var(--white); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; }
 .burger-btn { background:none; border:none; cursor:pointer; padding:4px; display:flex; flex-direction:column; gap:5px; align-items:flex-end; }
 .burger-btn span { display:block; height:1.5px; background:var(--ink); border-radius:1px; }
 .burger-btn span:nth-child(1) { width:20px; }
@@ -1799,6 +2213,18 @@ function cyclerCarousel(el){
 }
 </scr` + `ipt>
 <scr` + `ipt>
+function playYT(thumb, id) {
+  var wrap = thumb.parentElement.querySelector('.yt-iframe-wrap');
+  if (!wrap) return;
+  thumb.style.display = 'none';
+  wrap.style.display = 'block';
+  var iframe = document.createElement('iframe');
+  iframe.src = 'https://www.youtube.com/embed/' + id;
+  iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+  iframe.allowFullscreen = true;
+  iframe.style.cssText = 'width:100%;height:100%;border:none;';
+  wrap.appendChild(iframe);
+}
 document.addEventListener('click', function(e){
   var menu = document.getElementById('burgerMenuStatic');
   var btn = document.getElementById('burgerBtnStatic');
@@ -1813,12 +2239,31 @@ document.addEventListener('click', function(e){
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   const ts = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
-  a.download = 'content_asobiva.html';
+  a.download = 'content_zero.html';
   document.body.appendChild(a);
   a.click();
   a.remove();
 }
 
+// ページ読み込み時にiframeを全てリセット
+function resetYouTubeIframes() {
+  document.querySelectorAll('.yt-iframe-wrap').forEach(el => {
+    el.innerHTML = '';
+    el.style.display = 'none';
+  });
+  document.querySelectorAll('.yt-thumb').forEach(el => {
+    el.style.display = '';
+  });
+}
+
+window.addEventListener('pageshow', function(e) {
+  resetYouTubeIframes();
+  if (e.persisted) {
+    init();
+  }
+});
+
+resetYouTubeIframes();
 init();
 </script>
 </body>

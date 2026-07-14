@@ -2,8 +2,8 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ASOBIVA — HTMLコンテンツ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ASOBIVA — GAMES</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -30,53 +30,6 @@ body {
 }
 
 /* ── ADMIN BUTTON ── */
-.admin-btn {
-  position: fixed;
-  top: 14px; right: 14px;
-  z-index: 100;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  background: rgba(255,255,255,0.92);
-  border: 1px solid var(--border);
-  padding: 6px 14px;
-  border-radius: 20px;
-  cursor: pointer;
-  color: var(--ink-soft);
-  backdrop-filter: blur(4px);
-  transition: all 0.15s;
-}
-.admin-btn:hover { border-color: var(--ink); color: var(--ink); }
-.admin-btn.active { background: var(--ink); color: var(--white); border-color: var(--ink); }
-
-/* ── DOWNLOAD BUTTON ── */
-.download-btn {
-  position: fixed;
-  top: 14px; right: 78px;
-  z-index: 100;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  background: rgba(255,255,255,0.92);
-  border: 1px solid var(--border);
-  padding: 6px 14px;
-  border-radius: 20px;
-  cursor: pointer;
-  color: var(--ink-soft);
-  backdrop-filter: blur(4px);
-  transition: all 0.15s;
-  display: none;
-}
-body.admin-mode .download-btn { display: inline-block; }
-.download-btn:hover { border-color: var(--ink); color: var(--ink); }
-
-/* ── HEADER PAIR ── */
-.header-pair {
-  display: flex;
-  flex-direction: column;
-  background: var(--white);
-}
-
 /* ── SITE HEADER (back + burger) ── */
 .site-header {
   display: flex;
@@ -96,9 +49,6 @@ body.admin-mode .download-btn { display: inline-block; }
   color: var(--ink-soft);
   text-decoration: none;
   transition: color 0.15s;
-  display: flex;
-  align-items: center;
-  gap: 4px;
 }
 .back-link:hover { color: var(--ink); }
 .burger-btn {
@@ -122,13 +72,11 @@ body.admin-mode .download-btn { display: inline-block; }
 .burger-btn span:nth-child(2) { width: 14px; }
 .burger-btn span:nth-child(3) { width: 20px; }
 .burger-btn:hover span { width: 20px; }
-
-/* ── BURGER MENU DROPDOWN ── */
 .burger-menu {
   display: none;
   position: absolute;
   top: 100%;
-  right: 12px;
+  right: 0;
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -150,13 +98,13 @@ body.admin-mode .download-btn { display: inline-block; }
   color: var(--ink);
   cursor: pointer;
   text-align: left;
+  font-family: inherit;
   transition: background 0.15s;
 }
 .burger-menu-item:last-child { border-bottom: none; }
 .burger-menu-item:hover { background: var(--bg); }
 .burger-menu-item.active { color: var(--white); background: var(--ink); }
 
-/* 管理モード以外では管理専用ボタンを非表示 */
 .admin-only { display: none; }
 body.admin-mode .admin-only { display: block; }
 
@@ -166,7 +114,6 @@ body.admin-mode .admin-only { display: block; }
   margin: 4px 0;
 }
 
-/* ── NAV LINK items ── */
 .nav-link-item {
   display: block;
   width: 100%;
@@ -184,7 +131,6 @@ body.admin-mode .admin-only { display: block; }
 }
 .nav-link-item:hover { background: var(--bg); }
 
-/* ── NAV EDITOR PANEL ── */
 .nav-editor-panel {
   position: fixed;
   bottom: 0; left: 0; right: 0;
@@ -200,7 +146,6 @@ body.admin-mode .admin-only { display: block; }
   overflow-y: auto;
 }
 .nav-editor-panel.open { transform: translateY(0); }
-
 .nav-editor-list { margin-bottom: 16px; }
 .nav-editor-row {
   display: flex;
@@ -209,35 +154,19 @@ body.admin-mode .admin-only { display: block; }
   padding: 10px 0;
   border-bottom: 1px solid var(--border);
 }
-.nav-editor-row-label {
-  flex: 1;
-  font-size: 13px;
-  color: var(--ink);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.nav-editor-row-label { flex:1; font-size:13px; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.nav-editor-row-url { font-size:10px; color:var(--ink-soft); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:120px; }
+.nav-editor-btn { background:none; border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:11px; cursor:pointer; color:var(--ink-soft); white-space:nowrap; }
+.nav-editor-btn:hover { border-color:var(--ink); color:var(--ink); }
+.nav-editor-btn.del { border-color:transparent; color:#c0392b; }
+.nav-editor-btn.del:hover { background:#fdf0f0; }
+
+/* ── HEADER PAIR ── */
+.header-pair {
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
 }
-.nav-editor-row-url {
-  font-size: 10px;
-  color: var(--ink-soft);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 120px;
-}
-.nav-editor-btn {
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 4px 8px;
-  font-size: 11px;
-  cursor: pointer;
-  color: var(--ink-soft);
-  white-space: nowrap;
-}
-.nav-editor-btn:hover { border-color: var(--ink); color: var(--ink); }
-.nav-editor-btn.del { border-color: transparent; color: #c0392b; }
-.nav-editor-btn.del:hover { background: #fdf0f0; }
 
 .banner-slot {
   width: 100%;
@@ -284,7 +213,7 @@ body.admin-mode .admin-only { display: block; }
 body.admin-mode .banner-slot .banner-edit { display: flex; }
 .banner-file { display: none; }
 
-/* ── CARDS ── */
+/* ── CARDS (image / html, same as other ASOBIVA pages) ── */
 .card-section {
   background: var(--bg);
   padding-top: 10px;
@@ -297,11 +226,6 @@ body.admin-mode .banner-slot .banner-edit { display: flex; }
   background: var(--white);
   padding-top: 0;
   border-top: 1px dashed rgba(0,0,0,0.2);
-}
-.card-section.line-gap {
-  background: var(--white);
-  padding-top: 0;
-  border-top: 1px solid var(--ink);
 }
 .card-gap-btn {
   display: none;
@@ -345,11 +269,11 @@ body.admin-mode .card:hover img { transform: none; }
 /* ── HTML CARD ── */
 .html-card {
   display: block;
+  text-decoration: none;
   width: 100%;
   position: relative;
   background: var(--white);
   overflow: hidden;
-  text-decoration: none;
 }
 .html-card iframe {
   display: block;
@@ -367,6 +291,7 @@ body.admin-mode .card:hover img { transform: none; }
   background: var(--white);
   border-bottom: 1px solid var(--border);
 }
+body.admin-mode .html-card-label { display: block; }
 
 /* ── CAROUSEL CARD ── */
 .carousel-card {
@@ -411,8 +336,41 @@ body.admin-mode .card:hover img { transform: none; }
   border-radius: 20px;
   pointer-events: none;
 }
-body.admin-mode .html-card-label { display: block; }
 
+/* ── GAME CARD (square corners, no text, demo preview only) ── */
+.game-card {
+  width: 100%;
+  position: relative;
+  background: #ffffff;
+  overflow: hidden;
+  border-radius: 0;
+}
+.game-card-frame-wrap {
+  width: 100%;
+  background: #ffffff;
+  position: relative;
+  overflow: hidden;
+  line-height: 0; /* avoid extra inline-level whitespace gap below the iframe */
+}
+.game-card-frame-wrap iframe {
+  display: block;
+  border: none;
+  pointer-events: none !important;
+  /* iframe is always rendered at its native CARD_ASPECT_W x CARD_ASPECT_H
+     size, then scaled down via CSS transform to fit the card's actual
+     display width. This keeps the GW games' internal fixed-size layout
+     (no reflow at odd widths) and just shrinks the whole rendered frame
+     like a thumbnail. transform-origin/scale are set inline via JS. */
+}
+.game-card-tap {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  cursor: pointer;
+  pointer-events: auto !important;
+}
+
+/* ── DEL / REPLACE BUTTONS (shared by all card types) ── */
 .card-del {
   display: none;
   position: absolute;
@@ -431,6 +389,31 @@ body.admin-mode .html-card-label { display: block; }
 }
 .card-del:hover { background: #c0392b; }
 body.admin-mode .card-del { display: flex; }
+.card-move {
+  display: none;
+  position: absolute;
+  bottom: 10px; right: 50px;
+  flex-direction: row;
+  gap: 6px;
+  z-index: 5;
+}
+.card-move button {
+  width: 30px; height: 30px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.card-move button:hover { background: #444; }
+.card-move button:disabled { opacity: 0.3; cursor: default; }
+body.admin-mode .card-move { display: flex; }
+
 
 .card-replace {
   display: none;
@@ -496,6 +479,47 @@ body.admin-mode .card-link-btn { display: flex; }
   transition: background 0.15s, color 0.15s;
 }
 .add-card-btn:hover { background: #f5f5f5; color: var(--ink); }
+
+/* ── GAME CAROUSEL ── */
+.game-carousel-card {
+  width: 100%;
+  background: var(--white);
+  overflow: hidden;
+  position: relative;
+}
+.game-carousel-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+.game-carousel-footer .game-carousel-title {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: 0.04em;
+  flex: 1;
+  text-align: center;
+}
+.game-carousel-nav {
+  background: none;
+  color: var(--ink);
+  border: none;
+  width: 32px;
+  height: 32px;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+}
+.game-carousel-nav:hover { opacity: 1; }
 
 /* ── EMPTY STATE ── */
 .empty-section {
@@ -680,6 +704,101 @@ footer {
   transition: width 0.3s ease;
 }
 
+/* ── FULLSCREEN GAME OVERLAY ── */
+.fullscreen-overlay {
+  position: fixed;
+  inset: 0;
+  background: #0a0a12;
+  z-index: 500;
+  display: none;
+  flex-direction: column;
+}
+.fullscreen-overlay.open { display: flex; }
+
+.fullscreen-topbar {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 12px;
+  padding-top: max(10px, env(safe-area-inset-top));
+  background: #0a0a12;
+  position: relative;
+  z-index: 20;
+}
+
+.close-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.close-btn:active {
+  background: rgba(255,255,255,0.18);
+}
+
+.fullscreen-frame-wrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fullscreen-frame-wrap iframe {
+  border: none;
+  background: #0a0a12;
+}
+
+/* ── TAP TO START prompt shown over the fullscreen demo until the player taps ──
+   positioned below the topbar (not inset:0 on the whole overlay), so the
+   close (✕) button stays clickable even while this prompt is showing */
+.tap-to-start {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10,10,18,0.35);
+  cursor: pointer;
+}
+.tap-to-start.show { display: flex; }
+
+.tap-to-start-circle {
+  width: 132px;
+  height: 132px;
+  border-radius: 50%;
+  border: 2px solid #39ff7a;
+  background: rgba(10,10,18,0.85);
+  color: #39ff7a;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 0 0 8px #39ff7a;
+  box-shadow: 0 0 22px rgba(57,255,122,0.35);
+  animation: pulseRing 1.6s ease-in-out infinite;
+}
+
+@keyframes pulseRing {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .card img, .panel { transition: none; }
 }
@@ -713,32 +832,6 @@ body.admin-mode .footer-edit-btn { display: inline-block; }
   margin: 0 auto;
 }
 .footer-editor-panel.open { transform: translateY(0); }
-
-/* ── MOVE BUTTONS ── */
-.card-move {
-  display: none;
-  position: absolute;
-  bottom: 10px; right: 50px;
-  flex-direction: row;
-  gap: 6px;
-  z-index: 5;
-}
-.card-move button {
-  width: 30px; height: 30px;
-  background: rgba(0,0,0,0.5);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s;
-}
-.card-move button:hover { background: #444; }
-.card-move button:disabled { opacity: 0.3; cursor: default; }
-body.admin-mode .card-move { display: flex; }
 </style>
 </head>
 <body>
@@ -748,9 +841,6 @@ body.admin-mode .card-move { display: flex; }
   <div class="loading-bar-wrap"><div class="loading-bar" id="loadingBar"></div></div>
 </div>
 
-<button class="admin-btn" id="adminBtn" onclick="toggleAdmin()">管理</button>
-
-
 <div class="wrap">
   <div class="site-header">
     <a href="asobiva.html" class="back-link">← トップへ戻る</a>
@@ -759,14 +849,13 @@ body.admin-mode .card-move { display: flex; }
         <span></span><span></span><span></span>
       </button>
       <div class="burger-menu" id="burgerMenu">
-        <!-- ナビリンク一覧（動的に生成） -->
         <div id="navLinks"></div>
         <div class="burger-menu-divider"></div>
         <button class="burger-menu-item" id="adminBtn" onclick="toggleAdmin()">管理</button>
         <button class="burger-menu-item admin-only" onclick="openNavEditor(); closeBurgerMenu()">メニューを編集</button>
         <button class="burger-menu-item admin-only" onclick="downloadEditHTML(); closeBurgerMenu()">編集用保存</button>
         <button class="burger-menu-item admin-only" id="downloadHtmlBtn" onclick="handleDownloadClick()">公開用保存</button>
-        <div class="burger-menu-item admin-only" style="font-size:10px;color:#aaa;text-align:right;padding:8px 20px;cursor:default;border:none;">v2.8</div>
+        <div class="burger-menu-item admin-only" style="font-size:10px;color:#aaa;text-align:right;padding:8px 20px;cursor:default;border:none;">v3.0</div>
       </div>
     </div>
   </div>
@@ -813,26 +902,48 @@ body.admin-mode .card-move { display: flex; }
 <div class="panel" id="panel">
   <div class="panel-handle"></div>
   <div class="panel-title">カードを追加</div>
-  <div style="font-size:10px;color:#aaa;margin-top:-12px;margin-bottom:16px;">公開用保存時に自動圧縮されます（v2）</div>
   <div class="drop-zone" id="dropZone">
     <input type="file" id="fileInput" accept="image/*,text/html,.html" multiple onchange="onFileSelect(this.files)">
     <div class="dz-icon">📄🖼️</div>
     <span class="dz-label">画像 または HTMLファイルを選択 / ドロップ</span>
-    <span class="dz-hint">JPG · PNG · GIF · WEBP · HTML　複数選択可</span>
+    <span class="dz-hint">JPG · PNG · GIF · WEBP · HTML（ゲームのHTMLもOK）　複数選択可</span>
   </div>
   <div class="preview-grid" id="previewGrid"></div>
   <label class="carousel-toggle" id="carouselToggleWrap" style="display:none;">
     <input type="checkbox" id="carouselToggle">
     <span>選んだ画像を1枚のカードにまとめる（カルーセル）</span>
   </label>
-  <label class="field-label" for="linkUrl">リンク先URL（任意）</label>
+  <label class="field-label" for="linkUrl">リンク先URL（任意・ゲーム以外のHTML/画像カード用）</label>
   <input class="field-input" id="linkUrl" type="url" placeholder="https://note.com/...">
+  <div id="gameCarouselSection" style="display:none;margin-bottom:16px;padding:16px;border:1.5px dashed var(--border);border-radius:12px;">
+    <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;color:var(--ink-soft);margin-bottom:12px;">🎮 ゲームカルーセル</div>
+    <div id="gameNameInputs"></div>
+  </div>
   <button class="btn-add" id="addBtn" onclick="addCards()" disabled>追加する</button>
 </div>
 
+<div class="fullscreen-overlay" id="fullscreenOverlay">
+  <div class="fullscreen-topbar">
+    <button class="close-btn" id="closeFullscreenBtn">✕</button>
+  </div>
+  <div class="fullscreen-frame-wrap" id="fullscreenFrameWrap"></div>
+  <div class="tap-to-start" id="tapToStart">
+    <div class="tap-to-start-circle">TAP TO<br>START</div>
+  </div>
+</div>
+
 <script>
+// Used for: (1) the fixed preview-card aspect ratio in the card list, and
+// (2) the initial iframe size for the static download snapshot's markup
+// (a real value is needed there since it has no live JS measurement pass
+// before first paint), and (3) fullscreen play, so the game is always
+// shown at the same aspect ratio regardless of device screen height.
+const CARD_ASPECT_W = 320;
+const CARD_ASPECT_H = 591;
+const GAME_CONTENT_HEIGHT = 586; // invader/breakerの実寸(5ゲーム中もっとも一般的な高さ)。幅に関わらずこの高さで固定する。
+
 // ── IndexedDB (Base64ストレージ) ──────────────
-const DB_NAME = 'asobiva_content_asobiva_b64';
+const DB_NAME = 'asobiva_games_b64_fluid';
 let db;
 
 function openDB() {
@@ -846,7 +957,13 @@ function openDB() {
         if (!d.objectStoreNames.contains('banners'))
           d.createObjectStore('banners', { keyPath: 'slot' });
       };
-      req.onsuccess = e => { db = e.target.result; res(); };
+      req.onsuccess = e => {
+        db = e.target.result;
+        // 長時間放置などで接続が切れた場合、次回のdbOpで再接続させる
+        db.onclose = () => { db = null; };
+        db.onversionchange = () => { try { db.close(); } catch {} db = null; };
+        res();
+      };
       req.onerror = () => { db = null; res(); };
     } catch (err) {
       db = null;
@@ -855,29 +972,43 @@ function openDB() {
   });
 }
 
-function dbOp(store, mode, fn) {
+async function dbOp(store, mode, fn) {
   if (!db) {
-    // IndexedDB unavailable (e.g. sandboxed preview) — no-op storage
-    return Promise.resolve(mode === 'readonly' && store === 'cards' ? [] : undefined);
+    await openDB();
   }
-  return new Promise((res, rej) => {
-    const req = fn(db.transaction(store, mode).objectStore(store));
-    req.onsuccess = e => res(e.target.result);
-    req.onerror = e => rej(e);
-  });
+  if (!db) {
+    return mode === 'readonly' && store === 'cards' ? [] : undefined;
+  }
+  try {
+    return await new Promise((res, rej) => {
+      const req = fn(db.transaction(store, mode).objectStore(store));
+      req.onsuccess = e => res(e.target.result);
+      req.onerror = e => rej(e);
+    });
+  } catch (err) {
+    // 接続が切れていた場合、再接続して1回だけリトライ
+    db = null;
+    await openDB();
+    if (!db) {
+      return mode === 'readonly' && store === 'cards' ? [] : undefined;
+    }
+    return new Promise((res, rej) => {
+      const req = fn(db.transaction(store, mode).objectStore(store));
+      req.onsuccess = e => res(e.target.result);
+      req.onerror = e => rej(e);
+    });
+  }
 }
 
-// ── ファイル → Base64 変換 ────────────────────
+// ── ファイル → Base64 / テキスト変換 ──────────
 function fileToBase64(file) {
   return new Promise((res, rej) => {
     const reader = new FileReader();
-    reader.onload = e => res(e.target.result); // "data:image/jpeg;base64,..."
+    reader.onload = e => res(e.target.result);
     reader.onerror = rej;
     reader.readAsDataURL(file);
   });
 }
-
-// ── ファイル → テキスト変換（HTML用） ──────────
 function fileToText(file) {
   return new Promise((res, rej) => {
     const reader = new FileReader();
@@ -887,7 +1018,14 @@ function fileToText(file) {
   });
 }
 
-// ── iframe高さ自動調整 ─────────────────────────
+// ── HTML種別の判定: ゲーム用HTML か 通常HTML か ──
+// ゲーム本体には目印として window.ASOBIVA_GAME = true; を含める想定。
+// 含まれていない通常のHTML（記事・ツール等）は従来通りの html-card として扱う。
+function isGameHtml(html) {
+  return /ASOBIVA_GAME\s*=\s*true/.test(html) || /id=["']demoBadge["']/.test(html);
+}
+
+// ── iframe高さ自動調整（通常HTMLカード用） ─────
 function injectAutoResize(html) {
   const script = `
 <scr` + `ipt>
@@ -913,7 +1051,7 @@ function injectAutoResize(html) {
   return html + script;
 }
 
-// ── iframeリサイズメッセージ受信 ───────────────
+// ── iframeリサイズメッセージ受信（通常HTMLカード用） ──
 window.addEventListener('message', e => {
   if (e.data && e.data.type === 'asobiva-resize') {
     document.querySelectorAll('.html-card iframe').forEach(f => {
@@ -925,8 +1063,8 @@ window.addEventListener('message', e => {
 });
 
 // ── State ─────────────────────────────────────
-let cards = [];       // [{ id, type: 'image'|'html'|'carousel', html?, base64?, images?, name?, link }]
-let banners = { 1: null }; // base64 strings
+let cards = [];       // [{ id, type: 'image'|'html'|'carousel'|'game', html?, base64?, images?, name?, link }]
+let banners = { 1: null };
 let pendingFiles = [];
 let adminMode = false;
 
@@ -935,9 +1073,10 @@ async function init() {
   try {
     setLoadingBar(10);
     await openDB();
+
   // 編集用保存データの読み込み
-  if (window.__ASOBIVA_INIT__) {
-    const d = window.__ASOBIVA_INIT__;
+  if (window.__GAMES_INIT__) {
+    const d = window.__GAMES_INIT__;
     if (d.banners) {
       for (const [slot, val] of Object.entries(d.banners)) {
         if (val) { try { await dbOp('banners', 'readwrite', s => s.put({ slot: parseInt(slot), base64: val })); } catch {} }
@@ -949,29 +1088,19 @@ async function init() {
         try { await dbOp('cards', 'readwrite', s => s.put(c)); } catch {}
       }
     }
-    // フッター情報を復元
-    if (d.footerText) {
-      await dbOp('banners', 'readwrite', s => s.put({ slot: 99, footerText: data.footerText }));
-    }
-    if (d.footerNoGap !== undefined) {
-      await dbOp('banners', 'readwrite', s => s.put({ slot: 98, footerNoGap: data.footerNoGap }));
-    }
     if (d.navItems) {
       try { saveNavItems(d.navItems); } catch {}
     }
-    window.__ASOBIVA_INIT__ = null;
+    window.__GAMES_INIT__ = null;
   }
-
     setLoadingBar(30);
 
-    // banner (single header)
     try {
       const row = await dbOp('banners', 'readonly', s => s.get(1));
       if (row?.base64) { banners[1] = row.base64; applyBanner(1, row.base64); }
     } catch {}
     setLoadingBar(60);
 
-    // cards
     const rows = await dbOp('cards', 'readonly', s => s.getAll());
     cards = (rows || []).map(r => ({
       id: r.id,
@@ -981,21 +1110,24 @@ async function init() {
       images: r.images,
       name: r.name || '',
       link: r.link || '',
-      gap: r.gap !== undefined ? r.gap : true,
-      order: (r.order ?? r.id)
+      gap: r.gap !== false,
+      htmls: r.htmls,
+      names: r.names,
+      ytId: r.ytId,
+      title: r.title || '',
+      thumbB64: r.thumbB64 || null,
+      musicUrl: r.musicUrl || '',
+      artist: r.artist || '',
     }));
-    cards.sort((a, b) => a.order - b.order);
     setLoadingBar(100);
   } catch (err) {
     console.error('init error:', err);
   }
 
   setTimeout(() => {
-    document.getElementById('loading').style.display = 'none';
-    render();
     renderNavLinks();
-    loadFooterText();
-    loadFooterGap();
+  document.getElementById('loading').style.display = 'none';
+    render();
   }, 200);
 }
 
@@ -1007,7 +1139,6 @@ function setLoadingBar(pct) {
 function triggerBanner(slot) {
   document.getElementById('bannerFile' + slot).click();
 }
-
 async function onBannerFile(slot, input) {
   const f = input.files[0];
   if (!f) return;
@@ -1016,7 +1147,6 @@ async function onBannerFile(slot, input) {
   banners[slot] = base64;
   applyBanner(slot, base64);
 }
-
 function applyBanner(slot, base64) {
   const el = document.getElementById('banner' + slot);
   el.querySelector('.slot-label')?.remove();
@@ -1046,18 +1176,50 @@ function render() {
   if (cards.length === 0 && !adminMode) {
     const sec = document.createElement('div');
     sec.className = 'empty-section';
-    sec.innerHTML = '<div class="empty-state"><strong>まだカードがありません</strong>右上の「管理」から追加できます</div>';
+    sec.innerHTML = '<div class="empty-state"><strong>まだゲーム／カードがありません</strong>右上の「管理」から追加できます</div>';
     container.appendChild(sec);
   }
 
+  const gameFramesToScale = []; // [{frameWrap, iframe}] — scaled after full DOM attachment below
+
   cards.forEach((c, idx) => {
     const sec = document.createElement('div');
-    const gapClass = c.gap === false || c.gap === 'nogap' ? ' no-gap' : c.gap === 'line' ? ' line-gap' : c.gap === 'dot' ? ' dot-gap' : '';
-    sec.className = 'card-section' + gapClass;
+    sec.className = 'card-section' + (c.gap === false ? ' no-gap' : '');
 
     let wrap, replaceAccept, supportsReplace = true;
 
-    if (c.type === 'image') {
+    if (c.type === 'game') {
+      wrap = document.createElement('div');
+      wrap.className = 'game-card';
+
+      const frameWrap = document.createElement('div');
+      frameWrap.className = 'game-card-frame-wrap';
+
+      const iframe = document.createElement('iframe');
+      iframe.srcdoc = c.html;
+      iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin');
+      // Sized directly to the card's real display width/height — no CSS
+      // transform:scale or zoom involved. The games use 100vw/100vh
+      // internally, so setting the iframe's actual box to the target size
+      // makes the game render at exactly that size on its own. This avoids
+      // an entire class of bugs where a transform/zoom-based shrink and a
+      // separately-calculated wrapper height could fall out of sync
+      // (confirmed to happen on iOS Safari even when correct on desktop).
+      frameWrap.appendChild(iframe);
+
+      const tapCatcher = document.createElement('div');
+      tapCatcher.className = 'game-card-tap';
+      tapCatcher.addEventListener('click', () => {
+        if (adminMode) return;
+        openFullscreenGame(c.html);
+      });
+      frameWrap.appendChild(tapCatcher);
+
+      wrap.appendChild(frameWrap);
+      gameFramesToScale.push({ frameWrap, iframe });
+
+      replaceAccept = '.html,text/html';
+    } else if (c.type === 'image') {
       wrap = document.createElement('a');
       wrap.className = 'card';
       wrap.href = adminMode ? '#' : (c.link || '#');
@@ -1070,6 +1232,70 @@ function render() {
       img.loading = 'lazy';
       wrap.appendChild(img);
       replaceAccept = 'image/*,text/html,.html';
+    } else if (c.type === 'game-carousel') {
+      wrap = document.createElement('div');
+      wrap.className = 'game-carousel-card';
+      wrap.dataset.index = '0';
+
+      // ゲームフレーム
+      const frameWrap = document.createElement('div');
+      frameWrap.className = 'game-card-frame-wrap';
+
+      const iframe = document.createElement('iframe');
+      iframe.srcdoc = c.htmls[0];
+      iframe.sandbox = 'allow-scripts allow-same-origin';
+      iframe.style.cssText = 'border:none;display:block;pointer-events:none;';
+      frameWrap.appendChild(iframe);
+      sizeGameIframeToCard(frameWrap, iframe);
+
+      const tapCatcher = document.createElement('div');
+      tapCatcher.className = 'game-card-tap';
+      tapCatcher.onclick = () => openFullscreenGame(c.htmls[0]);
+      frameWrap.appendChild(tapCatcher);
+      wrap.appendChild(frameWrap);
+
+      // フッター（ナビ）
+      const footer = document.createElement('div');
+      footer.className = 'game-carousel-footer';
+
+      const prevBtn = document.createElement('button');
+      prevBtn.className = 'game-carousel-nav';
+      prevBtn.textContent = '‹';
+
+      const titleSpan = document.createElement('span');
+      titleSpan.className = 'game-carousel-title';
+      titleSpan.textContent = (c.names?.[0] || '') + (c.htmls.length > 1 ? `　1 / ${c.htmls.length}` : '');
+
+      const nextBtn = document.createElement('button');
+      nextBtn.className = 'game-carousel-nav';
+      nextBtn.textContent = '›';
+
+      footer.appendChild(prevBtn);
+      footer.appendChild(titleSpan);
+      footer.appendChild(nextBtn);
+      wrap.appendChild(footer);
+
+      function updateGame(idx) {
+        wrap.dataset.index = String(idx);
+        iframe.srcdoc = c.htmls[idx];
+        sizeGameIframeToCard(frameWrap, iframe);
+        tapCatcher.onclick = () => openFullscreenGame(c.htmls[idx]);
+        titleSpan.textContent = (c.names?.[idx] || '') + (c.htmls.length > 1 ? `　${idx + 1} / ${c.htmls.length}` : '');
+      }
+
+      prevBtn.addEventListener('click', e => {
+        e.preventDefault(); e.stopPropagation();
+        const idx = (parseInt(wrap.dataset.index, 10) - 1 + c.htmls.length) % c.htmls.length;
+        updateGame(idx);
+      });
+      nextBtn.addEventListener('click', e => {
+        e.preventDefault(); e.stopPropagation();
+        const idx = (parseInt(wrap.dataset.index, 10) + 1) % c.htmls.length;
+        updateGame(idx);
+      });
+
+      supportsReplace = false;
+
     } else if (c.type === 'carousel') {
       wrap = document.createElement('div');
       wrap.className = 'carousel-card';
@@ -1084,9 +1310,9 @@ function render() {
       if (c.images.length > 1) {
         const dots = document.createElement('div');
         dots.className = 'carousel-dots';
-        c.images.forEach((_, i) => {
+        c.images.forEach((_, idx) => {
           const dot = document.createElement('span');
-          if (i === 0) dot.classList.add('active');
+          if (idx === 0) dot.classList.add('active');
           dots.appendChild(dot);
         });
         wrap.appendChild(dots);
@@ -1097,7 +1323,7 @@ function render() {
         wrap.appendChild(count);
 
         wrap.addEventListener('click', e => {
-          if (adminMode) return; // avoid conflicting with admin controls
+          if (adminMode) return;
           e.preventDefault();
           let idx = (parseInt(wrap.dataset.index, 10) + 1) % c.images.length;
           wrap.dataset.index = String(idx);
@@ -1108,6 +1334,7 @@ function render() {
       }
       supportsReplace = false;
     } else {
+      // plain html-card (non-game HTML content, e.g. articles/tools)
       wrap = document.createElement('div');
       wrap.className = 'html-card';
 
@@ -1181,36 +1408,34 @@ function render() {
       e.preventDefault(); e.stopPropagation();
       deleteCard(c.id);
     });
-
-    const gapBtn = document.createElement('button');
-    gapBtn.className = 'card-gap-btn';
-    const gapLabels = { true: '隙間あり', false: '隙間なし', nogap: '隙間なし', line: 'ライン', dot: '点線' };
-    gapBtn.textContent = gapLabels[c.gap] ?? '隙間あり';
-    gapBtn.addEventListener('click', e => {
-      e.preventDefault(); e.stopPropagation();
-      toggleGap(c.id);
-    });
     const moveWrap = document.createElement('div');
     moveWrap.className = 'card-move';
     const upBtn = document.createElement('button');
-    upBtn.textContent = '↑'; upBtn.title = '上へ移動';
+    upBtn.textContent = '↑';
     upBtn.disabled = idx === 0;
     upBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); moveCard(idx, idx - 1); });
     const downBtn = document.createElement('button');
-    downBtn.textContent = '↓'; downBtn.title = '下へ移動';
+    downBtn.textContent = '↓';
     downBtn.disabled = idx === cards.length - 1;
     downBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); moveCard(idx, idx + 1); });
     moveWrap.appendChild(upBtn);
     moveWrap.appendChild(downBtn);
+    wrap.appendChild(moveWrap);
 
-    if (c.type !== 'carousel') wrap.appendChild(linkBtn);
+    const gapBtn = document.createElement('button');
+    gapBtn.className = 'card-gap-btn';
+    gapBtn.textContent = c.gap === false ? '隙間なし' : '隙間あり';
+    gapBtn.addEventListener('click', e => {
+      e.preventDefault(); e.stopPropagation();
+      toggleGap(c.id);
+    });
+    if (!['game','game-carousel','carousel'].includes(c.type)) wrap.appendChild(linkBtn);
     if (supportsReplace) {
       wrap.appendChild(replaceBtn);
       wrap.appendChild(replaceInput);
     }
     wrap.appendChild(delBtn);
     wrap.appendChild(gapBtn);
-    wrap.appendChild(moveWrap);
     sec.appendChild(wrap);
     container.appendChild(sec);
   });
@@ -1225,22 +1450,159 @@ function render() {
     addSec.appendChild(btn);
     container.appendChild(addSec);
   }
+
+  // now that every card is attached to the live DOM, frameWrap has a real
+  // clientWidth — safe to compute and apply the scale transform here
+  gameFramesToScale.forEach(({ frameWrap, iframe }) => sizeGameIframeToCard(frameWrap, iframe));
 }
+
+// ── ゲームカード用: 直接サイズ指定 ────────────────
+// 3つのゲームはいずれも内部で `width:100vw; height:100vh;` を使っているため、
+// iframe の実際の width/height 属性をカードの表示サイズに直接合わせるだけで、
+// ゲーム自身がそのサイズにフィットして描画される。
+// transform:scale や zoom のような「後から縮小する」処理を使うと、縮小後の
+// 見た目とラッパーの高さを JS で別々に計算・同期する必要が生じ、その同期が
+// 実機(iOS Safari)でズレることが確認されたため、この方式に統一した。
+// CARD_ASPECT_W/H は上部で定義済み（プレビューカードの固定縦横比）。
+
+const CARD_SCALE = 0.6; // カード表示は常にこの倍率で固定縮小(iframeの実サイズを縮小)
+const FLUID_RATIO = 584 / 320; // fluid版ゲームの基準比率(320px幅の時の高さ584px)
+
+function sizeGameIframeToCard(frameWrap, iframe) {
+  const apply = () => {
+    const w = frameWrap.clientWidth || frameWrap.parentElement?.clientWidth || 0;
+    if (!w) return;
+    const scaledW = Math.round(w * CARD_SCALE);
+    const scaledH = Math.round(scaledW * FLUID_RATIO) + 4;
+    iframe.style.transform = '';
+    iframe.style.zoom = '';
+    iframe.style.width = scaledW + 'px';
+    iframe.style.height = scaledH + 'px';
+    iframe.style.display = 'block';
+    iframe.style.borderRadius = '12px';
+    iframe.style.margin = '40px auto';
+  };
+  apply();
+  requestAnimationFrame(apply);
+  setTimeout(apply, 150);
+  setTimeout(apply, 500);
+}
+
+// ── フルスクリーン再生 ──────────────────────────
+// 画面いっぱいに引き伸ばさず、90%のサイズで表示し、余った分を
+// frameWrapのcenter配置で上下左右均等に配置する。
+const FULLSCREEN_SCALE = 0.9;
+let _fullscreenResizeHandler = null;
+
+function sizeFullscreenIframe(frameWrap, iframe) {
+  const apply = () => {
+    const maxW = frameWrap.clientWidth || window.innerWidth;
+    if (!maxW) return;
+    iframe.style.zoom = '';
+    iframe.style.transform = '';
+    iframe.style.width = maxW + 'px';
+    iframe.style.height = Math.round(maxW * FLUID_RATIO) + 'px';
+  };
+  apply();
+  requestAnimationFrame(apply);
+  setTimeout(apply, 150);
+  if (_fullscreenResizeHandler) window.removeEventListener('resize', _fullscreenResizeHandler);
+  _fullscreenResizeHandler = apply;
+  window.addEventListener('resize', apply);
+}
+
+function openFullscreenGame(html) {
+  const overlay = document.getElementById('fullscreenOverlay');
+  const frameWrap = document.getElementById('fullscreenFrameWrap');
+  frameWrap.innerHTML = '';
+
+  const iframe = document.createElement('iframe');
+  iframe.srcdoc = html;
+  iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin');
+  frameWrap.appendChild(iframe);
+  sizeFullscreenIframe(frameWrap, iframe);
+
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.body.style.position = 'fixed';
+  document.body.style.width = '100%';
+  document.body.dataset.scrollY = String(window.scrollY);
+  document.body.style.top = '-' + window.scrollY + 'px';
+
+  // GW版ゲームかどうか判別してTAP TO STARTのスタイルを切り替え
+  const circle = document.querySelector('.tap-to-start-circle');
+  const isGW = html.includes('#8fa888');
+  if (isGW) {
+    circle.style.border = '2px solid #1a2a1a';
+    circle.style.background = '#8fa888';
+    circle.style.color = '#1a2a1a';
+    circle.style.boxShadow = 'none';
+    circle.style.textShadow = 'none';
+    circle.style.animation = 'none';
+  } else {
+    circle.style.border = '2px solid #39ff7a';
+    circle.style.background = 'rgba(10,10,18,0.85)';
+    circle.style.color = '#39ff7a';
+    circle.style.boxShadow = '0 0 22px rgba(57,255,122,0.35)';
+    circle.style.textShadow = '0 0 8px #39ff7a';
+    circle.style.animation = 'pulseRing 1.6s ease-in-out infinite';
+  }
+
+  const tapToStart = document.getElementById('tapToStart');
+  tapToStart.classList.add('show');
+}
+
+function dismissTapToStart() {
+  const tapToStart = document.getElementById('tapToStart');
+  tapToStart.classList.remove('show');
+  const iframe = document.querySelector('#fullscreenFrameWrap iframe');
+  if (!iframe || !iframe.contentWindow) return;
+
+  // Primary path: call the game's own exitDemoIfActive() directly via
+  // contentWindow. This is more reliable than postMessage for srcdoc
+  // iframes, where some browsers (notably iOS Safari) can be inconsistent
+  // about delivering cross-frame messages.
+  try {
+    if (typeof iframe.contentWindow.exitDemoIfActive === 'function') {
+      iframe.contentWindow.exitDemoIfActive();
+    } else {
+      throw new Error('exitDemoIfActive not found on contentWindow');
+    }
+  } catch (err) {
+    // Fallback: postMessage, in case direct access is blocked for any reason
+    console.warn('direct call failed, falling back to postMessage', err);
+    iframe.contentWindow.postMessage({ type: 'asobiva-start-play' }, '*');
+  }
+}
+document.getElementById('tapToStart').addEventListener('click', dismissTapToStart);
+
+function closeFullscreenGame() {
+  const overlay = document.getElementById('fullscreenOverlay');
+  const frameWrap = document.getElementById('fullscreenFrameWrap');
+  overlay.classList.remove('open');
+  frameWrap.innerHTML = '';
+  document.getElementById('tapToStart').classList.remove('show');
+  const y = parseInt(document.body.dataset.scrollY || '0', 10);
+  document.body.style.overflow = '';
+  document.body.style.position = '';
+  document.body.style.width = '';
+  document.body.style.top = '';
+  window.scrollTo(0, y);
+}
+document.getElementById('closeFullscreenBtn').addEventListener('click', closeFullscreenGame);
 
 // ── Admin ─────────────────────────────────────
 // ── Burger menu ───────────────────────────────
 function toggleBurgerMenu() {
   document.getElementById('burgerMenu').classList.toggle('open');
 }
-
 function closeBurgerMenu() {
   document.getElementById('burgerMenu').classList.remove('open');
 }
-
 document.addEventListener('click', e => {
   const menu = document.getElementById('burgerMenu');
   const btn = document.getElementById('burgerBtn');
-  if (menu && !menu.contains(e.target) && !btn.contains(e.target)) {
+  if (menu && !menu.contains(e.target) && btn && !btn.contains(e.target)) {
     menu.classList.remove('open');
   }
 });
@@ -1252,10 +1614,7 @@ function loadNavItems() {
   try { return JSON.parse(localStorage.getItem(NAV_KEY)) || []; }
   catch { return []; }
 }
-
-function saveNavItems(items) {
-  localStorage.setItem(NAV_KEY, JSON.stringify(items));
-}
+function saveNavItems(items) { localStorage.setItem(NAV_KEY, JSON.stringify(items)); }
 
 function renderNavLinks() {
   const items = loadNavItems();
@@ -1276,14 +1635,12 @@ function openNavEditor() {
   document.getElementById('navEditorOverlay').classList.add('open');
   document.getElementById('navEditorPanel').classList.add('open');
 }
-
 function closeNavEditor() {
   document.getElementById('navEditorOverlay').classList.remove('open');
   document.getElementById('navEditorPanel').classList.remove('open');
   document.getElementById('navLabelInput').value = '';
   document.getElementById('navUrlInput').value = '';
 }
-
 function renderNavEditorList() {
   const items = loadNavItems();
   const list = document.getElementById('navEditorList');
@@ -1307,7 +1664,6 @@ function renderNavEditorList() {
     list.appendChild(row);
   });
 }
-
 function addNavItem() {
   const label = document.getElementById('navLabelInput').value.trim();
   const url = document.getElementById('navUrlInput').value.trim();
@@ -1320,7 +1676,6 @@ function addNavItem() {
   renderNavEditorList();
   renderNavLinks();
 }
-
 function deleteNavItem(i) {
   const items = loadNavItems();
   items.splice(i, 1);
@@ -1328,7 +1683,6 @@ function deleteNavItem(i) {
   renderNavEditorList();
   renderNavLinks();
 }
-
 function moveNavItem(i, dir) {
   const items = loadNavItems();
   const j = i + dir;
@@ -1440,13 +1794,11 @@ function openPanel() {
   document.getElementById('overlay').classList.add('open');
   document.getElementById('panel').classList.add('open');
 }
-
 function closePanel() {
   document.getElementById('overlay').classList.remove('open');
   document.getElementById('panel').classList.remove('open');
   resetForm();
 }
-
 function resetForm() {
   pendingFiles = [];
   document.getElementById('fileInput').value = '';
@@ -1461,14 +1813,12 @@ function resetForm() {
 function isHtmlFile(f) {
   return f.type === 'text/html' || f.name.toLowerCase().endsWith('.html') || f.name.toLowerCase().endsWith('.htm');
 }
-
 function onFileSelect(files) {
   for (const f of files) {
     if (isHtmlFile(f) || f.type.startsWith('image/')) pendingFiles.push(f);
   }
   renderPreviews();
 }
-
 function renderPreviews() {
   const grid = document.getElementById('previewGrid');
   grid.innerHTML = '';
@@ -1497,25 +1847,54 @@ function renderPreviews() {
   });
   document.getElementById('addBtn').disabled = pendingFiles.length === 0;
 
-  // carousel toggle visibility: only when 2+ images and no HTML files mixed in
   const imgCount = pendingFiles.filter(f => !isHtmlFile(f)).length;
   const htmlCount = pendingFiles.filter(isHtmlFile).length;
   const toggleWrap = document.getElementById('carouselToggleWrap');
+  const gameCarouselSection = document.getElementById('gameCarouselSection');
   if (imgCount >= 2 && htmlCount === 0) {
     toggleWrap.style.display = 'flex';
+    gameCarouselSection.style.display = 'none';
+  } else if (htmlCount >= 2 && imgCount === 0) {
+    toggleWrap.style.display = 'none';
+    document.getElementById('carouselToggle').checked = false;
+    gameCarouselSection.style.display = 'block';
+    renderGameNameInputs();
   } else {
     toggleWrap.style.display = 'none';
     document.getElementById('carouselToggle').checked = false;
+    gameCarouselSection.style.display = 'none';
   }
 }
 
-// drag & drop
 const dz = document.getElementById('dropZone');
 dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
 dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
 dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag-over'); onFileSelect(e.dataTransfer.files); });
 
 // ── Add cards ─────────────────────────────────
+function renderGameNameInputs() {
+  const htmlFiles = pendingFiles.filter(isHtmlFile);
+  const container = document.getElementById('gameNameInputs');
+  if (!container) return;
+  container.innerHTML = '';
+  htmlFiles.forEach((f, i) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:8px;';
+    const label = document.createElement('span');
+    label.style.cssText = 'font-size:11px;color:var(--ink-soft);flex-shrink:0;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+    label.textContent = f.name;
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'field-input';
+    input.placeholder = 'ゲーム名';
+    input.style.cssText = 'margin:0;flex:1;padding:8px 10px;font-size:13px;';
+    input.id = `gameName_${i}`;
+    row.appendChild(label);
+    row.appendChild(input);
+    container.appendChild(row);
+  });
+}
+
 async function addCards() {
   const link = document.getElementById('linkUrl').value.trim();
   const isCarousel = document.getElementById('carouselToggle').checked;
@@ -1523,10 +1902,22 @@ async function addCards() {
   btn.disabled = true;
   btn.textContent = '保存中…';
 
-  if (isCarousel) {
-    const images = pendingFiles.filter(f => !isHtmlFile(f));
+  const htmlFiles = pendingFiles.filter(isHtmlFile);
+  const imgFiles = pendingFiles.filter(f => !isHtmlFile(f));
+
+  if (htmlFiles.length >= 2 && imgFiles.length === 0) {
+    // ゲームカルーセル
+    const htmlTexts = [];
+    for (const f of htmlFiles) htmlTexts.push(await fileToText(f));
+    const names = htmlFiles.map((f, i) => {
+      const input = document.getElementById(`gameName_${i}`);
+      return input?.value.trim() || f.name;
+    });
+    const id = await dbOp('cards', 'readwrite', s => s.add({ type: 'game-carousel', htmls: htmlTexts, names, link: '', gap: true }));
+    cards.push({ id, type: 'game-carousel', htmls: htmlTexts, names, link: '', gap: true });
+  } else if (isCarousel) {
     const images64 = [];
-    for (const f of images) images64.push(await fileToBase64(f));
+    for (const f of imgFiles) images64.push(await fileToBase64(f));
     const id = await dbOp('cards', 'readwrite', s => s.add({ type: 'carousel', images: images64, link: '' }));
     cards.push({ id, type: 'carousel', images: images64, link: '' });
   } else {
@@ -1534,8 +1925,13 @@ async function addCards() {
       if (isHtmlFile(f)) {
         const html = await fileToText(f);
         const name = f.name;
-        const id = await dbOp('cards', 'readwrite', s => s.add({ type: 'html', html, name, link }));
-        cards.push({ id, type: 'html', html, name, link });
+        if (isGameHtml(html)) {
+          const id = await dbOp('cards', 'readwrite', s => s.add({ type: 'game', html, name, link: '' }));
+          cards.push({ id, type: 'game', html, name, link: '' });
+        } else {
+          const id = await dbOp('cards', 'readwrite', s => s.add({ type: 'html', html, name, link }));
+          cards.push({ id, type: 'html', html, name, link });
+        }
       } else {
         const base64 = await fileToBase64(f);
         const id = await dbOp('cards', 'readwrite', s => s.add({ type: 'image', base64, link }));
@@ -1551,18 +1947,24 @@ async function addCards() {
 
 // ── Replace ───────────────────────────────────
 async function replaceCard(id, file) {
-  const link = cards.find(c => c.id === id)?.link || '';
+  const existing = cards.find(c => c.id === id);
+  const link = existing?.link || '';
   const i = cards.findIndex(c => c.id === id);
 
   if (isHtmlFile(file)) {
     const html = await fileToText(file);
     const name = file.name;
-    await dbOp('cards', 'readwrite', s => s.put({ id, type: 'html', html, name, link }));
-    if (i !== -1) { cards[i] = { id, type: 'html', html, name, link }; }
+    if (isGameHtml(html)) {
+      await dbOp('cards', 'readwrite', s => s.put({ id, type: 'game', html, name, link: '' }));
+      if (i !== -1) cards[i] = { id, type: 'game', html, name, link: '' };
+    } else {
+      await dbOp('cards', 'readwrite', s => s.put({ id, type: 'html', html, name, link }));
+      if (i !== -1) cards[i] = { id, type: 'html', html, name, link };
+    }
   } else {
     const base64 = await fileToBase64(file);
     await dbOp('cards', 'readwrite', s => s.put({ id, type: 'image', base64, link }));
-    if (i !== -1) { cards[i] = { id, type: 'image', base64, link }; }
+    if (i !== -1) cards[i] = { id, type: 'image', base64, link };
   }
   render();
 }
@@ -1577,28 +1979,24 @@ async function toggleGap(id) {
   else c.gap = true;
   await dbOp('cards', 'readwrite', s => s.put({
     id: c.id, type: c.type, html: c.html, base64: c.base64,
-    images: c.images, name: c.name, link: c.link, gap: c.gap, order: c.order
+    images: c.images, name: c.name, link: c.link, gap: c.gap
   }));
   render();
 }
 
-// ── Move ─────────────────────────────────────
+// ── Delete ────────────────────────────────────
 async function moveCard(fromIdx, toIdx) {
   if (toIdx < 0 || toIdx >= cards.length) return;
   const tmp = cards[fromIdx];
   cards[fromIdx] = cards[toIdx];
   cards[toIdx] = tmp;
   cards.forEach((c, i) => { c.order = i + 1; });
-  for (const c of cards) {
-    await dbOp('cards', 'readwrite', s => s.put({
-      id: c.id, type: c.type, html: c.html, base64: c.base64,
-      images: c.images, name: c.name, link: c.link, gap: c.gap, order: c.order
-    }));
+  for (const card of cards) {
+    try { await dbOp('cards', 'readwrite', s => s.put({ ...card })); } catch {}
   }
   render();
 }
 
-// ── Delete ────────────────────────────────────
 async function deleteCard(id) {
   await dbOp('cards', 'readwrite', s => s.delete(id));
   const i = cards.findIndex(c => c.id === id);
@@ -1606,25 +2004,22 @@ async function deleteCard(id) {
   render();
 }
 
-// ── 編集用HTMLとして保存（データ埋め込み） ─────────
+// ── HTMLとして保存（静的スナップショット） ─────────
 function downloadEditHTML() {
   const source = document.documentElement.outerHTML.replace(' class="admin-mode"', '').replace(' admin-mode', '');
-  let footerTextVal = document.getElementById('footerText')?.textContent || '';
-  let footerNoGapVal = document.getElementById('footerSection')?.classList.contains('no-gap') || false;
-  const initData = { banners: banners, cards: cards, footerText: footerTextVal, footerNoGap: footerNoGapVal, navItems: loadNavItems() };
-  const initScript = `<scr` + `ipt>window.__ASOBIVA_INIT__ = ${JSON.stringify(initData).split('\n').join(' ').split('\r').join(' ').split('\t').join(' ')};</scr` + `ipt>`;
-  const output = source.replace('</head>', initScript + '\n</head>');
+  const initData = { banners: banners, cards: cards, navItems: loadNavItems() };
+  const initScript = `<scr` + `ipt>window.__GAMES_INIT__ = ${JSON.stringify(initData).split('\n').join(' ').split('\r').join(' ').split('\t').join(' ').replace(/<\/script/gi, '<\\/script')};</scr` + `ipt>`;
+  const output = '<!DOCTYPE html>\n' + source.replace('</head>', initScript + '\n</head>');
   const blob = new Blob([output], { type: 'text/html;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   const ts = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
-  a.download = 'content_asobiva_e.html';
+  a.download = 'games_hub_fluid_e.html';
   document.body.appendChild(a);
   a.click();
   a.remove();
 }
 
-// ── HTMLとして保存（静的スナップショット） ─────────
 // ── 画像圧縮（公開用保存時のみ使用） ─────────────
 function compressImage(base64) {
   return new Promise((res) => {
@@ -1663,7 +2058,6 @@ async function handleDownloadClick() {
 }
 
 async function downloadHTML() {
-  // banner block (single header, 圧縮してから出力)
   let headerHTML;
   if (banners[1]) {
     const b64 = await compressImage(banners[1]);
@@ -1672,14 +2066,16 @@ async function downloadHTML() {
     headerHTML = `    <div class="banner-slot"><span class="slot-label">HEADER</span></div>\n`;
   }
 
-  // card blocks（画像のみ圧縮してから出力）
   let cardsHTML = '';
   if (cards.length === 0) {
-    cardsHTML = `  <div class="empty-section"><div class="empty-state"><strong>まだカードがありません</strong></div></div>\n`;
+    cardsHTML = `  <div class="empty-section"><div class="empty-state"><strong>まだゲーム／カードがありません</strong></div></div>\n`;
   } else {
     for (const c of cards) {
-      const gapClass = c.gap === false || c.gap === 'nogap' ? ' no-gap' : c.gap === 'line' ? ' line-gap' : c.gap === 'dot' ? ' dot-gap' : '';
-      if (c.type === 'image') {
+      const gapClass = c.gap === false ? ' no-gap' : '';
+      if (c.type === 'game') {
+        const escaped = c.html.replace(/"/g, '&quot;');
+        cardsHTML += `  <div class="card-section${gapClass}"><div class="game-card"><div class="game-card-frame-wrap"><iframe srcdoc="${escaped}" sandbox="allow-scripts allow-same-origin" width="${CARD_ASPECT_W}" height="${CARD_ASPECT_H}"></iframe><div class="game-card-tap" onclick="openFullscreenGameStatic(this)" data-html="${escaped}"></div></div></div></div>\n`;
+      } else if (c.type === 'image') {
         const compressedB64 = await compressImage(c.base64);
         const tag = c.link
           ? `<a class="card" href="${c.link}"${isExternalLink(c.link) ? ' target="_blank" rel="noopener"' : ''}><img src="${compressedB64}" alt=""></a>`
@@ -1704,7 +2100,7 @@ async function downloadHTML() {
 :root { --bg:#e0e0e0; --white:#ffffff; --ink:#1a1a1a; --ink-soft:#888; --border:#e0e0e0; }
 body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
 .wrap { max-width: 480px; margin: 0 auto; background: var(--bg); min-height: 100vh; }
-.site-header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:var(--white); border-bottom:1px solid var(--border); position:sticky; top:0; }
+.site-header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:var(--white); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; }
 .back-link { font-size:12px; font-weight:500; letter-spacing:0.04em; color:var(--ink-soft); text-decoration:none; }
 .header-pair { display:flex; flex-direction:column; background:var(--white); }
 .banner-slot { width:100%; min-height:80px; background:var(--white); display:flex; align-items:center; justify-content:center; }
@@ -1718,6 +2114,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: v
 .card img { width:100%; height:auto; display:block; }
 .html-card { display:block; width:100%; position:relative; background:var(--white); overflow:hidden; text-decoration:none; }
 .html-card iframe { display:block; width:100%; height:480px; border:none; background:var(--white); }
+.game-card { width:100%; position:relative; background:#ffffff; overflow:hidden; }
+.game-card-frame-wrap { width:100%; background:#ffffff; position:relative; overflow:hidden; line-height:0; }
+.game-card-frame-wrap iframe { display:block; border:none; pointer-events:none; }
+.game-card-tap { position:absolute; inset:0; z-index:3; cursor:pointer; }
 .carousel-card { width:100%; position:relative; background:var(--white); overflow:hidden; cursor:pointer; }
 .carousel-card img { width:100%; height:auto; display:block; }
 .carousel-dots { position:absolute; bottom:10px; left:0; right:0; display:flex; justify-content:center; gap:6px; pointer-events:none; }
@@ -1731,6 +2131,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: v
 .footer-section.no-gap { padding-top:0; }
 .footer-section.line-gap { padding-top:0; background:var(--white); border-top:1px solid var(--ink); }
 .footer-section.dot-gap { padding-top:0; background:var(--white); border-top:1px dashed rgba(0,0,0,0.2); }
+.footer-section.no-gap { padding-top:0; }
+.footer-section.line-gap { padding-top:0; background:var(--white); border-top:1px solid var(--ink); }
+.footer-section.dot-gap { padding-top:0; background:var(--white); border-top:1px dashed rgba(0,0,0,0.2); }
 .burger-btn { background:none; border:none; cursor:pointer; padding:4px; display:flex; flex-direction:column; gap:5px; align-items:flex-end; }
 .burger-btn span { display:block; height:1.5px; background:var(--ink); border-radius:1px; }
 .burger-btn span:nth-child(1) { width:20px; }
@@ -1741,13 +2144,19 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: v
 .nav-link-item { display:block; width:100%; padding:14px 20px; background:none; border:none; border-bottom:1px solid var(--border); font-size:13px; font-weight:500; color:var(--ink); cursor:pointer; text-align:left; text-decoration:none; }
 .nav-link-item:last-child { border-bottom:none; }
 footer { padding:16px; text-align:center; font-size:10px; letter-spacing:0.1em; color:var(--ink); background:var(--white); }
+.fullscreen-overlay { position:fixed; inset:0; background:#0a0a12; z-index:500; display:none; flex-direction:column; }
+.fullscreen-overlay.open { display:flex; }
+.fullscreen-topbar { flex-shrink:0; display:flex; justify-content:flex-end; padding:10px 12px; padding-top:max(10px, env(safe-area-inset-top)); background:#0a0a12; position:relative; z-index:20; }
+.close-btn { width:36px; height:36px; border-radius:50%; border:1px solid rgba(255,255,255,0.25); background:rgba(255,255,255,0.06); color:#fff; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.fullscreen-frame-wrap { flex:1; min-height:0; display:flex; align-items:center; justify-content:center; }
+.fullscreen-frame-wrap iframe { border:none; background:#0a0a12; }
+.tap-to-start { position:absolute; top:0; left:0; right:0; bottom:0; z-index:10; display:none; align-items:center; justify-content:center; background:rgba(10,10,18,0.35); cursor:pointer; }
+.tap-to-start.show { display:flex; }
+.tap-to-start-circle { width:132px; height:132px; border-radius:50%; border:2px solid #39ff7a; background:rgba(10,10,18,0.85); color:#39ff7a; font-size:15px; font-weight:700; letter-spacing:0.08em; line-height:1.5; text-align:center; display:flex; align-items:center; justify-content:center; text-shadow:0 0 8px #39ff7a; box-shadow:0 0 22px rgba(57,255,122,0.35); animation:pulseRing 1.6s ease-in-out infinite; }
+@keyframes pulseRing { 0%,100% { transform:scale(1); } 50% { transform:scale(1.06); } }
 `;
 
-
-  let navItems = [];
-  try { navItems = JSON.parse(localStorage.getItem('asobiva_nav_v1')) || []; } catch {}
-  const navLinksHTML = navItems.map(item => `<a class="nav-link-item" href="${item.url}">${item.label}</a>`).join('');
-  const footerText = document.getElementById('footerText')?.textContent || 'ASOBIVA — i.roiro';
+  const footerTextVal = document.getElementById('footerText')?.textContent || 'ASOBIVA — i.roiro';
   const footerSectionEl = document.getElementById('footerSection');
   const footerGapClass = footerSectionEl?.classList.contains('no-gap') ? ' no-gap'
     : footerSectionEl?.classList.contains('line-gap') ? ' line-gap'
@@ -1758,8 +2167,8 @@ footer { padding:16px; text-align:center; font-size:10px; letter-spacing:0.1em; 
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ASOBIVA — HTMLコンテンツ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ASOBIVA — GAMES</title>
 <style>${staticCSS}</style>
 </head>
 <body>
@@ -1776,9 +2185,16 @@ footer { padding:16px; text-align:center; font-size:10px; letter-spacing:0.1em; 
   <div class="header-pair">
 ${headerHTML}  </div>
 ${cardsHTML}  <div class="footer-section${footerGapClass}">
-    <footer>${footerText}</footer>
+    <footer>${footerTextVal}</footer>
   </div>
 </div>
+
+<div class="fullscreen-overlay" id="fullscreenOverlay">
+  <div class="fullscreen-topbar"><button class="close-btn" id="closeFullscreenBtn">✕</button></div>
+  <div class="fullscreen-frame-wrap" id="fullscreenFrameWrap"></div>
+  <div class="tap-to-start" id="tapToStart"><div class="tap-to-start-circle">TAP TO<br>START</div></div>
+</div>
+
 <scr` + `ipt>
 window.addEventListener('message', function(e){
   if (e.data && e.data.type === 'asobiva-resize') {
@@ -1797,6 +2213,120 @@ function cyclerCarousel(el){
   var count = el.querySelector('.carousel-count');
   if (count) count.textContent = (idx + 1) + ' / ' + images.length;
 }
+var CARD_ASPECT_W = 320;
+var CARD_ASPECT_H = 591;
+var GAME_CONTENT_HEIGHT = 586;
+var CARD_SCALE = 0.6;
+var FLUID_RATIO = 584 / 320;
+(function(){
+  function sizeFrame(wrap, iframe){
+    var w = wrap.clientWidth;
+    if (!w) return;
+    var scaledW = Math.round(w * CARD_SCALE);
+    var scaledH = Math.round(scaledW * FLUID_RATIO) + 4;
+    iframe.style.transform = '';
+    iframe.style.zoom = '';
+    iframe.style.width = scaledW + 'px';
+    iframe.style.height = scaledH + 'px';
+    iframe.style.display = 'block';
+    iframe.style.borderRadius = '12px';
+    iframe.style.margin = '40px auto';
+  }
+
+  function fitGameFrames(){
+    document.querySelectorAll('.game-card-frame-wrap').forEach(function(wrap){
+      var iframe = wrap.querySelector('iframe');
+      if (!iframe) return;
+      sizeFrame(wrap, iframe);
+    });
+  }
+
+  fitGameFrames();
+  document.addEventListener('DOMContentLoaded', fitGameFrames);
+  window.addEventListener('load', fitGameFrames);
+  window.addEventListener('resize', fitGameFrames);
+  // retry briefly in case layout wasn't ready on first pass
+  setTimeout(fitGameFrames, 100);
+  setTimeout(fitGameFrames, 400);
+})();
+var FULLSCREEN_SCALE = 0.9;
+var _fullscreenResizeHandlerStatic = null;
+function sizeFullscreenIframeStatic(frameWrap, iframe){
+  function apply(){
+    var maxW = frameWrap.clientWidth || window.innerWidth;
+    if (!maxW) return;
+    iframe.style.zoom = '';
+    iframe.style.transform = '';
+    iframe.style.width = maxW + 'px';
+    iframe.style.height = Math.round(maxW * FLUID_RATIO) + 'px';
+  }
+  apply();
+  requestAnimationFrame(apply);
+  setTimeout(apply, 150);
+  if (_fullscreenResizeHandlerStatic) window.removeEventListener('resize', _fullscreenResizeHandlerStatic);
+  _fullscreenResizeHandlerStatic = apply;
+  window.addEventListener('resize', apply);
+}
+function openFullscreenGameStatic(tapEl){
+  var html = tapEl.getAttribute('data-html');
+  var overlay = document.getElementById('fullscreenOverlay');
+  var frameWrap = document.getElementById('fullscreenFrameWrap');
+  frameWrap.innerHTML = '';
+  var iframe = document.createElement('iframe');
+  iframe.srcdoc = html;
+  iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin');
+  frameWrap.appendChild(iframe);
+  sizeFullscreenIframeStatic(frameWrap, iframe);
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.body.style.position = 'fixed';
+  document.body.style.width = '100%';
+  document.body.dataset.scrollY = String(window.scrollY);
+  document.body.style.top = '-' + window.scrollY + 'px';
+  var circle = document.querySelector('.tap-to-start-circle');
+  var isGW = html.indexOf('#8fa888') !== -1;
+  if (isGW) {
+    circle.style.border = '2px solid #1a2a1a';
+    circle.style.background = '#8fa888';
+    circle.style.color = '#1a2a1a';
+    circle.style.boxShadow = 'none';
+    circle.style.textShadow = 'none';
+    circle.style.animation = 'none';
+  } else {
+    circle.style.border = '2px solid #39ff7a';
+    circle.style.background = 'rgba(10,10,18,0.85)';
+    circle.style.color = '#39ff7a';
+    circle.style.boxShadow = '0 0 22px rgba(57,255,122,0.35)';
+    circle.style.textShadow = '0 0 8px #39ff7a';
+    circle.style.animation = 'pulseRing 1.6s ease-in-out infinite';
+  }
+  document.getElementById('tapToStart').classList.add('show');
+}
+document.getElementById('tapToStart').addEventListener('click', function(){
+  document.getElementById('tapToStart').classList.remove('show');
+  var iframe = document.querySelector('#fullscreenFrameWrap iframe');
+  if (!iframe || !iframe.contentWindow) return;
+  try {
+    if (typeof iframe.contentWindow.exitDemoIfActive === 'function') {
+      iframe.contentWindow.exitDemoIfActive();
+    } else {
+      throw new Error('exitDemoIfActive not found on contentWindow');
+    }
+  } catch (err) {
+    iframe.contentWindow.postMessage({ type: 'asobiva-start-play' }, '*');
+  }
+});
+document.getElementById('closeFullscreenBtn').addEventListener('click', function(){
+  document.getElementById('fullscreenOverlay').classList.remove('open');
+  document.getElementById('fullscreenFrameWrap').innerHTML = '';
+  document.getElementById('tapToStart').classList.remove('show');
+  var y = parseInt(document.body.dataset.scrollY || '0', 10);
+  document.body.style.overflow = '';
+  document.body.style.position = '';
+  document.body.style.width = '';
+  document.body.style.top = '';
+  window.scrollTo(0, y);
+});
 </scr` + `ipt>
 <scr` + `ipt>
 document.addEventListener('click', function(e){
@@ -1813,7 +2343,7 @@ document.addEventListener('click', function(e){
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   const ts = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
-  a.download = 'content_asobiva.html';
+  a.download = 'games_hub_fluid.html';
   document.body.appendChild(a);
   a.click();
   a.remove();

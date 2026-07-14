@@ -298,11 +298,6 @@ body.admin-mode .banner-slot .banner-edit { display: flex; }
   padding-top: 0;
   border-top: 1px dashed rgba(0,0,0,0.2);
 }
-.card-section.line-gap {
-  background: var(--white);
-  padding-top: 0;
-  border-top: 1px solid var(--ink);
-}
 .card-gap-btn {
   display: none;
   position: absolute;
@@ -431,6 +426,31 @@ body.admin-mode .html-card-label { display: block; }
 }
 .card-del:hover { background: #c0392b; }
 body.admin-mode .card-del { display: flex; }
+.card-move {
+  display: none;
+  position: absolute;
+  bottom: 10px; right: 50px;
+  flex-direction: row;
+  gap: 6px;
+  z-index: 5;
+}
+.card-move button {
+  width: 30px; height: 30px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.card-move button:hover { background: #444; }
+.card-move button:disabled { opacity: 0.3; cursor: default; }
+body.admin-mode .card-move { display: flex; }
+
 
 .card-replace {
   display: none;
@@ -713,32 +733,6 @@ body.admin-mode .footer-edit-btn { display: inline-block; }
   margin: 0 auto;
 }
 .footer-editor-panel.open { transform: translateY(0); }
-
-/* ── MOVE BUTTONS ── */
-.card-move {
-  display: none;
-  position: absolute;
-  bottom: 10px; right: 50px;
-  flex-direction: row;
-  gap: 6px;
-  z-index: 5;
-}
-.card-move button {
-  width: 30px; height: 30px;
-  background: rgba(0,0,0,0.5);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s;
-}
-.card-move button:hover { background: #444; }
-.card-move button:disabled { opacity: 0.3; cursor: default; }
-body.admin-mode .card-move { display: flex; }
 </style>
 </head>
 <body>
@@ -766,7 +760,7 @@ body.admin-mode .card-move { display: flex; }
         <button class="burger-menu-item admin-only" onclick="openNavEditor(); closeBurgerMenu()">メニューを編集</button>
         <button class="burger-menu-item admin-only" onclick="downloadEditHTML(); closeBurgerMenu()">編集用保存</button>
         <button class="burger-menu-item admin-only" id="downloadHtmlBtn" onclick="handleDownloadClick()">公開用保存</button>
-        <div class="burger-menu-item admin-only" style="font-size:10px;color:#aaa;text-align:right;padding:8px 20px;cursor:default;border:none;">v2.8</div>
+        <div class="burger-menu-item admin-only" style="font-size:10px;color:#aaa;text-align:right;padding:8px 20px;cursor:default;border:none;">v2.4</div>
       </div>
     </div>
   </div>
@@ -832,7 +826,7 @@ body.admin-mode .card-move { display: flex; }
 
 <script>
 // ── IndexedDB (Base64ストレージ) ──────────────
-const DB_NAME = 'asobiva_content_asobiva_b64';
+const DB_NAME = 'asobiva_content_uranai_b64';
 let db;
 
 function openDB() {
@@ -945,23 +939,21 @@ async function init() {
     }
     if (d.cards && d.cards.length > 0) {
       cards = d.cards;
-      for (const c of cards) {
-        try { await dbOp('cards', 'readwrite', s => s.put(c)); } catch {}
+      for (const card of cards) {
+        try { await dbOp('cards', 'readwrite', s => s.put(card)); } catch {}
       }
-    }
-    // フッター情報を復元
-    if (d.footerText) {
-      await dbOp('banners', 'readwrite', s => s.put({ slot: 99, footerText: data.footerText }));
-    }
-    if (d.footerNoGap !== undefined) {
-      await dbOp('banners', 'readwrite', s => s.put({ slot: 98, footerNoGap: data.footerNoGap }));
     }
     if (d.navItems) {
       try { saveNavItems(d.navItems); } catch {}
     }
+    if (d.footerText) {
+      try { await dbOp('banners', 'readwrite', s => s.put({ slot: 99, footerText: d.footerText })); } catch {}
+    }
+    if (d.footerNoGap !== undefined) {
+      try { await dbOp('banners', 'readwrite', s => s.put({ slot: 98, footerNoGap: d.footerNoGap })); } catch {}
+    }
     window.__ASOBIVA_INIT__ = null;
   }
-
     setLoadingBar(30);
 
     // banner (single header)
@@ -981,10 +973,15 @@ async function init() {
       images: r.images,
       name: r.name || '',
       link: r.link || '',
-      gap: r.gap !== undefined ? r.gap : true,
-      order: (r.order ?? r.id)
+      gap: r.gap !== false,
+      htmls: r.htmls,
+      names: r.names,
+      ytId: r.ytId,
+      title: r.title || '',
+      thumbB64: r.thumbB64 || null,
+      musicUrl: r.musicUrl || '',
+      artist: r.artist || '',
     }));
-    cards.sort((a, b) => a.order - b.order);
     setLoadingBar(100);
   } catch (err) {
     console.error('init error:', err);
@@ -1052,8 +1049,7 @@ function render() {
 
   cards.forEach((c, idx) => {
     const sec = document.createElement('div');
-    const gapClass = c.gap === false || c.gap === 'nogap' ? ' no-gap' : c.gap === 'line' ? ' line-gap' : c.gap === 'dot' ? ' dot-gap' : '';
-    sec.className = 'card-section' + gapClass;
+    sec.className = 'card-section' + (c.gap === false ? ' no-gap' : '');
 
     let wrap, replaceAccept, supportsReplace = true;
 
@@ -1084,9 +1080,9 @@ function render() {
       if (c.images.length > 1) {
         const dots = document.createElement('div');
         dots.className = 'carousel-dots';
-        c.images.forEach((_, i) => {
+        c.images.forEach((_, idx) => {
           const dot = document.createElement('span');
-          if (i === 0) dot.classList.add('active');
+          if (idx === 0) dot.classList.add('active');
           dots.appendChild(dot);
         });
         wrap.appendChild(dots);
@@ -1181,27 +1177,27 @@ function render() {
       e.preventDefault(); e.stopPropagation();
       deleteCard(c.id);
     });
-
-    const gapBtn = document.createElement('button');
-    gapBtn.className = 'card-gap-btn';
-    const gapLabels = { true: '隙間あり', false: '隙間なし', nogap: '隙間なし', line: 'ライン', dot: '点線' };
-    gapBtn.textContent = gapLabels[c.gap] ?? '隙間あり';
-    gapBtn.addEventListener('click', e => {
-      e.preventDefault(); e.stopPropagation();
-      toggleGap(c.id);
-    });
     const moveWrap = document.createElement('div');
     moveWrap.className = 'card-move';
     const upBtn = document.createElement('button');
-    upBtn.textContent = '↑'; upBtn.title = '上へ移動';
+    upBtn.textContent = '↑';
     upBtn.disabled = idx === 0;
     upBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); moveCard(idx, idx - 1); });
     const downBtn = document.createElement('button');
-    downBtn.textContent = '↓'; downBtn.title = '下へ移動';
+    downBtn.textContent = '↓';
     downBtn.disabled = idx === cards.length - 1;
     downBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); moveCard(idx, idx + 1); });
     moveWrap.appendChild(upBtn);
     moveWrap.appendChild(downBtn);
+    wrap.appendChild(moveWrap);
+
+    const gapBtn = document.createElement('button');
+    gapBtn.className = 'card-gap-btn';
+    gapBtn.textContent = c.gap === false ? '隙間なし' : '隙間あり';
+    gapBtn.addEventListener('click', e => {
+      e.preventDefault(); e.stopPropagation();
+      toggleGap(c.id);
+    });
 
     if (c.type !== 'carousel') wrap.appendChild(linkBtn);
     if (supportsReplace) {
@@ -1210,7 +1206,6 @@ function render() {
     }
     wrap.appendChild(delBtn);
     wrap.appendChild(gapBtn);
-    wrap.appendChild(moveWrap);
     sec.appendChild(wrap);
     container.appendChild(sec);
   });
@@ -1527,19 +1522,19 @@ async function addCards() {
     const images = pendingFiles.filter(f => !isHtmlFile(f));
     const images64 = [];
     for (const f of images) images64.push(await fileToBase64(f));
-    const id = await dbOp('cards', 'readwrite', s => s.add({ type: 'carousel', images: images64, link: '' }));
-    cards.push({ id, type: 'carousel', images: images64, link: '' });
+    const id = await dbOp('cards', 'readwrite', s => s.add({ type: 'carousel', images: images64, link: '', gap: true }));
+    cards.push({ id, type: 'carousel', images: images64, link: '', gap: true });
   } else {
     for (const f of pendingFiles) {
       if (isHtmlFile(f)) {
         const html = await fileToText(f);
         const name = f.name;
-        const id = await dbOp('cards', 'readwrite', s => s.add({ type: 'html', html, name, link }));
-        cards.push({ id, type: 'html', html, name, link });
+        const id = await dbOp('cards', 'readwrite', s => s.add({ type: 'html', html, name, link, gap: true }));
+        cards.push({ id, type: 'html', html, name, link, gap: true });
       } else {
         const base64 = await fileToBase64(f);
-        const id = await dbOp('cards', 'readwrite', s => s.add({ type: 'image', base64, link }));
-        cards.push({ id, type: 'image', base64, link });
+        const id = await dbOp('cards', 'readwrite', s => s.add({ type: 'image', base64, link, gap: true }));
+        cards.push({ id, type: 'image', base64, link, gap: true });
       }
     }
   }
@@ -1577,28 +1572,24 @@ async function toggleGap(id) {
   else c.gap = true;
   await dbOp('cards', 'readwrite', s => s.put({
     id: c.id, type: c.type, html: c.html, base64: c.base64,
-    images: c.images, name: c.name, link: c.link, gap: c.gap, order: c.order
+    images: c.images, name: c.name, link: c.link, gap: c.gap
   }));
   render();
 }
 
-// ── Move ─────────────────────────────────────
+// ── Delete ────────────────────────────────────
 async function moveCard(fromIdx, toIdx) {
   if (toIdx < 0 || toIdx >= cards.length) return;
   const tmp = cards[fromIdx];
   cards[fromIdx] = cards[toIdx];
   cards[toIdx] = tmp;
   cards.forEach((c, i) => { c.order = i + 1; });
-  for (const c of cards) {
-    await dbOp('cards', 'readwrite', s => s.put({
-      id: c.id, type: c.type, html: c.html, base64: c.base64,
-      images: c.images, name: c.name, link: c.link, gap: c.gap, order: c.order
-    }));
+  for (const card of cards) {
+    try { await dbOp('cards', 'readwrite', s => s.put({ ...card })); } catch {}
   }
   render();
 }
 
-// ── Delete ────────────────────────────────────
 async function deleteCard(id) {
   await dbOp('cards', 'readwrite', s => s.delete(id));
   const i = cards.findIndex(c => c.id === id);
@@ -1609,16 +1600,14 @@ async function deleteCard(id) {
 // ── 編集用HTMLとして保存（データ埋め込み） ─────────
 function downloadEditHTML() {
   const source = document.documentElement.outerHTML.replace(' class="admin-mode"', '').replace(' admin-mode', '');
-  let footerTextVal = document.getElementById('footerText')?.textContent || '';
-  let footerNoGapVal = document.getElementById('footerSection')?.classList.contains('no-gap') || false;
-  const initData = { banners: banners, cards: cards, footerText: footerTextVal, footerNoGap: footerNoGapVal, navItems: loadNavItems() };
+  const initData = { banners: banners, cards: cards, navItems: loadNavItems() };
   const initScript = `<scr` + `ipt>window.__ASOBIVA_INIT__ = ${JSON.stringify(initData).split('\n').join(' ').split('\r').join(' ').split('\t').join(' ')};</scr` + `ipt>`;
   const output = source.replace('</head>', initScript + '\n</head>');
   const blob = new Blob([output], { type: 'text/html;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   const ts = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
-  a.download = 'content_asobiva_e.html';
+  a.download = 'content_uranai_e.html';
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -1813,7 +1802,7 @@ document.addEventListener('click', function(e){
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   const ts = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
-  a.download = 'content_asobiva.html';
+  a.download = 'content_uranai.html';
   document.body.appendChild(a);
   a.click();
   a.remove();
