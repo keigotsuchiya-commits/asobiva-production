@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ページ順を決めるツール</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,sans-serif;margin:0;padding:16px;background:#f4f5f7;color:#111}
+h1{font-size:18px;margin:0 0 8px}
+p{font-size:14px;color:#555;margin:0 0 16px;line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.thumb{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;border:2px solid #ddd;background:#eee}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb.picked{border-color:#2563eb}
+.badge{position:absolute;top:4px;left:4px;background:#2563eb;color:#fff;border-radius:999px;min-width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;padding:0 6px}
+.bar{position:sticky;bottom:0;background:#fff;border-top:1px solid #ddd;padding:12px;margin:16px -16px -16px;display:flex;gap:8px}
+button{flex:1;padding:12px;border-radius:10px;border:1px solid #ddd;background:#fff;font-weight:700;font-size:14px}
+button.primary{background:#2563eb;color:#fff;border-color:#2563eb}
+#result{margin-top:12px;padding:12px;background:#fff;border-radius:10px;font-size:13px;line-height:1.8;word-break:break-all;display:none;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<h1>ページ順を決めるツール</h1>
+<p>画像を、絵本の正しいページ順に<b>タップしていく</b>だけです。押した順に番号が付きます。間違えたらもう一度タップで解除できます。全部押したら「この順番で確定」を押してください。</p>
+
+<div class="grid" id="grid"></div>
+
+<div class="bar">
+  <button id="resetBtn">リセット</button>
+  <button id="doneBtn" class="primary">この順番で確定</button>
+</div>
+
+<div id="result"></div>
+
+<script>
+// GitHubにアップロード済みの画像(表示用に直接参照)
+const REPO_OWNER = 'keigotsuchiya-commits';
+const REPO_NAME = 'asobiva-production';
+const BRANCH = 'main'; // もし画像が表示されなければ、ここを 'master' に変えてみてください
+const files = [
+  "IMG_0222.jpeg","IMG_0223.jpeg","IMG_0224.jpeg","IMG_0225.jpeg",
+  "IMG_0227.jpeg","IMG_0228.jpeg","IMG_0229.jpeg","IMG_0230.jpeg",
+  "IMG_0232.jpeg","IMG_0233.jpeg","IMG_0234.jpeg","IMG_0235.jpeg",
+  "IMG_0237.jpeg","IMG_0257.jpeg","IMG_0262.jpeg","IMG_0264.jpeg",
+  "IMG_0265.jpeg","IMG_0270.jpeg",
+];
+
+const grid = document.getElementById('grid');
+const order = [];
+
+files.forEach(name => {
+  const url = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/images/${name}`;
+  const div = document.createElement('div');
+  div.className = 'thumb';
+  div.dataset.name = name;
+  div.innerHTML = `<img src="${url}" alt="${name}"><div class="badge" style="display:none"></div>`;
+  div.onclick = () => {
+    const idx = order.indexOf(name);
+    if (idx >= 0) {
+      order.splice(idx, 1);
+      div.classList.remove('picked');
+      div.querySelector('.badge').style.display = 'none';
+    } else {
+      order.push(name);
+      div.classList.add('picked');
+      const b = div.querySelector('.badge');
+      b.style.display = 'flex';
+      b.textContent = order.length;
+    }
+    renumber();
+  };
+  grid.appendChild(div);
+});
+
+function renumber() {
+  document.querySelectorAll('.thumb').forEach(div => {
+    const idx = order.indexOf(div.dataset.name);
+    const b = div.querySelector('.badge');
+    if (idx >= 0) { b.style.display = 'flex'; b.textContent = idx + 1; }
+  });
+}
+
+document.getElementById('resetBtn').onclick = () => {
+  order.length = 0;
+  document.querySelectorAll('.thumb').forEach(div => {
+    div.classList.remove('picked');
+    div.querySelector('.badge').style.display = 'none';
+  });
+  document.getElementById('result').style.display = 'none';
+};
+
+document.getElementById('doneBtn').onclick = () => {
+  if (order.length !== files.length) {
+    alert('まだ ' + (files.length - order.length) + ' 枚 選ばれていません');
+    return;
+  }
+  const result = document.getElementById('result');
+  result.style.display = 'block';
+  result.textContent = 'この並び順のスクリーンショットを撮って送ってください:\n\n' + order.map((n,i)=>(i+1)+'. '+n).join('\n');
+  result.scrollIntoView({behavior:'smooth'});
+};
+</script>
+</body>
+</html>
