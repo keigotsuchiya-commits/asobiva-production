@@ -6,9 +6,9 @@
 <title>ASOBIVA</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root { --bg:#e0e0e0; --white:#ffffff; --ink:#1a1a1a; --ink-soft:#888; --border:#e0e0e0; --page-max:480px; --cols:1; }
+:root { --bg:#e0e0e0; --white:#ffffff; --ink:#1a1a1a; --ink-soft:#888; --border:#e0e0e0; --page-max:480px; --cols:1; --header-h:44px; }
 body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--white); color: var(--ink); min-height: 100vh; }
-.wrap { max-width: var(--page-max); margin: 0 auto; background: var(--white); min-height: 100vh; }
+.wrap { max-width: var(--page-max); margin: 0 auto; padding-top: var(--header-h); background: var(--white); min-height: 100vh; }
 .header-pair { display:flex; flex-direction:column; background:var(--white); }
 .banner-slot { width:100%; min-height:80px; background:var(--white); display:flex; align-items:center; justify-content:center; }
 .banner-slot img { width:100%; height:auto; display:block; }
@@ -30,7 +30,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: v
 .empty-state strong { display:block; font-size:14px; font-weight:600; color:var(--ink); margin-bottom:6px; }
 .footer-section { background: var(--white); }
 footer { padding:16px; text-align:center; font-size:10px; letter-spacing:0.1em; color:#111111; background:var(--white); }
-.site-header { display:flex; align-items:center; justify-content:flex-end; padding:10px 16px; background:var(--white); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; max-width:var(--page-max); margin:0 auto; -webkit-transform:translateZ(0); transform:translateZ(0); }
+.site-header { display:flex; align-items:center; justify-content:flex-end; padding:0 16px; height:var(--header-h); background:var(--white); border-bottom:1px solid var(--border); position:fixed; top:0; left:0; right:0; z-index:100; max-width:var(--page-max); margin:0 auto; }
 .burger-btn { background:none; border:none; cursor:pointer; padding:4px; display:flex; flex-direction:column; gap:5px; align-items:flex-end; }
 .burger-btn span { display:block; height:1.5px; background:var(--ink); border-radius:1px; }
 .burger-btn span:nth-child(1) { width:20px; }
