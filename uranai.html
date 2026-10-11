@@ -1,0 +1,3046 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ゲーム・占い | 福徳神社 | ASOBIVA</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root { --bg:#e0e0e0; --white:#ffffff; --ink:#1a1a1a; --ink-soft:#888; --border:#e0e0e0; --page-max:480px; --cols:1; --header-h:44px; --side-m:24px; --col-gap:24px; --hdr-gap:24px; }
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--white); color: var(--ink); min-height: 100vh; }
+.wrap { max-width: var(--page-max); margin: 0 auto; padding-top: var(--header-h); background: var(--white); min-height: 100vh; }
+.site-header { display:flex; align-items:center; justify-content:flex-end; padding:0 16px; height:var(--header-h); background:var(--white); border-bottom:1px solid var(--border); position:fixed; top:0; left:0; right:0; z-index:100; max-width:var(--page-max); margin:0 auto; }
+/* ヘッダーのロゴ（左端・押すとトップ）と、下の線のオン・オフ（v3.1） */
+.site-logo { margin-right: auto; display: flex; align-items: center; height: 100%; }
+.site-logo[hidden] { display: none; }
+.site-logo img { height: calc(var(--header-h) * var(--logo-pct, 0.6)); width: auto; display: block; }
+.site-header.no-line { border-bottom-color: transparent; }
+.burger-btn { background:none; border:none; cursor:pointer; padding:4px; display:flex; flex-direction:column; gap:5px; align-items:flex-end; }
+.burger-btn span { display:block; height:1.5px; background:var(--ink); border-radius:1px; }
+.burger-btn span:nth-child(1) { width:20px; }
+.burger-btn span:nth-child(2) { width:14px; }
+.burger-btn span:nth-child(3) { width:20px; }
+.burger-menu { display:none; position:absolute; top:100%; right:12px; background:var(--white); border:1px solid var(--border); border-radius:10px; box-shadow:0 4px 16px rgba(0,0,0,0.1); overflow-x:hidden; overflow-y:auto; -webkit-overflow-scrolling:touch; max-height:calc(100vh - var(--header-h, 44px) - 24px); max-height:calc(100dvh - var(--header-h, 44px) - 24px); z-index:200; width:max-content; min-width:160px; max-width:calc(100vw - 24px); }
+.burger-menu.open { display:block; }
+.nav-list { padding:6px 0; }
+.nav-link-item { display:block; width:100%; padding:7px 18px 7px 30px; font-size:13px; font-weight:400; line-height:1.5; color:var(--ink); text-align:left; text-decoration:none; word-break:break-word; }
+.nav-link-item:hover { background:var(--bg); }
+.nav-link-item.current { font-weight:700; background:#f4f4f4; box-shadow:inset 3px 0 0 var(--ink); }
+.nav-group-label { padding:12px 18px 2px; font-size:11px; line-height:1.5; color:#666; letter-spacing:.06em; }
+.nav-top .nav-link-item { padding-left:18px; }
+.nav-group + .nav-group, .nav-top + .nav-group { border-top:1px solid #eee; margin-top:6px; }
+.header-pair { display:flex; flex-direction:column; background:var(--white); }
+.banner-slot { width:100%; min-height:80px; background:var(--white); display:flex; align-items:center; justify-content:center; }
+.banner-slot img { width:100%; height:auto; display:block; }
+.banner-slot > .html-card { width:100%; }
+@media (max-width: 767.98px) { .banner-slot > img, .banner-slot > .html-card { width: calc(100% * var(--bps, 1)); } }
+@media (min-width: 768px) { .banner-slot > img, .banner-slot > .html-card { width: calc(100% * var(--bpw, 1)); } }
+.card-section { background: var(--white); }
+.sp { position:relative; padding-bottom:var(--mb, 0px); }
+.sp-top { position:relative; padding-top:var(--mb, 0px); }
+.sp.sp-line::after, .sp.sp-dot::after, .sp-top.sp-line::before, .sp-top.sp-dot::before { content:''; position:absolute; left:0; right:0; height:0; z-index:2; pointer-events:none; }
+.sp.sp-line::after, .sp.sp-dot::after { bottom:calc(var(--mb, 0px) / 2); transform:translateY(50%); }
+.sp-top.sp-line::before, .sp-top.sp-dot::before { top:calc(var(--mb, 0px) / 2); transform:translateY(-50%); }
+.sp-line::after, .sp-line::before { border-top:1px solid var(--line-c, var(--ink)); }
+.sp.sp-line::after { transform:translateY(50%) scaleY(var(--line-s, 1)); }
+.sp-top.sp-line::before { transform:translateY(-50%) scaleY(var(--line-s, 1)); }
+.sp-dot::after, .sp-dot::before { border-top:1px dashed rgba(0,0,0,0.2); }
+.card { width:100%; display:block; text-decoration:none; background:var(--white); overflow:hidden; }
+.card img { width:100%; height:auto; display:block; }
+.html-card { width:100%; position:relative; background:var(--white); overflow:hidden; }
+.html-link-overlay { position:absolute; inset:0; z-index:4; display:block; }
+.html-card iframe { display:block; width:100%; height:60px; border:none; background:var(--white); overflow:hidden; }
+/* 縦画面だけ、カード（HTML・画像・画像のカルーセル）を幅の --ps 倍にして真ん中に置く（カードごとの「縦画面の大きさ」。v3.3〜） */
+@media (max-width: 767.98px) {
+  .html-card > iframe { width: calc(100% * var(--ps, 1)) !important; margin: 0 auto; }
+  .card-section > .card, .card-section > .carousel-card { width: calc(100% * var(--ps, 1)); margin-left: auto; margin-right: auto; }
+}
+/* 横画面・PCは「横画面の大きさ」（--pw）。カードの幅（1マス・いっぱい・中央）に対する割合（v3.7） */
+@media (min-width: 768px) {
+  .html-card > iframe { width: calc(100% * var(--pw, 1)) !important; margin: 0 auto; }
+  .card-section > .card, .card-section > .carousel-card { width: calc(100% * var(--pw, 1)); margin-left: auto; margin-right: auto; }
+  .card-section.html-center > .card, .card-section.html-center > .carousel-card { width: calc(min(100%, 480px) * var(--pw, 1)); }
+}
+
+.carousel-card { width:100%; position:relative; background:var(--white); overflow:hidden; cursor:pointer; }
+.carousel-card img { width:100%; height:auto; display:block; }
+.carousel-dots { position:absolute; bottom:10px; left:0; right:0; display:flex; justify-content:center; gap:6px; pointer-events:none; }
+.carousel-dots span { width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,0.55); }
+.carousel-dots span.active { background:#fff; transform:scale(1.25); }
+.carousel-count { position:absolute; top:10px; left:10px; font-size:10px; letter-spacing:0.05em; color:#fff; background:rgba(0,0,0,0.45); padding:3px 8px; border-radius:20px; pointer-events:none; }
+.empty-state { padding:60px 24px; text-align:center; color:var(--ink-soft); font-size:13px; line-height:2; background:var(--white); }
+.footer-section { background: var(--white); }
+footer { padding:16px; text-align:center; font-size:10px; letter-spacing:0.1em; color:#111111; background:var(--white); white-space:pre-line; line-height:1.8; }
+footer .ft-body, footer .ft-c { white-space:pre-line; line-height:1.8; }
+footer .ft-c { text-align:center; }
+footer .ft-body + .ft-c { margin-top:var(--ft-cgap, 16px); }
+footer.ft-left .ft-body { text-align:left; }
+footer.ft-block .ft-body { max-width:var(--ft-max, 480px); margin:0 auto; text-align:left; }
+#cardContainer { display:grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); background: var(--white); }
+#cardContainer > * { grid-column: 1 / -1; min-width:0; }
+#cardContainer > .card-section.in-row { grid-column: auto; }
+/* 段の線：段の左端のカードが、段の幅いっぱいに引く（列の間の余白や空いたマスもまたいで1本の線にする） */
+#cardContainer > .in-row.sp:not(.row-lead)::after { display: none; }
+/* ラインの左右の余白（v5.7）：縦画面 --line-mp・横画面 --line-ml（サイト設定。最初は0）。段の線は、段の両端から同じだけ内側 */
+#cardContainer { --line-m: var(--line-mp, 0px); }
+@media (min-width: 768px) { #cardContainer { --line-m: var(--line-ml, 0px); } }
+#cardContainer .sp.sp-line::after, #cardContainer .sp.sp-dot::after { left: var(--line-m, 0px); right: var(--line-m, 0px); }
+/* ラインの上の余白（v5.8）：カードとラインの間をサイト全体で同じに（--line-t）。下の余白（--mb）が小さいときは、下の余白のいちばん下。
+   設定がない（--line-t がない）ときは、今までどおり下の余白の真ん中（mb − mb/2） */
+#cardContainer .sp.sp-line::after, #cardContainer .sp.sp-dot::after { bottom: calc(var(--mb, 0px) - min(var(--line-t, calc(var(--mb, 0px) / 2)), var(--mb, 0px))); }
+#cardContainer > .row-lead.sp::after { right: auto; width: calc((100% + var(--col-gap, 0px)) * var(--cols) - var(--col-gap, 0px) - 2 * var(--line-m, 0px)); }
+/* 段ごとの列の間（v5.5）：グリッドの列の間は全体で1つ（--col-gap）なので、パターンB・Cの段は、マスの左右の余白を足し引きして
+   「段の幅を同じ数に分け、間をその値にした」位置・幅にする。--ri＝段の中の何番目か（0から）。付けるのは asobivaLayout */
+#cardContainer [data-rgp="B"] { --rg: var(--gap-b, 48px); }
+#cardContainer [data-rgp="C"] { --rg: var(--gap-c, 80px); }
+#cardContainer [data-rgp].in-row { margin-left: calc((var(--rg) - var(--col-gap, 0px)) * var(--ri, 0) / var(--cols)); margin-right: calc((var(--rg) - var(--col-gap, 0px)) * (var(--cols) - 1 - var(--ri, 0)) / var(--cols)); }
+#cardContainer [data-rgp].in-row.row-lead.sp::after { right: auto; width: calc((100% + var(--rg)) * var(--cols) - var(--rg) - 2 * var(--line-m, 0px)); }
+.group-card { width:100%; }
+/* ── グループのカルーセル：1回に1グループを表示。高さは一番高いグループ（重ねて置き、見えない物は隠す） ── */
+.gcar-card { width: 100%; position: relative; background: var(--white); }
+.gcar-stage { display: grid; }
+.gcar-slide { grid-area: 1 / 1; min-width: 0; visibility: hidden; }
+.gcar-slide.on { visibility: visible; }
+.gcar-ui { display: flex; align-items: center; justify-content: space-between; height: 40px; }
+.gcar-ui button { width: 44px; height: 40px; border: none; background: none; font-size: 26px; line-height: 1; color: var(--ink); cursor: pointer; padding: 0; font-family: inherit; }
+.gcar-count { font-size: 12px; letter-spacing: 0.05em; color: var(--ink-soft); }
+/* カルーセルの名前（v5.0）：帯（‹ 1 / 3 ›）の一段下。UIが「上」のときは帯の一段上。
+   名前の段の高さは一番長い名前に合わせる（重ねて置き、今の1枚の名前だけ見せる）ので、切り替えても高さが変わらない */
+.gcar-names { display: grid; }
+.gcar-names > div { grid-area: 1 / 1; min-width: 0; font-size: var(--cap-p, 13px); font-weight: 700; letter-spacing: 0.04em; line-height: 1.5; color: var(--ink); text-align: center; padding: 0 16px 10px; overflow-wrap: anywhere; visibility: hidden; }
+.gcar-names > div.on { visibility: visible; }
+.gcar-names.top > div { padding: 10px 16px 0; align-self: end; }
+/* カードのキャプション（v5.1）：カードのすぐ下に真ん中そろえ。文字はカルーセルの名前と同じ（大きさは縦画面・横画面で別の設定） */
+.card-cap { display: block; text-align: center; font-size: var(--cap-p, 13px); font-weight: 700; letter-spacing: 0.04em; line-height: 1.5; color: var(--ink); padding: 8px 16px 0; overflow-wrap: anywhere; white-space: pre-line; text-decoration: none; }
+@media (min-width: 768px) { .card-cap, .gcar-names > div, .gcar-cell-name { font-size: var(--cap-l, 13px); } }
+/* グループのカルーセル「横画面・PCでは並べる」（v5.4）：横画面では、カルーセルの入れ物をなくして（display: contents）
+   1グループずつを1マスとしてページの列に並べる。中身は1つのまま（HTMLカードを2回読み込まない）。名前は各マスの下 */
+.gcar-cell-name { display: none; font-size: var(--cap-p, 13px); font-weight: 700; letter-spacing: 0.04em; line-height: 1.5; color: var(--ink); text-align: center; padding: 8px 16px 0; overflow-wrap: anywhere; }
+@media (min-width: 768px) {
+  .gcar-section.gcar-spread, .gcar-spread > .gcar-card, .gcar-spread .gcar-stage { display: contents; }
+  .gcar-spread .gcar-ui, .gcar-spread .gcar-names { display: none; }
+  .gcar-section.gcar-spread::after { display: none; } /* 入れ物の線は使わない（1枚ずつのマスが引く） */
+  .gcar-spread .gcar-slide { visibility: visible; grid-area: auto; min-width: 0; }
+  .gcar-spread .gcar-cell-name { display: block; font-size: var(--cap-l, 13px); } /* 横画面の大きさ（v5.4.1：縦画面の値になっていたのを直す） */
+  #cardContainer .gcar-slide.in-row.sp:not(.row-lead)::after { display: none; }
+  #cardContainer .gcar-slide.row-lead.sp::after { right: auto; width: calc((100% + var(--col-gap, 0px)) * var(--cols) - var(--col-gap, 0px) - 2 * var(--line-m, 0px)); }
+}
+/* キャプションの揃え・位置（v5.2）。左揃えは、カードの左端に合わせる（カードと同じ幅にして、左右の余白をなくす） */
+.card-cap.cap-top { padding-top: 0; padding-bottom: 8px; }
+.card-cap.cap-left { text-align: left; padding-left: 0; padding-right: 0; margin-left: auto; margin-right: auto; }
+.card-section.html-center > .card-cap.cap-left { max-width: 480px; }
+/* 左揃えの左右の余白（v5.3）：カードの幅に対する割合（--ci ％）。内側の span の % はキャプション（＝カードの幅）が基準 */
+.card-cap > .cap-in { display: block; padding: 0 calc(var(--ci, 0) * 1%); }
+@media (max-width: 767.98px) {
+  body:not(.admin-mode) .card-section > .card-cap.cap-left { width: calc(100% * var(--ps, 1)); }
+  body:not(.admin-mode) .card-section.html-center > .card-cap.cap-left.cap-html { max-width: none; width: calc(min(100%, 480px) * var(--ps, 1)); }
+}
+@media (min-width: 768px) {
+  body:not(.admin-mode) .card-section > .card-cap.cap-left { width: calc(100% * var(--pw, 1)); }
+  body:not(.admin-mode) .card-section.html-center > .card-cap.cap-left { width: calc(min(100%, 480px) * var(--pw, 1)); }
+}
+.card-section.html-center .html-card, .card-section.html-center > .card, .card-section.html-center > .carousel-card, .card-section.html-center > .gcar-card { max-width:480px; margin:0 auto; }
+@media (min-width: 768px) {
+  :root { --page-max:1200px; --cols:3; }
+  :root.cols-2 { --cols:2; }
+  .wrap { width: calc(100% - var(--side-m) * 2); }
+  .site-header { left: var(--side-m); right: var(--side-m); }
+  #cardContainer { column-gap: var(--col-gap); }
+  .header-pair { flex-direction:row; column-gap: var(--hdr-gap); }
+  .header-pair .banner-slot { flex: var(--ar, 1) 1 0; min-width:0; }
+  .header-pair.split .banner-slot { flex: var(--sf, 1) 1 0; }
+  .header-pair .banner-slot.sp { padding-bottom:0; }
+  .header-pair .banner-slot.sp::after { display:none; }
+}
+:root { --side-m:80px; --col-gap:24px; --gap-b:10px; --gap-c:0px; --hdr-gap:0px; --line-s:1; --line-c:#1a1a1a; --line-mp:20px; --line-ml:20px; --line-t:20px; --header-h:50px; --logo-pct:0.35; --ts-wide:1; --ts-cell:0.7; --cap-p:15px; --cap-l:10px; }
+@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W3'),local('Hiragino Sans W3');font-weight:300;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W4'),local('Hiragino Sans W4');font-weight:400;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W5'),local('Hiragino Sans W5');font-weight:500;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W6'),local('Hiragino Sans W6');font-weight:600;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W7'),local('Hiragino Sans W7');font-weight:700;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W8'),local('Hiragino Sans W8');font-weight:800;}.card-cap, .gcar-names > div, .gcar-cell-name { font-family: 'AsoCapHS', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 300; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="site-header no-line">
+    <a class="site-logo" href="index.html"><img src="images/logo_img_4681.jpg" alt="TOP"></a>
+    <button class="burger-btn" id="burgerBtn" aria-label="メニュー" onclick="document.getElementById('burgerMenu').classList.toggle('open')"><span></span><span></span><span></span></button>
+    <div class="burger-menu" id="burgerMenu"><div class="nav-list"><div class="nav-top"><a class="nav-link-item" href="index.html">TOP</a><a class="nav-link-item" href="asobiva.html" data-pf="2026-11-17">ASOBIVAとは？</a></div><div class="nav-group"><div class="nav-group-label">音楽・映像</div><a class="nav-link-item" href="music.html" data-pf="2026-11-17">0FILE</a></div><div class="nav-group"><div class="nav-group-label">絵本・イラスト</div><a class="nav-link-item" href="ehon.html" data-pf="2026-11-17">絵本コレクション</a><a class="nav-link-item" href="project-supana.html" data-pf="2027-01-01">PROJECT SUPANA</a></div><div class="nav-group"><div class="nav-group-label">シリーズ連載</div><a class="nav-link-item" href="marumaru.html" data-pf="2026-11-17">〇〇の話</a><a class="nav-link-item" href="yokai.html" data-pf="2026-11-17">榊原幻舟の百鬼奇譚</a><a class="nav-link-item" href="n.html" data-pf="2027-01-01">蟲屋Nの昆虫図鑑</a><a class="nav-link-item" href="page-11.html" data-pf="2027-01-01">ほらばな新聞</a><a class="nav-link-item" href="page-12.html" data-pf="2027-01-01">今日の田中さん</a><a class="nav-link-item" href="oborogi.html" data-pf="2027-01-01">名を持たぬ哲学者</a></div><div class="nav-group"><div class="nav-group-label">ゲーム・占い</div><a class="nav-link-item" href="game.html" data-pf="2026-11-17">豆太ピコのゲーム</a><a class="nav-link-item current" href="uranai.html" data-pf="2026-11-17">福徳神社</a></div></div></div>
+  </div>
+  <div class="header-pair sp" style="--mb:0px">
+    <div class="banner-slot" style="--ar:1.0000;--bps:0.7;--bpw:0.35;"><img src="images/58544eab-a4f0-450d-b103-b9dc7b5be2f4_2.png" alt=""></div>
+  </div>
+  <div id="cardContainer" data-rowsp="last">
+    <div class="card-section sp is-html" style="--mb:0px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
+<html lang=&quot;ja&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>INTRODUCTION</title>
+<link href=&quot;https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&amp;display=swap&quot; rel=&quot;stylesheet&quot;>
+<style>*{box-sizing:border-box;}
+body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;padding:0;line-height:1.7;}
+.page{max-width:600px;margin:0 auto;padding:0;}
+.divider-container{width:100%;padding:min(2.325582vw,10px) min(4.651163vw,20px) min(2.325582vw,10px) min(4.651163vw,20px);}
+.divider{width:100%;border:none;border-top:1px solid #17191a;margin:0;}
+.dv-head{display:flex;align-items:center;gap:min(3.720931vw,16px);}
+.dv-head .divider{flex:1 1 0;width:auto;min-width:0;}
+.dv-text{flex:0 1 auto;min-width:0;font-size:min(2.790698vw,12px);font-weight:400;color:#111111;letter-spacing:0.04em;line-height:1.4;overflow-wrap:anywhere;}
+.dv-center .dv-text{text-align:center;}</style>
+</head>
+<body>
+<div class=&quot;page&quot;>
+  <div class=&quot;divider-container&quot;>
+    <div class=&quot;dv-head dv-left&quot;><span class=&quot;dv-text&quot;>INTRODUCTION</span><hr class=&quot;divider&quot;></div>
+  </div>
+</div>
+<script type=&quot;application/json&quot; id=&quot;dv-data&quot;>{&quot;v&quot;:2,&quot;lineColor&quot;:&quot;#17191a&quot;,&quot;lineStyle&quot;:&quot;solid&quot;,&quot;lineWidth&quot;:1,&quot;mt&quot;:10,&quot;mb&quot;:10,&quot;ml&quot;:20,&quot;mr&quot;:20,&quot;mode&quot;:&quot;left&quot;,&quot;text&quot;:&quot;INTRODUCTION&quot;,&quot;size&quot;:12,&quot;weight&quot;:400,&quot;color&quot;:&quot;#111111&quot;,&quot;ls&quot;:0.04,&quot;gap&quot;:16}</script>
+<style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
+(function(){
+  function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-init') report(); });
+  window.addEventListener('load', report);
+  if(document.readyState==='complete') report();
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  var applied = null;
+  function applyScale(s){
+    if(!document.body || applied === s) return;
+    var first = applied === null;
+    applied = s;
+    if(first &amp;&amp; s === 1) return; // 一度も拡大・縮小していなければ、何もしない
+    // body とその中のすべての要素の元の文字の大きさを先に測ってから、まとめて倍にする
+    // （文字を直接持たない段落なども倍にして、行の間隔が文字と同じ割合で変わるようにする）
+    var nodes = [document.body].concat(Array.prototype.slice.call(document.body.querySelectorAll('*'))), i, el;
+    for(i=0;i<nodes.length;i++){
+      if(s === 1) break; // 元に戻すときは、元の大きさを測り直さない
+      el = nodes[i];
+      if(/^(IMG|VIDEO|IFRAME|SVG|SCRIPT|STYLE|PATH|G|CIRCLE|RECT|LINE|POLYGON|POLYLINE|ELLIPSE|USE|DEFS)$/i.test(el.tagName)) continue;
+      if(el.getAttribute('data-asobiva-fs')) continue;
+      el.setAttribute('data-asobiva-fs', getComputedStyle(el).fontSize);
+      // もともとHTMLが持っている文字の大きさの指定（例：プロフィールの「名前 120%」）を覚えておき、100%に戻すときはそれに戻す（v4.7）
+      el.setAttribute('data-asobiva-fs0', el.style.fontSize || '');
+    }
+    for(i=0;i<nodes.length;i++){
+      var base = parseFloat(nodes[i].getAttribute('data-asobiva-fs'));
+      if(isFinite(base)) nodes[i].style.fontSize = s === 1 ? (nodes[i].getAttribute('data-asobiva-fs0') || '') : (base * s) + 'px';
+    }
+    report();
+  }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-scale') applyScale(e.data.scale); });
+  parent.postMessage({ type:'asobiva-need-scale' }, '*');
+})();
+</script></body>
+</html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
+    <div class="card-section sp is-html html-center" style="--mb:40px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
+<html lang=&quot;ja&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>image-text-block</title>
+</head>
+<body style=&quot;margin:0;padding:0;background:#fff;&quot;>
+<style>
+.it52aqcx.it-wrap{width:100vw;position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;}
+.it52aqcx .it-frame-outer{box-sizing:border-box;}
+.it52aqcx .it-block{width:100%;box-sizing:border-box;padding:20px 30px 20px 30px;display:flex;align-items:center;gap:clamp(14px,2.9cqw,30px);font-family:&quot;Hiragino Mincho ProN&quot;,&quot;Noto Serif JP&quot;,serif;}
+.it52aqcx .it-block.it-right{flex-direction:row-reverse;}
+.it52aqcx .it-block.it-none{display:block;}
+.it52aqcx .it-img{flex:0 0 38%;max-width:38%;}
+.it52aqcx .it-img img{display:block;width:100%;height:auto;}
+.it52aqcx .it-text{flex:1;min-width:0;}
+.it52aqcx .it-text p, .it52aqcx .it-text > div{margin:0;font-size:15px;line-height:1.8;color:#111111;white-space:pre-wrap;}
+.it52aqcx .it-text .it-line{margin:0;white-space:pre-wrap;}
+.it52aqcx .it-text a{color:inherit;text-decoration:underline;}
+.it52aqcx .it-text p.it-sig{display:block;text-align:right;margin:0!important;padding:0!important;border:0!important;line-height:1!important;white-space:normal;}
+.it52aqcx .it-sig-wrap{display:block;text-align:right;line-height:0;font-size:0;}
+.it52aqcx .it-sig-wrap .it-sig-img{display:inline-block;height:auto;}
+</style>
+
+<div class=&quot;it-wrap it52aqcx&quot;>
+  <div class=&quot;it-frame-outer&quot;>
+    <div class=&quot;it-block it-none&quot; style=&quot;&quot;>
+      <div class=&quot;it-text&quot;><div style=&quot;font-size:15px;line-height:1.8&quot;><div class=&quot;it-line&quot;><strong>福徳神社には、さまざまな福があります。</strong></div><div class=&quot;it-line&quot;>&amp;nbsp;</div><div class=&quot;it-line&quot;><strong>福を招くこと。運を開くこと。人と人との縁を結ぶこと。無事に帰ること。そして、それぞれの願いを託すこと。</strong></div><div class=&quot;it-line&quot;>&amp;nbsp;</div><div class=&quot;it-line&quot;><strong>何を願い、何を福とするかは、人それぞれです。</strong></div><div class=&quot;it-line&quot;>&amp;nbsp;</div><div class=&quot;it-line&quot;><strong>おみくじや占いを楽しみながら、自分なりの福を見つけてみてください。</strong></div><div class=&quot;it-line&quot;>&amp;nbsp;</div><div class=&quot;it-line&quot;><strong>ここでのひとときが、あなたにとって少しでも良いものになりますように。</strong></div></div><div class=&quot;it-sig-wrap&quot;><img class=&quot;it-sig-img&quot; src=&quot;images/htmlimg_59415b56.png&quot; alt=&quot;&quot; style=&quot;width:100px;margin:50px 0px 0px 0px&quot;></div></div>
+    </div>
+  </div>
+</div>
+<style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
+(function(){
+  function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-init') report(); });
+  window.addEventListener('load', report);
+  if(document.readyState==='complete') report();
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  var applied = null;
+  function applyScale(s){
+    if(!document.body || applied === s) return;
+    var first = applied === null;
+    applied = s;
+    if(first &amp;&amp; s === 1) return; // 一度も拡大・縮小していなければ、何もしない
+    // body とその中のすべての要素の元の文字の大きさを先に測ってから、まとめて倍にする
+    // （文字を直接持たない段落なども倍にして、行の間隔が文字と同じ割合で変わるようにする）
+    var nodes = [document.body].concat(Array.prototype.slice.call(document.body.querySelectorAll('*'))), i, el;
+    for(i=0;i<nodes.length;i++){
+      if(s === 1) break; // 元に戻すときは、元の大きさを測り直さない
+      el = nodes[i];
+      if(/^(IMG|VIDEO|IFRAME|SVG|SCRIPT|STYLE|PATH|G|CIRCLE|RECT|LINE|POLYGON|POLYLINE|ELLIPSE|USE|DEFS)$/i.test(el.tagName)) continue;
+      if(el.getAttribute('data-asobiva-fs')) continue;
+      el.setAttribute('data-asobiva-fs', getComputedStyle(el).fontSize);
+      // もともとHTMLが持っている文字の大きさの指定（例：プロフィールの「名前 120%」）を覚えておき、100%に戻すときはそれに戻す（v4.7）
+      el.setAttribute('data-asobiva-fs0', el.style.fontSize || '');
+    }
+    for(i=0;i<nodes.length;i++){
+      var base = parseFloat(nodes[i].getAttribute('data-asobiva-fs'));
+      if(isFinite(base)) nodes[i].style.fontSize = s === 1 ? (nodes[i].getAttribute('data-asobiva-fs0') || '') : (base * s) + 'px';
+    }
+    report();
+  }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-scale') applyScale(e.data.scale); });
+  parent.postMessage({ type:'asobiva-need-scale' }, '*');
+})();
+</script></body>
+</html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
+    <div class="card-section sp is-html" style="--mb:16px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
+<html lang=&quot;ja&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>image-text-block</title>
+</head>
+<body style=&quot;margin:0;padding:0;background:#fff;&quot;>
+<style>
+.itule7m0.it-wrap{width:100vw;position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;}
+.itule7m0 .it-frame-outer{box-sizing:border-box;}
+.itule7m0 .it-block{width:100%;box-sizing:border-box;padding:8px 10px 8px 10px;display:flex;align-items:center;gap:clamp(14px,2.9cqw,30px);font-family:&quot;Hiragino Sans&quot;,&quot;Noto Sans JP&quot;,sans-serif;}
+.itule7m0 .it-block.it-right{flex-direction:row-reverse;}
+.itule7m0 .it-block.it-none{display:block;}
+.itule7m0 .it-img{flex:0 0 38%;max-width:38%;}
+.itule7m0 .it-img img{display:block;width:100%;height:auto;}
+.itule7m0 .it-text{flex:1;min-width:0;}
+.itule7m0 .it-text p, .itule7m0 .it-text > div{margin:0;font-size:15px;line-height:1.5;color:#000000;white-space:pre-wrap;}
+.itule7m0 .it-text .it-line{margin:0;white-space:pre-wrap;}
+.itule7m0 .it-text a{color:inherit;text-decoration:underline;}
+.itule7m0 .it-text p.it-sig{display:block;text-align:right;margin:0!important;padding:0!important;border:0!important;line-height:1!important;white-space:normal;}
+.itule7m0 .it-sig-wrap{display:block;text-align:right;line-height:0;font-size:0;}
+.itule7m0 .it-sig-wrap .it-sig-img{display:inline-block;height:auto;}
+@font-face{font-family:'ItHS';src:local('HiraginoSans-W3'),local('Hiragino Sans W3');font-weight:300;}@font-face{font-family:'ItHS';src:local('HiraginoSans-W4'),local('Hiragino Sans W4');font-weight:400;}@font-face{font-family:'ItHS';src:local('HiraginoSans-W5'),local('Hiragino Sans W5');font-weight:500;}@font-face{font-family:'ItHS';src:local('HiraginoSans-W6'),local('Hiragino Sans W6');font-weight:600;}@font-face{font-family:'ItHS';src:local('HiraginoSans-W7'),local('Hiragino Sans W7');font-weight:700;}@font-face{font-family:'ItHS';src:local('HiraginoSans-W8'),local('Hiragino Sans W8');font-weight:800;}
+</style>
+
+<div class=&quot;it-wrap itule7m0&quot;>
+  <div class=&quot;it-frame-outer&quot; style=&quot;padding:16px 16px 16px 16px&quot;>
+    <div class=&quot;it-block it-none&quot; style=&quot; border:1px solid #111111;&quot;>
+      <div class=&quot;it-text&quot;><div style=&quot;font-size:15px;line-height:1.5;font-family:'ItHS','Hiragino Sans','Noto Sans JP',sans-serif;font-weight:300;&quot;><div class=&quot;it-line&quot; style=&quot;text-align:center&quot;>Selected Works</div></div></div>
+    </div>
+  </div>
+</div>
+<script type=&quot;application/json&quot; class=&quot;it-typo&quot;>{&quot;wBody&quot;:3,&quot;wSig&quot;:&quot;keep&quot;,&quot;sigFontSize&quot;:null}</script>
+<style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
+(function(){
+  function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-init') report(); });
+  window.addEventListener('load', report);
+  if(document.readyState==='complete') report();
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  var applied = null;
+  function applyScale(s){
+    if(!document.body || applied === s) return;
+    var first = applied === null;
+    applied = s;
+    if(first &amp;&amp; s === 1) return; // 一度も拡大・縮小していなければ、何もしない
+    // body とその中のすべての要素の元の文字の大きさを先に測ってから、まとめて倍にする
+    // （文字を直接持たない段落なども倍にして、行の間隔が文字と同じ割合で変わるようにする）
+    var nodes = [document.body].concat(Array.prototype.slice.call(document.body.querySelectorAll('*'))), i, el;
+    for(i=0;i<nodes.length;i++){
+      if(s === 1) break; // 元に戻すときは、元の大きさを測り直さない
+      el = nodes[i];
+      if(/^(IMG|VIDEO|IFRAME|SVG|SCRIPT|STYLE|PATH|G|CIRCLE|RECT|LINE|POLYGON|POLYLINE|ELLIPSE|USE|DEFS)$/i.test(el.tagName)) continue;
+      if(el.getAttribute('data-asobiva-fs')) continue;
+      el.setAttribute('data-asobiva-fs', getComputedStyle(el).fontSize);
+      // もともとHTMLが持っている文字の大きさの指定（例：プロフィールの「名前 120%」）を覚えておき、100%に戻すときはそれに戻す（v4.7）
+      el.setAttribute('data-asobiva-fs0', el.style.fontSize || '');
+    }
+    for(i=0;i<nodes.length;i++){
+      var base = parseFloat(nodes[i].getAttribute('data-asobiva-fs'));
+      if(isFinite(base)) nodes[i].style.fontSize = s === 1 ? (nodes[i].getAttribute('data-asobiva-fs0') || '') : (base * s) + 'px';
+    }
+    report();
+  }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-scale') applyScale(e.data.scale); });
+  parent.postMessage({ type:'asobiva-need-scale' }, '*');
+})();
+</script></body>
+</html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
+    <div class="card-section sp is-html" style="--mb:30px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
+<html lang=&quot;ja&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>FORTUNE</title>
+<link href=&quot;https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&amp;display=swap&quot; rel=&quot;stylesheet&quot;>
+<style>*{box-sizing:border-box;}
+body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;padding:0;line-height:1.7;}
+.page{max-width:600px;margin:0 auto;padding:0;}
+.divider-container{width:100%;padding:min(2.325582vw,10px) min(4.651163vw,20px) min(2.325582vw,10px) min(4.651163vw,20px);}
+.divider{width:100%;border:none;border-top:1px solid #17191a;margin:0;}
+.dv-head{display:flex;align-items:center;gap:min(3.720931vw,16px);}
+.dv-head .divider{flex:1 1 0;width:auto;min-width:0;}
+.dv-text{flex:0 1 auto;min-width:0;font-size:min(2.790698vw,12px);font-weight:400;color:#111111;letter-spacing:0.04em;line-height:1.4;overflow-wrap:anywhere;}
+.dv-center .dv-text{text-align:center;}</style>
+</head>
+<body>
+<div class=&quot;page&quot;>
+  <div class=&quot;divider-container&quot;>
+    <div class=&quot;dv-head dv-left&quot;><span class=&quot;dv-text&quot;>FORTUNE</span><hr class=&quot;divider&quot;></div>
+  </div>
+</div>
+<script type=&quot;application/json&quot; id=&quot;dv-data&quot;>{&quot;v&quot;:2,&quot;lineColor&quot;:&quot;#17191a&quot;,&quot;lineStyle&quot;:&quot;solid&quot;,&quot;lineWidth&quot;:1,&quot;mt&quot;:10,&quot;mb&quot;:10,&quot;ml&quot;:20,&quot;mr&quot;:20,&quot;mode&quot;:&quot;left&quot;,&quot;text&quot;:&quot;FORTUNE&quot;,&quot;size&quot;:12,&quot;weight&quot;:400,&quot;color&quot;:&quot;#111111&quot;,&quot;ls&quot;:0.04,&quot;gap&quot;:16}</script>
+<style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
+(function(){
+  function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-init') report(); });
+  window.addEventListener('load', report);
+  if(document.readyState==='complete') report();
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  var applied = null;
+  function applyScale(s){
+    if(!document.body || applied === s) return;
+    var first = applied === null;
+    applied = s;
+    if(first &amp;&amp; s === 1) return; // 一度も拡大・縮小していなければ、何もしない
+    // body とその中のすべての要素の元の文字の大きさを先に測ってから、まとめて倍にする
+    // （文字を直接持たない段落なども倍にして、行の間隔が文字と同じ割合で変わるようにする）
+    var nodes = [document.body].concat(Array.prototype.slice.call(document.body.querySelectorAll('*'))), i, el;
+    for(i=0;i<nodes.length;i++){
+      if(s === 1) break; // 元に戻すときは、元の大きさを測り直さない
+      el = nodes[i];
+      if(/^(IMG|VIDEO|IFRAME|SVG|SCRIPT|STYLE|PATH|G|CIRCLE|RECT|LINE|POLYGON|POLYLINE|ELLIPSE|USE|DEFS)$/i.test(el.tagName)) continue;
+      if(el.getAttribute('data-asobiva-fs')) continue;
+      el.setAttribute('data-asobiva-fs', getComputedStyle(el).fontSize);
+      // もともとHTMLが持っている文字の大きさの指定（例：プロフィールの「名前 120%」）を覚えておき、100%に戻すときはそれに戻す（v4.7）
+      el.setAttribute('data-asobiva-fs0', el.style.fontSize || '');
+    }
+    for(i=0;i<nodes.length;i++){
+      var base = parseFloat(nodes[i].getAttribute('data-asobiva-fs'));
+      if(isFinite(base)) nodes[i].style.fontSize = s === 1 ? (nodes[i].getAttribute('data-asobiva-fs0') || '') : (base * s) + 'px';
+    }
+    report();
+  }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-scale') applyScale(e.data.scale); });
+  parent.postMessage({ type:'asobiva-need-scale' }, '*');
+})();
+</script></body>
+</html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
+    <div class="card-section sp sp-line" style="--mb:40px"><div class="group-card">
+    <div class="card-section sp" style="--mb:10px"><div class="card" style="--ps:0.8;--pw:0.8;"><img src="images/img_2802.jpg" alt="" loading="lazy"></div></div>
+    <div class="card-section sp" style="--mb:16px"><div class="html-card" style="--ps:0.8;--pw:0.8;"><iframe srcdoc="<!DOCTYPE html>
+<html lang=&quot;ja&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>御神託</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: &quot;Hiragino Mincho ProN&quot;, &quot;Yu Mincho&quot;, serif;
+    background: #f3efe8;
+    color: #2b2b2b;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  .start-banner {
+    width: 100%;
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
+    display: block;
+    overflow: hidden;
+    transition: transform 0.15s;
+  }
+  .start-banner:active { transform: scale(0.98); }
+  .start-banner img {
+    width: 100%;
+    display: block;
+  }
+
+  .omikuji-wrap {
+    display: none;
+    width: 100%;
+    position: relative;
+  }
+  .omikuji-wrap.show { display: block; }
+  .omikuji-wrap img.bg {
+    width: 100%;
+    display: block;
+  }
+
+  .layer {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .site-title {
+    position: absolute;
+    top: 9.5%;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: calc(var(--cardw, 360px) * 0.075);
+    font-weight: 900;
+    letter-spacing: 0.3em;
+    color: #b03a2e;
+  }
+
+  .num-box {
+    position: absolute;
+    top: 18.5%;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: calc(var(--cardw, 360px) * 0.04);
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: #555;
+  }
+
+  .grade-box {
+    position: absolute;
+    top: 23.5%;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: calc(var(--cardw, 360px) * 0.12);
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    color: #1a1a1a;
+  }
+
+  .body-text {
+    position: absolute;
+    top: 36%;
+    left: 8%;
+    width: 84%;
+    text-align: center;
+    font-size: calc(var(--cardw, 360px) * 0.033);
+    line-height: 1.8;
+    letter-spacing: 0.03em;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .items-grid {
+    position: absolute;
+    top: 50%;
+    left: 8%;
+    width: 84%;
+    display: flex;
+    flex-direction: column;
+  }
+  .item-row {
+    display: flex;
+    align-items: baseline;
+    font-size: calc(var(--cardw, 360px) * 0.032);
+    line-height: 1.4;
+    border-bottom: 1px dashed #c9a86a;
+    padding: 1.6% 0;
+  }
+  .item-row .label {
+    font-weight: 900;
+    color: #b03a2e;
+    letter-spacing: 0.1em;
+    margin-right: 0.7em;
+    white-space: nowrap;
+  }
+  .item-row .text {
+    color: #333;
+  }
+
+  .lucky-row {
+    position: absolute;
+    top: 86%;
+    left: 6%;
+    width: 88%;
+    text-align: center;
+    font-size: calc(var(--cardw, 360px) * 0.028);
+    line-height: 1.8;
+    color: #555;
+  }
+  .lucky-row b {
+    color: #b03a2e;
+  }
+
+  .controls {
+    margin-top: 18px;
+    text-align: center;
+  }
+  button.redraw {
+    background: #b03a2e;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 10px 30px;
+    font-size: 14px;
+    font-family: inherit;
+    letter-spacing: 4px;
+    cursor: pointer;
+  }
+  button.redraw:disabled { background: #ccc; }
+</style>
+</head>
+<body>
+
+  <button class=&quot;start-banner&quot; id=&quot;startBtn&quot; onclick=&quot;draw(false)&quot;>
+    <img src=&quot;images/htmlimg_caaff81f.jpg&quot; alt=&quot;御神託&quot;>
+  </button>
+
+  <div class=&quot;omikuji-wrap&quot; id=&quot;omikujiWrap&quot;>
+    <img class=&quot;bg&quot; src=&quot;images/htmlimg_26e0af7d.jpg&quot; alt=&quot;おみくじ&quot;>
+    <div class=&quot;layer&quot;>
+      <div class=&quot;site-title&quot;>おみくじ</div>
+      <div class=&quot;num-box&quot; id=&quot;numBox&quot;>第七番</div>
+      <div class=&quot;grade-box&quot; id=&quot;gradeBox&quot;>大吉</div>
+      <div class=&quot;body-text&quot; id=&quot;bodyText&quot;></div>
+      <div class=&quot;items-grid&quot; id=&quot;itemsGrid&quot;></div>
+      <div class=&quot;lucky-row&quot; id=&quot;luckyRow&quot;></div>
+    </div>
+  </div>
+
+  <div class=&quot;controls&quot; id=&quot;controls&quot; style=&quot;display:none;&quot;>
+    <button class=&quot;redraw&quot; id=&quot;redrawBtn&quot; onclick=&quot;draw(false)&quot;>もう一度引く（デバッグ用）</button>
+  </div>
+
+<script>
+  const KANJI_NUM = [&quot;&quot;,&quot;一&quot;,&quot;二&quot;,&quot;三&quot;,&quot;四&quot;,&quot;五&quot;,&quot;六&quot;,&quot;七&quot;,&quot;八&quot;,&quot;九&quot;,&quot;十&quot;,&quot;十一&quot;,&quot;十二&quot;];
+
+  const DATA = [
+    { num:1, grade:&quot;大吉&quot;,
+      body:&quot;心穏やかに過ごせば幸運訪れる。励め。&quot;,
+      items:{願望:&quot;思いがけない形で叶うでしょう。&quot;, 恋愛:&quot;良いご縁に恵まれます。&quot;, 仕事:&quot;努力が認められ成果に。&quot;, 学業:&quot;集中力が高まる。&quot;, 金運:&quot;収入やチャンスに恵まれる。&quot;, 健康:&quot;心身ともに安定。&quot;},
+      lucky:{color:&quot;紅色&quot;, item:&quot;お守り&quot;, spot:&quot;神社・高台&quot;, advice:&quot;感謝を言葉にしよう&quot;}
+    },
+    { num:2, grade:&quot;中吉&quot;,
+      body:&quot;時を待てば叶う。焦らず歩むが吉。&quot;,
+      items:{願望:&quot;少し時間をかければ叶う。&quot;, 恋愛:&quot;穏やかな関係が続く。&quot;, 仕事:&quot;地道な努力が評価される。&quot;, 学業:&quot;基礎を固めると吉。&quot;, 金運:&quot;安定した運気が続く。&quot;, 健康:&quot;無理せず過ごすと良好。&quot;},
+      lucky:{color:&quot;水色&quot;, item:&quot;手帳&quot;, spot:&quot;図書館&quot;, advice:&quot;焦らず一歩ずつ&quot;}
+    },
+    { num:3, grade:&quot;小吉&quot;,
+      body:&quot;小さき幸い重なり、やがて実りに。&quot;,
+      items:{願望:&quot;少しずつ近づいている。&quot;, 恋愛:&quot;自然な出会いを大切に。&quot;, 仕事:&quot;基本を大事にすると吉。&quot;, 学業:&quot;反復練習が力になる。&quot;, 金運:&quot;無駄遣いに注意。&quot;, 健康:&quot;小さな不調に注意。&quot;},
+      lucky:{color:&quot;黄色&quot;, item:&quot;ハンカチ&quot;, spot:&quot;公園&quot;, advice:&quot;感謝の気持ちを忘れずに&quot;}
+    },
+    { num:4, grade:&quot;吉&quot;,
+      body:&quot;穏やかな風吹き物事円滑に進む。&quot;,
+      items:{願望:&quot;努力次第で叶うでしょう。&quot;, 恋愛:&quot;良い関係が築ける。&quot;, 仕事:&quot;安定して進む。&quot;, 学業:&quot;努力が花開く。&quot;, 金運:&quot;まずまず良好。&quot;, 健康:&quot;健やかに過ごせる。&quot;},
+      lucky:{color:&quot;緑色&quot;, item:&quot;腕時計&quot;, spot:&quot;神社&quot;, advice:&quot;今を大切に過ごそう&quot;}
+    },
+    { num:5, grade:&quot;末吉&quot;,
+      body:&quot;今は静かな時なれど、光輝く道あり。&quot;,
+      items:{願望:&quot;後になって叶う望み。&quot;, 恋愛:&quot;ゆっくりと進展する。&quot;, 仕事:&quot;後半に運が向く。&quot;, 学業:&quot;今は地味でも後に伸びる。&quot;, 金運:&quot;少しずつ良くなる。&quot;, 健康:&quot;養生を心がけよう。&quot;},
+      lucky:{color:&quot;藍色&quot;, item:&quot;メモ帳&quot;, spot:&quot;静かな場所&quot;, advice:&quot;今を耐え忍ぼう&quot;}
+    },
+    { num:6, grade:&quot;凶&quot;,
+      body:&quot;嵐の如き試練あれど道開ける。油断大敵。&quot;,
+      items:{願望:&quot;今は控えるのが良い。&quot;, 恋愛:&quot;波風立ちやすい時期。&quot;, 仕事:&quot;無理せず慎重に。&quot;, 学業:&quot;油断すれば失敗する。&quot;, 金運:&quot;出費に注意が必要。&quot;, 健康:&quot;体調管理を怠らずに。&quot;},
+      lucky:{color:&quot;灰色&quot;, item:&quot;お札&quot;, spot:&quot;自宅&quot;, advice:&quot;今は静かに過ごそう&quot;}
+    },
+    { num:7, grade:&quot;大吉&quot;,
+      body:&quot;運気は最高潮。自信を持って進め。&quot;,
+      items:{願望:&quot;思いがけない形で叶うでしょう。&quot;, 恋愛:&quot;良いご縁に恵まれます。&quot;, 仕事:&quot;努力が認められ成果に。&quot;, 学業:&quot;集中力が高まる。&quot;, 金運:&quot;収入やチャンスに恵まれる。&quot;, 健康:&quot;心身ともに安定。&quot;},
+      lucky:{color:&quot;紅色&quot;, item:&quot;お守り&quot;, spot:&quot;神社・高台&quot;, advice:&quot;感謝を言葉にしよう&quot;}
+    },
+    { num:8, grade:&quot;中吉&quot;,
+      body:&quot;流れに乗り進めば道開ける。一歩進め。&quot;,
+      items:{願望:&quot;信じて進めば叶う。&quot;, 恋愛:&quot;自然な流れで進展する。&quot;, 仕事:&quot;周囲との連携が鍵。&quot;, 学業:&quot;集中力が結果を生む。&quot;, 金運:&quot;良い兆しがある。&quot;, 健康:&quot;概ね良好に過ごせる。&quot;},
+      lucky:{color:&quot;橙色&quot;, item:&quot;鈴&quot;, spot:&quot;高台&quot;, advice:&quot;信じる心を大切に&quot;}
+    },
+    { num:9, grade:&quot;小吉&quot;,
+      body:&quot;地に足つけ歩めば、花咲く時来る。&quot;,
+      items:{願望:&quot;地道な努力が実を結ぶ。&quot;, 恋愛:&quot;周囲への感謝が縁を呼ぶ。&quot;, 仕事:&quot;焦らず取り組むのが吉。&quot;, 学業:&quot;小さな積み重ねが力に。&quot;, 金運:&quot;安定を意識して使おう。&quot;, 健康:&quot;規則正しい生活を。&quot;},
+      lucky:{color:&quot;茶色&quot;, item:&quot;植物&quot;, spot:&quot;庭&quot;, advice:&quot;感謝を忘れずに&quot;}
+    },
+    { num:10, grade:&quot;吉&quot;,
+      body:&quot;心軽やかに過ごせば良き縁巡る。&quot;,
+      items:{願望:&quot;誠実な姿勢が叶える。&quot;, 恋愛:&quot;良き縁に恵まれる。&quot;, 仕事:&quot;信頼を得て進む。&quot;, 学業:&quot;努力が結果に繋がる。&quot;, 金運:&quot;安定した運び。&quot;, 健康:&quot;心穏やかに過ごせる。&quot;},
+      lucky:{color:&quot;白色&quot;, item:&quot;花&quot;, spot:&quot;庭園&quot;, advice:&quot;誠実な心を持とう&quot;}
+    },
+    { num:11, grade:&quot;末吉&quot;,
+      body:&quot;今は雌伏の時、必ず春は巡り来る。&quot;,
+      items:{願望:&quot;時間をかけて叶う。&quot;, 恋愛:&quot;じっくり育てる関係が吉。&quot;, 仕事:&quot;今は基盤づくりの時期。&quot;, 学業:&quot;継続が力になる。&quot;, 金運:&quot;少しずつ安定する。&quot;, 健康:&quot;無理せず養生を。&quot;},
+      lucky:{color:&quot;紫色&quot;, item:&quot;写真&quot;, spot:&quot;自然の中&quot;, advice:&quot;信念を持ち続けよう&quot;}
+    },
+    { num:12, grade:&quot;大吉&quot;,
+      body:&quot;春風の如く運気上昇し、幸福多し。&quot;,
+      items:{願望:&quot;思い通りに叶うでしょう。&quot;, 恋愛:&quot;良縁に恵まれます。&quot;, 仕事:&quot;順調に進み成功。&quot;, 学業:&quot;努力すれば成果が出る。&quot;, 金運:&quot;金運良し、使いすぎ注意。&quot;, 健康:&quot;心身ともに健やか。&quot;},
+      lucky:{color:&quot;金色&quot;, item:&quot;扇子&quot;, spot:&quot;展望台&quot;, advice:&quot;笑顔を忘れずに&quot;}
+    }
+  ];
+
+  function updateCardWidth() {
+    const wrap = document.getElementById(&quot;omikujiWrap&quot;);
+    if (wrap &amp;&amp; wrap.offsetWidth > 0) {
+      wrap.style.setProperty(&quot;--cardw&quot;, wrap.offsetWidth + &quot;px&quot;);
+    }
+  }
+  window.addEventListener(&quot;resize&quot;, updateCardWidth);
+  window.addEventListener(&quot;orientationchange&quot;, updateCardWidth);
+
+  function render(entry) {
+    document.getElementById(&quot;numBox&quot;).textContent = &quot;第&quot; + KANJI_NUM[entry.num] + &quot;番&quot;;
+    document.getElementById(&quot;gradeBox&quot;).textContent = entry.grade;
+    document.getElementById(&quot;bodyText&quot;).textContent = entry.body;
+
+    const grid = document.getElementById(&quot;itemsGrid&quot;);
+    grid.innerHTML = Object.entries(entry.items).map(([label, text]) =>
+      `<div class=&quot;item-row&quot;><span class=&quot;label&quot;>${label}</span><span class=&quot;text&quot;>${text}</span></div>`
+    ).join(&quot;&quot;);
+
+    const l = entry.lucky;
+    document.getElementById(&quot;luckyRow&quot;).innerHTML =
+      `<b>ラッキーカラー</b> ${l.color}　<b>アイテム</b> ${l.item}　<b>スポット</b> ${l.spot}<br><b>一言</b> ${l.advice}`;
+  }
+
+  // ---- 参拝記録（全占いツール共通） ----
+  function recordVisit(omikujiName, resultSummary) {
+    try {
+      const VISIT_KEY = &quot;asobiva_visit_log&quot;;
+      const raw = localStorage.getItem(VISIT_KEY);
+      const visits = raw ? JSON.parse(raw) : [];
+      visits.push({
+        id: Date.now(),
+        omikuji: omikujiName,
+        date: new Date().toISOString(),
+        result: resultSummary || &quot;&quot;
+      });
+      const trimmed = visits.slice(-500);
+      localStorage.setItem(VISIT_KEY, JSON.stringify(trimmed));
+    } catch (e) {
+      // localStorageが使えない環境では何もしない
+    }
+  }
+
+  function draw(force) {
+    const numIndex = Math.floor(Math.random() * DATA.length);
+    const entry = DATA[numIndex];
+    recordVisit(&quot;御神託&quot;, entry.grade);
+    show(entry, false);
+  }
+
+  function show(entry, lock) {
+    render(entry);
+    document.getElementById(&quot;startBtn&quot;).style.display = &quot;none&quot;;
+    document.getElementById(&quot;omikujiWrap&quot;).classList.add(&quot;show&quot;);
+    document.getElementById(&quot;controls&quot;).style.display = &quot;block&quot;;
+    if (lock) {
+      document.getElementById(&quot;redrawBtn&quot;).disabled = true;
+      document.getElementById(&quot;redrawBtn&quot;).textContent = &quot;本日のおみくじ済み&quot;;
+    }
+    requestAnimationFrame(function() {
+      updateCardWidth();
+      setTimeout(updateCardWidth, 50);
+    });
+  }
+
+  // デバッグ中：自動表示・回数制限オフ
+</script>
+<style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
+(function(){
+  function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-init') report(); });
+  window.addEventListener('load', report);
+  if(document.readyState==='complete') report();
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  var applied = null;
+  function applyScale(s){
+    if(!document.body || applied === s) return;
+    var first = applied === null;
+    applied = s;
+    if(first &amp;&amp; s === 1) return; // 一度も拡大・縮小していなければ、何もしない
+    // body とその中のすべての要素の元の文字の大きさを先に測ってから、まとめて倍にする
+    // （文字を直接持たない段落なども倍にして、行の間隔が文字と同じ割合で変わるようにする）
+    var nodes = [document.body].concat(Array.prototype.slice.call(document.body.querySelectorAll('*'))), i, el;
+    for(i=0;i<nodes.length;i++){
+      if(s === 1) break; // 元に戻すときは、元の大きさを測り直さない
+      el = nodes[i];
+      if(/^(IMG|VIDEO|IFRAME|SVG|SCRIPT|STYLE|PATH|G|CIRCLE|RECT|LINE|POLYGON|POLYLINE|ELLIPSE|USE|DEFS)$/i.test(el.tagName)) continue;
+      if(el.getAttribute('data-asobiva-fs')) continue;
+      el.setAttribute('data-asobiva-fs', getComputedStyle(el).fontSize);
+      // もともとHTMLが持っている文字の大きさの指定（例：プロフィールの「名前 120%」）を覚えておき、100%に戻すときはそれに戻す（v4.7）
+      el.setAttribute('data-asobiva-fs0', el.style.fontSize || '');
+    }
+    for(i=0;i<nodes.length;i++){
+      var base = parseFloat(nodes[i].getAttribute('data-asobiva-fs'));
+      if(isFinite(base)) nodes[i].style.fontSize = s === 1 ? (nodes[i].getAttribute('data-asobiva-fs0') || '') : (base * s) + 'px';
+    }
+    report();
+  }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-scale') applyScale(e.data.scale); });
+  parent.postMessage({ type:'asobiva-need-scale' }, '*');
+})();
+</script></body>
+</html>
+" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
+    </div></div>
+    <div class="card-section sp sp-line" style="--mb:40px"><div class="group-card">
+    <div class="card-section sp" style="--mb:10px"><div class="card" style="--ps:0.8;--pw:0.8;"><img src="images/img_2804.jpg" alt="" loading="lazy"></div></div>
+    <div class="card-section sp" style="--mb:16px"><div class="html-card" style="--ps:0.8;--pw:0.8;"><iframe srcdoc="<!DOCTYPE html>
+<html lang=&quot;ja&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>帰福占い</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: &quot;Hiragino Mincho ProN&quot;, &quot;Yu Mincho&quot;, serif;
+    background: #f3efe8;
+    color: #2b2b2b;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* スタートバナー */
+  .start-banner {
+    width: 100%;
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
+    display: block;
+    overflow: hidden;
+    transition: transform 0.15s;
+  }
+  .start-banner:active { transform: scale(0.98); }
+  .start-banner img { width: 100%; display: block; }
+
+  /* 選択画面 */
+  .form-wrap {
+    display: none;
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+  }
+  .form-wrap.show { display: block; }
+  .form-wrap .bg-img {
+    width: 100%;
+    display: block;
+  }
+  .form-wrap .layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 17% 6% 5.5% 6%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+  }
+  .form-title {
+    text-align: center;
+    font-size: 21px;
+    font-weight: 900;
+    color: #1a1a1a;
+    letter-spacing: 0.15em;
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+
+  .item-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .item-grid button {
+    padding: 18px 8px;
+    font-size: 16px;
+    border: 2px solid #d8c9a0;
+    border-radius: 12px;
+    background: #fffdf8;
+    color: #555;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .item-grid button .emoji {
+    font-size: 26px;
+  }
+  .item-grid button.selected {
+    background: #b03a2e;
+    border-color: #b03a2e;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .submit-btn {
+    width: 100%;
+    margin-top: 10px;
+    background: #b03a2e;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 14px 0;
+    font-size: 16px;
+    font-family: inherit;
+    letter-spacing: 0.3em;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .submit-btn:disabled {
+    background: #ccc;
+    cursor: default;
+  }
+
+  /* 結果画面 */
+  .omikuji-wrap {
+    display: none;
+    width: 100%;
+    position: relative;
+  }
+  .omikuji-wrap.show { display: block; }
+  .omikuji-wrap img.bg {
+    width: 100%;
+    display: block;
+  }
+  .layer {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .site-title {
+    position: absolute;
+    top: 9.5%;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: calc(var(--cardw, 360px) * 0.07);
+    font-weight: 900;
+    letter-spacing: 0.25em;
+    color: #b03a2e;
+  }
+
+  .item-box {
+    position: absolute;
+    top: 21%;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: calc(var(--cardw, 360px) * 0.045);
+    font-weight: 700;
+    color: #333;
+    letter-spacing: 0.05em;
+  }
+  .item-box .sub {
+    display: block;
+    font-size: calc(var(--cardw, 360px) * 0.034);
+    color: #888;
+    margin-top: 6px;
+    letter-spacing: 0.2em;
+  }
+
+  .score-box {
+    position: absolute;
+    top: 34%;
+    left: 0;
+    width: 100%;
+    text-align: center;
+  }
+  .score-box .num {
+    font-size: calc(var(--cardw, 360px) * 0.16);
+    font-weight: 900;
+    color: #1a1a1a;
+    line-height: 1;
+  }
+  .score-box .pct {
+    font-size: calc(var(--cardw, 360px) * 0.05);
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+  .score-box .label {
+    margin-top: 4px;
+    font-size: calc(var(--cardw, 360px) * 0.04);
+    font-weight: 900;
+    color: #b03a2e;
+    letter-spacing: 0.2em;
+  }
+
+  .comment-text {
+    position: absolute;
+    top: 54%;
+    left: 8%;
+    width: 84%;
+    text-align: center;
+    font-size: calc(var(--cardw, 360px) * 0.038);
+    line-height: 2;
+    letter-spacing: 0.03em;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .hint-grid {
+    position: absolute;
+    top: 69%;
+    left: 8%;
+    width: 84%;
+    display: flex;
+    flex-direction: column;
+  }
+  .hint-row {
+    display: flex;
+    align-items: baseline;
+    font-size: calc(var(--cardw, 360px) * 0.03);
+    line-height: 1.5;
+    border-bottom: 1px dashed #c9a86a;
+    padding: 1.8% 0;
+  }
+  .hint-row .label {
+    font-weight: 900;
+    color: #b03a2e;
+    letter-spacing: 0.1em;
+    margin-right: 0.7em;
+    white-space: nowrap;
+  }
+  .hint-row .text {
+    color: #333;
+  }
+
+  .advice-text {
+    position: absolute;
+    top: 86.5%;
+    left: 6%;
+    width: 88%;
+    text-align: center;
+    font-size: calc(var(--cardw, 360px) * 0.032);
+    line-height: 1.6;
+    color: #555;
+  }
+  .advice-text b {
+    color: #b03a2e;
+  }
+
+  .controls {
+    margin-top: 18px;
+    text-align: center;
+  }
+  button.redraw {
+    background: #b03a2e;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 10px 30px;
+    font-size: 14px;
+    font-family: inherit;
+    letter-spacing: 4px;
+    cursor: pointer;
+  }
+
+  /* ───────────────────────────────────────────────
+     幅に合わせて、文字・ボタン・入力欄の大きさを決める（基準：幅390pxのときに今までと同じ）
+     背景の絵と一緒に拡大・縮小するので、どの幅でも枠からはみ出さない。
+     --u = 枠の幅の 1/390。cqw は container-type を付けた枠の幅に対する割合（iPhone は iOS 16 以降）。
+     入力欄の文字は16pxより小さくしない（小さいと iPhone が入力時に画面を拡大するため）。
+     ─────────────────────────────────────────────── */
+  .form-wrap { container-type: inline-size; }
+  .form-wrap .layer { --u: calc(100cqw / 390); }
+  .form-title { font-size: calc(var(--u) * 21); margin-bottom: calc(var(--u) * 24); }
+  .item-grid { gap: calc(var(--u) * 12); margin-bottom: calc(var(--u) * 14); }
+  .item-grid button { padding: calc(var(--u) * 18) calc(var(--u) * 8); font-size: calc(var(--u) * 16); border-radius: calc(var(--u) * 12); gap: calc(var(--u) * 6); }
+  .item-grid button .emoji { font-size: calc(var(--u) * 26); }
+  .submit-btn { margin-top: calc(var(--u) * 10); padding: calc(var(--u) * 14) 0; font-size: calc(var(--u) * 16); border-radius: calc(var(--u) * 30); }
+</style>
+</head>
+<body>
+
+  <button class=&quot;start-banner&quot; id=&quot;startBtn&quot; onclick=&quot;showForm()&quot;>
+    <img src=&quot;images/htmlimg_de227b24.jpg&quot; alt=&quot;帰福占い&quot;>
+  </button>
+
+  <div class=&quot;form-wrap&quot; id=&quot;formWrap&quot;>
+    <img class=&quot;bg-img&quot; src=&quot;images/htmlimg_2e7d2af0.jpg&quot; alt=&quot;&quot;>
+    <div class=&quot;layer&quot;>
+    <div class=&quot;form-title&quot;>何を なくしましたか？</div>
+
+    <div class=&quot;item-grid&quot; id=&quot;itemGrid&quot;>
+      <button type=&quot;button&quot; data-item=&quot;財布&quot;><span class=&quot;emoji&quot;>👛</span>財布</button>
+      <button type=&quot;button&quot; data-item=&quot;鍵&quot;><span class=&quot;emoji&quot;>🔑</span>鍵</button>
+      <button type=&quot;button&quot; data-item=&quot;スマホ&quot;><span class=&quot;emoji&quot;>📱</span>スマホ</button>
+      <button type=&quot;button&quot; data-item=&quot;アクセサリー&quot;><span class=&quot;emoji&quot;>💍</span>アクセサリー</button>
+      <button type=&quot;button&quot; data-item=&quot;本・書類&quot;><span class=&quot;emoji&quot;>📔</span>本・書類</button>
+      <button type=&quot;button&quot; data-item=&quot;その他&quot;><span class=&quot;emoji&quot;>🎁</span>その他</button>
+    </div>
+
+    <button class=&quot;submit-btn&quot; id=&quot;submitBtn&quot; onclick=&quot;draw()&quot;>占う</button>
+    </div>
+
+  </div>
+
+  <div class=&quot;omikuji-wrap&quot; id=&quot;omikujiWrap&quot;>
+    <img class=&quot;bg&quot; src=&quot;images/htmlimg_26e0af7d.jpg&quot; alt=&quot;帰福占い結果&quot;>
+    <div class=&quot;layer&quot;>
+      <div class=&quot;site-title&quot;>帰福占い</div>
+      <div class=&quot;item-box&quot; id=&quot;itemBox&quot;>
+        財布
+        <span class=&quot;sub&quot;>の行方</span>
+      </div>
+      <div class=&quot;score-box&quot;>
+        <span class=&quot;num&quot; id=&quot;scoreNum&quot;>72</span><span class=&quot;pct&quot;>%</span>
+        <div class=&quot;label&quot; id=&quot;scoreLabel&quot;>戻る兆しあり</div>
+      </div>
+      <div class=&quot;comment-text&quot; id=&quot;commentText&quot;></div>
+      <div class=&quot;hint-grid&quot; id=&quot;hintGrid&quot;></div>
+      <div class=&quot;advice-text&quot; id=&quot;adviceText&quot;></div>
+    </div>
+  </div>
+
+  <div class=&quot;controls&quot; id=&quot;controls&quot; style=&quot;display:none;&quot;>
+    <button class=&quot;redraw&quot; onclick=&quot;resetAll()&quot;>もう一度占う</button>
+  </div>
+
+<script>
+  let selectedItem = &quot;財布&quot;;
+
+  document.querySelectorAll('#itemGrid button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#itemGrid button').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedItem = btn.dataset.item;
+    });
+  });
+
+  function showForm() {
+    document.getElementById('startBtn').style.display = 'none';
+    document.getElementById('formWrap').classList.add('show');
+  }
+
+  function scoreLabel(score) {
+    if (score >= 85) return &quot;必ず戻る&quot;;
+    if (score >= 65) return &quot;戻る兆しあり&quot;;
+    if (score >= 45) return &quot;気長に待とう&quot;;
+    if (score >= 25) return &quot;手がかり薄し&quot;;
+    return &quot;新たな縁を&quot;;
+  }
+
+  // スコア帯ごとのコメント
+  const COMMENTS = {
+    high: [&quot;近いうちに、思わぬ形であなたの元へ戻ってくるでしょう。&quot;, &quot;持ち主を忘れていません。もうすぐ再会できそうです。&quot;, &quot;良い知らせが届く予感。心当たりの場所をもう一度探してみて。&quot;],
+    mid: [&quot;時間はかかるかもしれませんが、戻る縁は繋がっています。&quot;, &quot;誰かの手によって、大切に保管されているようです。&quot;, &quot;焦らず待てば、ふとした瞬間に見つかるでしょう。&quot;],
+    low: [&quot;今は静かに見守る時。無理に探しすぎないことも大切です。&quot;, &quot;縁は薄れつつありますが、まだ望みは残っています。&quot;, &quot;一度心を落ち着けて、別の場所も探してみましょう。&quot;],
+    none: [&quot;今回は新しい縁を迎える時期なのかもしれません。&quot;, &quot;形あるものに執着せず、次の出会いを大切にしましょう。&quot;, &quot;失ったものより、これから得るものに目を向けてみて。&quot;]
+  };
+
+  // 見つかりやすい場所のヒント（アイテムごと）
+  const PLACES = {
+    財布: [&quot;カバンの内ポケット&quot;, &quot;車の座席の隙間&quot;, &quot;よく行くお店のレジ周り&quot;, &quot;コートやジャケットのポケット&quot;],
+    鍵: [&quot;玄関先や郵便受けの近く&quot;, &quot;カバンの底&quot;, &quot;前に着ていた服のポケット&quot;, &quot;車の中&quot;],
+    スマホ: [&quot;ソファや布団の隙間&quot;, &quot;充電器の近く&quot;, &quot;カバンの奥&quot;, &quot;最後に座った場所の周辺&quot;],
+    アクセサリー: [&quot;洗面所や鏡の前&quot;, &quot;アクセサリーケースの底&quot;, &quot;脱いだ服の中&quot;, &quot;引き出しの奥&quot;],
+    &quot;本・書類&quot;: [&quot;机の書類の間&quot;, &quot;カバンのサイドポケット&quot;, &quot;車内の座席下&quot;, &quot;本棚の別の場所&quot;],
+    その他: [&quot;普段よく通る場所の近く&quot;, &quot;家の中の意外な場所&quot;, &quot;持ち物をまとめている場所&quot;, &quot;最後に使った場所の周辺&quot;]
+  };
+
+  const TIMING = [&quot;数日以内に&quot;, &quot;今週中に&quot;, &quot;今月の半ばごろ&quot;, &quot;思い出した頃に&quot;, &quot;ふとした瞬間に&quot;, &quot;来月になる頃&quot;];
+
+  const ADVICE = [
+    &quot;焦らず心を落ち着けて探そう。&quot;,
+    &quot;一度通った道をもう一度辿ってみよう。&quot;,
+    &quot;身の回りを整理すると縁が戻りやすい。&quot;,
+    &quot;感謝の気持ちを忘れずに。&quot;,
+    &quot;誰かに聞いてみると手がかりが見つかるかも。&quot;,
+    &quot;諦めずもう一度探してみよう。&quot;
+  ];
+
+  function pick(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&amp;/g, '&amp;amp;').replace(/</g, '&amp;lt;').replace(/>/g, '&amp;gt;');
+  }
+
+  // 最終行が極端に短くならないよう、実描画幅を測って改行位置を調整
+  function fitLastLine(text) {
+    const el = document.getElementById('commentText');
+    el.textContent = text;
+
+    requestAnimationFrame(() => {
+      const containerWidth = el.clientWidth;
+      if (containerWidth <= 0) return;
+
+      const measurer = document.createElement('span');
+      measurer.style.visibility = 'hidden';
+      measurer.style.position = 'absolute';
+      measurer.style.whiteSpace = 'nowrap';
+      measurer.style.font = getComputedStyle(el).font;
+      measurer.style.letterSpacing = getComputedStyle(el).letterSpacing;
+      document.body.appendChild(measurer);
+
+      const chars = Array.from(text);
+      const breakPoints = [];
+      let lineStart = 0;
+      for (let i = 1; i <= chars.length; i++) {
+        measurer.textContent = chars.slice(lineStart, i).join('');
+        if (measurer.getBoundingClientRect().width > containerWidth) {
+          breakPoints.push(i - 1);
+          lineStart = i - 1;
+        }
+      }
+      document.body.removeChild(measurer);
+
+      if (breakPoints.length === 0) return;
+
+      // 2行になる場合は、最終行の長さによらず中央付近でバランス良く改行し直す
+      if (breakPoints.length === 1) {
+        const newBreak = Math.ceil(chars.length / 2);
+        const head = chars.slice(0, newBreak).join('');
+        const tail = chars.slice(newBreak).join('');
+        el.innerHTML = escapeHtml(head) + '<br>' + escapeHtml(tail);
+      }
+    });
+  }
+
+  // アドバイス欄（ラベル付き）の最終行調整
+  function fitAdviceLine(adviceText) {
+    const el = document.getElementById('adviceText');
+    const labelHtml = '<b>一言アドバイス</b>　';
+    el.innerHTML = labelHtml + escapeHtml(adviceText);
+
+    requestAnimationFrame(() => {
+      const containerWidth = el.clientWidth;
+      if (containerWidth <= 0) return;
+
+      const lineHeight = parseFloat(getComputedStyle(el).lineHeight);
+      if (el.scrollHeight <= lineHeight * 1.3) return; // 1行に収まっていればOK
+
+      // ラベル込みの全文を測定して、2行目が短すぎる場合のみ調整
+      const measurer = document.createElement('span');
+      measurer.style.visibility = 'hidden';
+      measurer.style.position = 'absolute';
+      measurer.style.whiteSpace = 'nowrap';
+      measurer.style.font = getComputedStyle(el).font;
+      measurer.style.letterSpacing = getComputedStyle(el).letterSpacing;
+      document.body.appendChild(measurer);
+
+      const fullText = &quot;一言アドバイス　&quot; + adviceText;
+      const chars = Array.from(fullText);
+      const breakPoints = [];
+      let lineStart = 0;
+      for (let i = 1; i <= chars.length; i++) {
+        measurer.textContent = chars.slice(lineStart, i).join('');
+        if (measurer.getBoundingClientRect().width > containerWidth) {
+          breakPoints.push(i - 1);
+          lineStart = i - 1;
+        }
+      }
+      document.body.removeChild(measurer);
+
+      if (breakPoints.length === 0) return;
+
+      const labelLen = &quot;一言アドバイス　&quot;.length;
+
+      // 3行以上になりそうな場合は、まずフォントサイズを少し縮めて再測定
+      if (breakPoints.length >= 2) {
+        const currentSize = parseFloat(getComputedStyle(el).fontSize);
+        const minSize = parseFloat(getComputedStyle(document.getElementById('omikujiWrap')).getPropertyValue('--cardw') || '360') * 0.024;
+        if (currentSize > minSize) {
+          el.style.fontSize = Math.max(currentSize * 0.85, minSize) + 'px';
+          requestAnimationFrame(() => fitAdviceLine(adviceText));
+        }
+        return;
+      }
+
+      const lastBreak = breakPoints[breakPoints.length - 1];
+
+      // 2行になる場合は常に、行間のバランスを取り直す
+      if (breakPoints.length === 1) {
+        const newBreak = Math.max(labelLen + 1, Math.ceil(chars.length / 2));
+        const head = chars.slice(labelLen, newBreak).join('');
+        const tail = chars.slice(newBreak).join('');
+        el.innerHTML = labelHtml + escapeHtml(head) + '<br>' + escapeHtml(tail);
+      }
+    });
+  }
+
+  // ---- 参拝記録（全占いツール共通） ----
+  function recordVisit(omikujiName, resultSummary) {
+    try {
+      const VISIT_KEY = &quot;asobiva_visit_log&quot;;
+      const raw = localStorage.getItem(VISIT_KEY);
+      const visits = raw ? JSON.parse(raw) : [];
+      visits.push({
+        id: Date.now(),
+        omikuji: omikujiName,
+        date: new Date().toISOString(),
+        result: resultSummary || &quot;&quot;
+      });
+      const trimmed = visits.slice(-500);
+      localStorage.setItem(VISIT_KEY, JSON.stringify(trimmed));
+    } catch (e) {
+      // localStorageが使えない環境では何もしない
+    }
+  }
+
+  function draw() {
+    const score = Math.floor(Math.random() * 96) + 5; // 5〜100
+    const label = scoreLabel(score);
+
+    let bank;
+    if (score >= 85) bank = COMMENTS.high;
+    else if (score >= 65) bank = COMMENTS.high;
+    else if (score >= 45) bank = COMMENTS.mid;
+    else if (score >= 25) bank = COMMENTS.low;
+    else bank = COMMENTS.none;
+
+    const comment = pick(bank);
+    const place = pick(PLACES[selectedItem] || PLACES[&quot;その他&quot;]);
+    const timing = pick(TIMING);
+    const advice = pick(ADVICE);
+
+    document.getElementById('itemBox').innerHTML =
+      `${selectedItem}<span class=&quot;sub&quot;>の行方</span>`;
+    document.getElementById('scoreNum').textContent = score;
+    document.getElementById('scoreLabel').textContent = label;
+    fitLastLine(comment);
+
+    const hintGrid = document.getElementById('hintGrid');
+    hintGrid.innerHTML =
+      `<div class=&quot;hint-row&quot;><span class=&quot;label&quot;>場所</span><span class=&quot;text&quot;>${place}</span></div>` +
+      `<div class=&quot;hint-row&quot;><span class=&quot;label&quot;>時期</span><span class=&quot;text&quot;>${timing}</span></div>`;
+
+    fitAdviceLine(advice);
+
+    recordVisit(&quot;帰福占い&quot;, `${selectedItem} ${score}%`);
+
+    document.getElementById('formWrap').classList.remove('show');
+    document.getElementById('omikujiWrap').classList.add('show');
+    document.getElementById('controls').style.display = 'block';
+
+    requestAnimationFrame(function() {
+      updateCardWidth();
+      setTimeout(updateCardWidth, 50);
+    });
+  }
+
+  function updateCardWidth() {
+    const wrap = document.getElementById(&quot;omikujiWrap&quot;);
+    if (wrap &amp;&amp; wrap.offsetWidth > 0) {
+      wrap.style.setProperty(&quot;--cardw&quot;, wrap.offsetWidth + &quot;px&quot;);
+    }
+  }
+  window.addEventListener(&quot;resize&quot;, updateCardWidth);
+  window.addEventListener(&quot;orientationchange&quot;, updateCardWidth);
+
+  function resetAll() {
+    document.querySelectorAll('#itemGrid button').forEach(b => b.classList.remove('selected'));
+    document.getElementById('omikujiWrap').classList.remove('show');
+    document.getElementById('controls').style.display = 'none';
+    document.getElementById('formWrap').classList.add('show');
+  }
+</script>
+<style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
+(function(){
+  function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-init') report(); });
+  window.addEventListener('load', report);
+  if(document.readyState==='complete') report();
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  var applied = null;
+  function applyScale(s){
+    if(!document.body || applied === s) return;
+    var first = applied === null;
+    applied = s;
+    if(first &amp;&amp; s === 1) return; // 一度も拡大・縮小していなければ、何もしない
+    // body とその中のすべての要素の元の文字の大きさを先に測ってから、まとめて倍にする
+    // （文字を直接持たない段落なども倍にして、行の間隔が文字と同じ割合で変わるようにする）
+    var nodes = [document.body].concat(Array.prototype.slice.call(document.body.querySelectorAll('*'))), i, el;
+    for(i=0;i<nodes.length;i++){
+      if(s === 1) break; // 元に戻すときは、元の大きさを測り直さない
+      el = nodes[i];
+      if(/^(IMG|VIDEO|IFRAME|SVG|SCRIPT|STYLE|PATH|G|CIRCLE|RECT|LINE|POLYGON|POLYLINE|ELLIPSE|USE|DEFS)$/i.test(el.tagName)) continue;
+      if(el.getAttribute('data-asobiva-fs')) continue;
+      el.setAttribute('data-asobiva-fs', getComputedStyle(el).fontSize);
+      // もともとHTMLが持っている文字の大きさの指定（例：プロフィールの「名前 120%」）を覚えておき、100%に戻すときはそれに戻す（v4.7）
+      el.setAttribute('data-asobiva-fs0', el.style.fontSize || '');
+    }
+    for(i=0;i<nodes.length;i++){
+      var base = parseFloat(nodes[i].getAttribute('data-asobiva-fs'));
+      if(isFinite(base)) nodes[i].style.fontSize = s === 1 ? (nodes[i].getAttribute('data-asobiva-fs0') || '') : (base * s) + 'px';
+    }
+    report();
+  }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-scale') applyScale(e.data.scale); });
+  parent.postMessage({ type:'asobiva-need-scale' }, '*');
+})();
+</script></body>
+</html>
+" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
+    </div></div>
+    <div class="card-section sp" style="--mb:40px"><div class="group-card">
+    <div class="card-section sp" style="--mb:10px"><div class="card" style="--ps:0.8;--pw:0.8;"><img src="images/img_2803.jpg" alt="" loading="lazy"></div></div>
+    <div class="card-section sp" style="--mb:16px"><div class="html-card" style="--ps:0.8;--pw:0.8;"><iframe srcdoc="<!DOCTYPE html>
+<html lang=&quot;ja&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>ご縁占い</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: &quot;Hiragino Mincho ProN&quot;, &quot;Yu Mincho&quot;, serif;
+    background: #f3efe8;
+    color: #2b2b2b;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* スタートバナー */
+  .start-banner {
+    width: 100%;
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
+    display: block;
+    overflow: hidden;
+    transition: transform 0.15s;
+  }
+  .start-banner:active { transform: scale(0.98); }
+  .start-banner img { width: 100%; display: block; }
+
+  /* 入力フォーム画面 */
+  .form-wrap {
+    display: none;
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+  }
+  .form-wrap.show { display: block; }
+  .form-wrap .bg-img {
+    width: 100%;
+    display: block;
+  }
+  .form-wrap .layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 17% 6% 5.5% 6%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+  }
+  .form-title {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 900;
+    color: #1a1a1a;
+    letter-spacing: 0.2em;
+    margin-bottom: 24px;
+  }
+
+  .field {
+    margin-bottom: 18px;
+  }
+  .field label {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 6px;
+    letter-spacing: 0.1em;
+  }
+  .field input[type=&quot;text&quot;] {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 16px;
+    border: 2px solid #d8c9a0;
+    border-radius: 10px;
+    font-family: inherit;
+    background: #fffdf8;
+  }
+  .field input[type=&quot;text&quot;]:focus {
+    outline: none;
+    border-color: #b03a2e;
+  }
+
+  .relation-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .relation-options button {
+    flex: 1 1 30%;
+    padding: 10px 6px;
+    font-size: 14px;
+    border: 2px solid #d8c9a0;
+    border-radius: 10px;
+    background: #fffdf8;
+    color: #555;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .relation-options button.selected {
+    background: #b03a2e;
+    border-color: #b03a2e;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .submit-btn {
+    width: 100%;
+    margin-top: 10px;
+    background: #b03a2e;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 14px 0;
+    font-size: 16px;
+    font-family: inherit;
+    letter-spacing: 0.3em;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .submit-btn:disabled {
+    background: #ccc;
+    cursor: default;
+  }
+
+  /* 結果画面 */
+  .omikuji-wrap {
+    display: none;
+    width: 100%;
+    position: relative;
+  }
+  .omikuji-wrap.show { display: block; }
+  .omikuji-wrap img.bg {
+    width: 100%;
+    display: block;
+  }
+  .layer {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .site-title {
+    position: absolute;
+    top: 9.5%;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: calc(var(--cardw, 360px) * 0.07);
+    font-weight: 900;
+    letter-spacing: 0.25em;
+    color: #b03a2e;
+  }
+
+  .names-box {
+    position: absolute;
+    top: 21%;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: calc(var(--cardw, 360px) * 0.045);
+    font-weight: 700;
+    color: #333;
+    letter-spacing: 0.05em;
+  }
+  .names-box .rel {
+    display: block;
+    font-size: calc(var(--cardw, 360px) * 0.034);
+    color: #888;
+    margin-top: 6px;
+    letter-spacing: 0.2em;
+  }
+
+  .score-box {
+    position: absolute;
+    top: 34%;
+    left: 0;
+    width: 100%;
+    text-align: center;
+  }
+  .score-box .num {
+    font-size: calc(var(--cardw, 360px) * 0.16);
+    font-weight: 900;
+    color: #1a1a1a;
+    line-height: 1;
+  }
+  .score-box .pct {
+    font-size: calc(var(--cardw, 360px) * 0.05);
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+  .score-box .label {
+    margin-top: 4px;
+    font-size: calc(var(--cardw, 360px) * 0.04);
+    font-weight: 900;
+    color: #b03a2e;
+    letter-spacing: 0.2em;
+  }
+
+  .comment-text {
+    position: absolute;
+    top: 54%;
+    left: 8%;
+    width: 84%;
+    text-align: center;
+    font-size: calc(var(--cardw, 360px) * 0.038);
+    line-height: 2;
+    letter-spacing: 0.03em;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .advice-text {
+    position: absolute;
+    top: 89%;
+    left: 6%;
+    width: 88%;
+    text-align: center;
+    font-size: calc(var(--cardw, 360px) * 0.034);
+    line-height: 1.8;
+    color: #555;
+  }
+  .advice-text b {
+    color: #b03a2e;
+  }
+
+  .controls {
+    margin-top: 18px;
+    text-align: center;
+  }
+  button.redraw {
+    background: #b03a2e;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 10px 30px;
+    font-size: 14px;
+    font-family: inherit;
+    letter-spacing: 4px;
+    cursor: pointer;
+  }
+
+  /* ───────────────────────────────────────────────
+     幅に合わせて、文字・ボタン・入力欄の大きさを決める（基準：幅390pxのときに今までと同じ）
+     背景の絵と一緒に拡大・縮小するので、どの幅でも枠からはみ出さない。
+     --u = 枠の幅の 1/390。cqw は container-type を付けた枠の幅に対する割合（iPhone は iOS 16 以降）。
+     入力欄の文字は16pxより小さくしない（小さいと iPhone が入力時に画面を拡大するため）。
+     ─────────────────────────────────────────────── */
+  .form-wrap { container-type: inline-size; }
+  .form-wrap .layer { --u: calc(100cqw / 390); }
+  .form-title { font-size: calc(var(--u) * 22); margin-bottom: calc(var(--u) * 24); }
+  .field { margin-bottom: calc(var(--u) * 18); }
+  .field label { font-size: calc(var(--u) * 14); margin-bottom: calc(var(--u) * 6); }
+  .field input[type=&quot;text&quot;] { padding: calc(var(--u) * 12) calc(var(--u) * 14); font-size: max(16px, calc(var(--u) * 16)); border-radius: calc(var(--u) * 10); }
+  .relation-options { gap: calc(var(--u) * 8); }
+  .relation-options button { padding: calc(var(--u) * 10) calc(var(--u) * 6); font-size: calc(var(--u) * 14); border-radius: calc(var(--u) * 10); }
+  .submit-btn { margin-top: calc(var(--u) * 10); padding: calc(var(--u) * 14) 0; font-size: calc(var(--u) * 16); border-radius: calc(var(--u) * 30); }
+</style>
+</head>
+<body>
+
+  <button class=&quot;start-banner&quot; id=&quot;startBtn&quot; onclick=&quot;showForm()&quot;>
+    <img src=&quot;images/htmlimg_27f68407.jpg&quot; alt=&quot;ご縁占い&quot;>
+  </button>
+
+  <div class=&quot;form-wrap&quot; id=&quot;formWrap&quot;>
+    <img class=&quot;bg-img&quot; src=&quot;images/htmlimg_2e7d2af0.jpg&quot; alt=&quot;&quot;>
+    <div class=&quot;layer&quot;>
+    <div class=&quot;form-title&quot;>お二人のお名前を<br>お聞かせください</div>
+
+    <div class=&quot;field&quot;>
+      <label>あなたのお名前</label>
+      <input type=&quot;text&quot; id=&quot;name1&quot; placeholder=&quot;例）たろう&quot; maxlength=&quot;12&quot;>
+    </div>
+
+    <div class=&quot;field&quot;>
+      <label>お相手のお名前</label>
+      <input type=&quot;text&quot; id=&quot;name2&quot; placeholder=&quot;例）はなこ&quot; maxlength=&quot;12&quot;>
+    </div>
+
+    <div class=&quot;field&quot;>
+      <label>お二人の関係</label>
+      <div class=&quot;relation-options&quot; id=&quot;relationOptions&quot;>
+        <button type=&quot;button&quot; data-rel=&quot;友達&quot;>友達</button>
+        <button type=&quot;button&quot; data-rel=&quot;家族&quot;>家族</button>
+        <button type=&quot;button&quot; data-rel=&quot;恋人&quot;>恋人</button>
+        <button type=&quot;button&quot; data-rel=&quot;仕事仲間&quot;>仕事仲間</button>
+        <button type=&quot;button&quot; data-rel=&quot;その他&quot;>その他</button>
+      </div>
+    </div>
+
+    <button class=&quot;submit-btn&quot; id=&quot;submitBtn&quot; onclick=&quot;draw()&quot;>ご縁を結ぶ</button>
+    </div>
+
+  </div>
+
+  <div class=&quot;omikuji-wrap&quot; id=&quot;omikujiWrap&quot;>
+    <img class=&quot;bg&quot; src=&quot;images/htmlimg_26e0af7d.jpg&quot; alt=&quot;ご縁占い結果&quot;>
+    <div class=&quot;layer&quot;>
+      <div class=&quot;site-title&quot;>ご縁占い</div>
+      <div class=&quot;names-box&quot; id=&quot;namesBox&quot;>
+        たろう ＆ はなこ
+        <span class=&quot;rel&quot; id=&quot;relLabel&quot;>友達</span>
+      </div>
+      <div class=&quot;score-box&quot;>
+        <span class=&quot;num&quot; id=&quot;scoreNum&quot;>87</span><span class=&quot;pct&quot;>%</span>
+        <div class=&quot;label&quot; id=&quot;scoreLabel&quot;>良縁</div>
+      </div>
+      <div class=&quot;comment-text&quot; id=&quot;commentText&quot;></div>
+      <div class=&quot;advice-text&quot; id=&quot;adviceText&quot;></div>
+    </div>
+  </div>
+
+  <div class=&quot;controls&quot; id=&quot;controls&quot; style=&quot;display:none;&quot;>
+    <button class=&quot;redraw&quot; onclick=&quot;resetAll()&quot;>もう一度占う</button>
+  </div>
+
+<script>
+  let selectedRelation = &quot;友達&quot;;
+
+  document.querySelectorAll('.relation-options button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.relation-options button').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedRelation = btn.dataset.rel;
+    });
+  });
+  document.querySelector('.relation-options button').classList.add('selected');
+
+  function showForm() {
+    document.getElementById('startBtn').style.display = 'none';
+    document.getElementById('formWrap').classList.add('show');
+  }
+
+  // スコア帯ごとのラベル
+  function scoreLabel(score) {
+    if (score >= 90) return &quot;大良縁&quot;;
+    if (score >= 75) return &quot;良縁&quot;;
+    if (score >= 55) return &quot;縁あり&quot;;
+    if (score >= 35) return &quot;発展途上&quot;;
+    return &quot;これから&quot;;
+  }
+
+  // 関係性別のコメントバンク（スコア帯ごと）
+  const COMMENTS = {
+    友達: {
+      high: [&quot;気の合う最高の友達同士。一緒にいるだけで運気が上がる関係です。&quot;, &quot;笑いのツボが似ていて、一緒にいる時間が宝物になる相性です。&quot;],
+      mid: [&quot;お互いを尊重し合える、心地よい友情が育っています。&quot;, &quot;ときどきすれ違っても、また自然と仲良くなれる縁です。&quot;],
+      low: [&quot;まだお互いを知り始めたばかり。これから縁が深まっていくでしょう。&quot;, &quot;ゆっくり時間をかけることで、良い友情に育っていきます。&quot;]
+    },
+    家族: {
+      high: [&quot;強い絆で結ばれた、かけがえのない家族の縁です。&quot;, &quot;支え合い、助け合える理想的な家族関係です。&quot;],
+      mid: [&quot;お互いを思いやる気持ちが、家族の絆を育てています。&quot;, &quot;時にぶつかっても、根っこの愛情は揺らぎません。&quot;],
+      low: [&quot;距離を感じることもありますが、縁は確かに繋がっています。&quot;, &quot;少しずつ歩み寄ることで、絆が深まっていくでしょう。&quot;]
+    },
+    恋人: {
+      high: [&quot;運命的な縁で結ばれた、とても良い相性です。&quot;, &quot;お互いを高め合える、理想的なパートナーシップです。&quot;],
+      mid: [&quot;これから二人で育てていける、温かい縁です。&quot;, &quot;歩み寄る努力が、より深い絆を生み出すでしょう。&quot;],
+      low: [&quot;まだ始まったばかりの縁。焦らず大切に育てましょう。&quot;, &quot;違いを認め合うことで、新しい魅力に気づけるはずです。&quot;]
+    },
+    仕事仲間: {
+      high: [&quot;息の合うベストパートナー。仕事の成果も期待できます。&quot;, &quot;お互いの強みを活かし合える、理想的なチームです。&quot;],
+      mid: [&quot;協力し合うことで、着実に成果を積み上げていけます。&quot;, &quot;それぞれの個性を活かせば、良い結果に繋がるでしょう。&quot;],
+      low: [&quot;まだ手探りの関係ですが、これから信頼を築けます。&quot;, &quot;対話を重ねることで、より良い関係になるでしょう。&quot;]
+    },
+    その他: {
+      high: [&quot;とても良い縁で結ばれています。大切にしたい関係です。&quot;, &quot;自然と惹かれ合う、心地よい縁です。&quot;],
+      mid: [&quot;これから深まっていく可能性を秘めた縁です。&quot;, &quot;お互いを知ることで、新しい発見がありそうです。&quot;],
+      low: [&quot;まだこれからの縁。ゆっくり育てていきましょう。&quot;, &quot;小さなきっかけが、良い関係に繋がるかもしれません。&quot;]
+    }
+  };
+
+  const ADVICE = [
+    &quot;素直な気持ちを大切に。&quot;,
+    &quot;感謝の言葉を伝えてみよう。&quot;,
+    &quot;ちょっとした気遣いが縁を深める。&quot;,
+    &quot;焦らず自然体で過ごそう。&quot;,
+    &quot;一緒に過ごす時間を大切に。&quot;,
+    &quot;笑顔が良い縁を引き寄せる。&quot;
+  ];
+
+  function pick(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  // 最終行が極端に短く（だいたい3文字以下）ならないよう、
+  // 実際の描画幅を測って改行位置を自前で計算し、<br>で明示的に折り返す
+  function fitLastLine(text) {
+    const el = document.getElementById('commentText');
+    el.style.fontSize = '';
+    el.textContent = text;
+
+    requestAnimationFrame(() => {
+      const containerWidth = el.clientWidth;
+      if (containerWidth <= 0) return;
+
+      // 計測用の非表示スパンで1文字ずつ幅を積算し、行の折り返し位置を求める
+      const measurer = document.createElement('span');
+      measurer.style.visibility = 'hidden';
+      measurer.style.position = 'absolute';
+      measurer.style.whiteSpace = 'nowrap';
+      measurer.style.font = getComputedStyle(el).font;
+      measurer.style.letterSpacing = getComputedStyle(el).letterSpacing;
+      document.body.appendChild(measurer);
+
+      const chars = Array.from(text);
+      const breakPoints = [];
+      let lineStart = 0;
+      for (let i = 1; i <= chars.length; i++) {
+        measurer.textContent = chars.slice(lineStart, i).join('');
+        if (measurer.getBoundingClientRect().width > containerWidth) {
+          breakPoints.push(i - 1);
+          lineStart = i - 1;
+        }
+      }
+      document.body.removeChild(measurer);
+
+      if (breakPoints.length === 0) return; // 1行に収まる
+
+      // 最終行の文字数を算出
+      const lastBreak = breakPoints[breakPoints.length - 1];
+      const lastLineLen = chars.length - lastBreak;
+
+      if (lastLineLen >= 1 &amp;&amp; lastLineLen <= 3 &amp;&amp; breakPoints.length === 1) {
+        // 最終行が短すぎる場合、改行位置を前にずらして2行のバランスを取る
+        const newBreak = Math.ceil(chars.length / 2);
+        const head = chars.slice(0, newBreak).join('');
+        const tail = chars.slice(newBreak).join('');
+        el.innerHTML = escapeHtml(head) + '<br>' + escapeHtml(tail);
+      }
+    });
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&amp;/g, '&amp;amp;').replace(/</g, '&amp;lt;').replace(/>/g, '&amp;gt;');
+  }
+
+
+  // ---- 参拝記録（全占いツール共通） ----
+  function recordVisit(omikujiName, resultSummary) {
+    try {
+      const VISIT_KEY = &quot;asobiva_visit_log&quot;;
+      const raw = localStorage.getItem(VISIT_KEY);
+      const visits = raw ? JSON.parse(raw) : [];
+      visits.push({
+        id: Date.now(),
+        omikuji: omikujiName,
+        date: new Date().toISOString(),
+        result: resultSummary || &quot;&quot;
+      });
+      const trimmed = visits.slice(-500);
+      localStorage.setItem(VISIT_KEY, JSON.stringify(trimmed));
+    } catch (e) {
+      // localStorageが使えない環境では何もしない
+    }
+  }
+
+  function draw() {
+    const name1 = document.getElementById('name1').value.trim() || &quot;あなた&quot;;
+    const name2 = document.getElementById('name2').value.trim() || &quot;お相手&quot;;
+
+    const score = Math.floor(Math.random() * 71) + 30; // 30〜100
+    const label = scoreLabel(score);
+
+    let bank;
+    if (score >= 75) bank = COMMENTS[selectedRelation].high;
+    else if (score >= 55) bank = COMMENTS[selectedRelation].mid;
+    else bank = COMMENTS[selectedRelation].low;
+
+    const comment = pick(bank);
+    const advice = pick(ADVICE);
+
+    document.getElementById('namesBox').innerHTML =
+      `${name1} ＆ ${name2}<span class=&quot;rel&quot;>${selectedRelation}</span>`;
+    document.getElementById('scoreNum').textContent = score;
+    document.getElementById('scoreLabel').textContent = label;
+    fitLastLine(comment);
+    document.getElementById('adviceText').innerHTML = `<b>一言アドバイス</b>　${advice}`;
+
+    recordVisit(&quot;ご縁占い&quot;, `${name1}＆${name2} ${score}%`);
+
+    document.getElementById('formWrap').classList.remove('show');
+    document.getElementById('omikujiWrap').classList.add('show');
+    document.getElementById('controls').style.display = 'block';
+
+    requestAnimationFrame(function() {
+      updateCardWidth();
+      setTimeout(updateCardWidth, 50);
+    });
+  }
+
+  function updateCardWidth() {
+    const wrap = document.getElementById(&quot;omikujiWrap&quot;);
+    if (wrap &amp;&amp; wrap.offsetWidth > 0) {
+      wrap.style.setProperty(&quot;--cardw&quot;, wrap.offsetWidth + &quot;px&quot;);
+    }
+  }
+  window.addEventListener(&quot;resize&quot;, updateCardWidth);
+  window.addEventListener(&quot;orientationchange&quot;, updateCardWidth);
+
+  function resetAll() {
+    document.getElementById('name1').value = '';
+    document.getElementById('name2').value = '';
+    document.getElementById('omikujiWrap').classList.remove('show');
+    document.getElementById('controls').style.display = 'none';
+    document.getElementById('formWrap').classList.add('show');
+  }
+</script>
+<style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
+(function(){
+  function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-init') report(); });
+  window.addEventListener('load', report);
+  if(document.readyState==='complete') report();
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  var applied = null;
+  function applyScale(s){
+    if(!document.body || applied === s) return;
+    var first = applied === null;
+    applied = s;
+    if(first &amp;&amp; s === 1) return; // 一度も拡大・縮小していなければ、何もしない
+    // body とその中のすべての要素の元の文字の大きさを先に測ってから、まとめて倍にする
+    // （文字を直接持たない段落なども倍にして、行の間隔が文字と同じ割合で変わるようにする）
+    var nodes = [document.body].concat(Array.prototype.slice.call(document.body.querySelectorAll('*'))), i, el;
+    for(i=0;i<nodes.length;i++){
+      if(s === 1) break; // 元に戻すときは、元の大きさを測り直さない
+      el = nodes[i];
+      if(/^(IMG|VIDEO|IFRAME|SVG|SCRIPT|STYLE|PATH|G|CIRCLE|RECT|LINE|POLYGON|POLYLINE|ELLIPSE|USE|DEFS)$/i.test(el.tagName)) continue;
+      if(el.getAttribute('data-asobiva-fs')) continue;
+      el.setAttribute('data-asobiva-fs', getComputedStyle(el).fontSize);
+      // もともとHTMLが持っている文字の大きさの指定（例：プロフィールの「名前 120%」）を覚えておき、100%に戻すときはそれに戻す（v4.7）
+      el.setAttribute('data-asobiva-fs0', el.style.fontSize || '');
+    }
+    for(i=0;i<nodes.length;i++){
+      var base = parseFloat(nodes[i].getAttribute('data-asobiva-fs'));
+      if(isFinite(base)) nodes[i].style.fontSize = s === 1 ? (nodes[i].getAttribute('data-asobiva-fs0') || '') : (base * s) + 'px';
+    }
+    report();
+  }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-scale') applyScale(e.data.scale); });
+  parent.postMessage({ type:'asobiva-need-scale' }, '*');
+})();
+</script></body>
+</html>
+" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
+    </div></div>
+    <div class="card-section sp is-html" style="--mb:30px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
+<html lang=&quot;ja&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>SHRINE</title>
+<link href=&quot;https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&amp;display=swap&quot; rel=&quot;stylesheet&quot;>
+<style>*{box-sizing:border-box;}
+body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;padding:0;line-height:1.7;}
+.page{max-width:600px;margin:0 auto;padding:0;}
+.divider-container{width:100%;padding:min(2.325582vw,10px) min(4.651163vw,20px) min(2.325582vw,10px) min(4.651163vw,20px);}
+.divider{width:100%;border:none;border-top:1px solid #17191a;margin:0;}
+.dv-head{display:flex;align-items:center;gap:min(3.720931vw,16px);}
+.dv-head .divider{flex:1 1 0;width:auto;min-width:0;}
+.dv-text{flex:0 1 auto;min-width:0;font-size:min(2.790698vw,12px);font-weight:400;color:#111111;letter-spacing:0.04em;line-height:1.4;overflow-wrap:anywhere;}
+.dv-center .dv-text{text-align:center;}</style>
+</head>
+<body>
+<div class=&quot;page&quot;>
+  <div class=&quot;divider-container&quot;>
+    <div class=&quot;dv-head dv-left&quot;><span class=&quot;dv-text&quot;>SHRINE</span><hr class=&quot;divider&quot;></div>
+  </div>
+</div>
+<script type=&quot;application/json&quot; id=&quot;dv-data&quot;>{&quot;v&quot;:2,&quot;lineColor&quot;:&quot;#17191a&quot;,&quot;lineStyle&quot;:&quot;solid&quot;,&quot;lineWidth&quot;:1,&quot;mt&quot;:10,&quot;mb&quot;:10,&quot;ml&quot;:20,&quot;mr&quot;:20,&quot;mode&quot;:&quot;left&quot;,&quot;text&quot;:&quot;SHRINE&quot;,&quot;size&quot;:12,&quot;weight&quot;:400,&quot;color&quot;:&quot;#111111&quot;,&quot;ls&quot;:0.04,&quot;gap&quot;:16}</script>
+<style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
+(function(){
+  function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-init') report(); });
+  window.addEventListener('load', report);
+  if(document.readyState==='complete') report();
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  var applied = null;
+  function applyScale(s){
+    if(!document.body || applied === s) return;
+    var first = applied === null;
+    applied = s;
+    if(first &amp;&amp; s === 1) return; // 一度も拡大・縮小していなければ、何もしない
+    // body とその中のすべての要素の元の文字の大きさを先に測ってから、まとめて倍にする
+    // （文字を直接持たない段落なども倍にして、行の間隔が文字と同じ割合で変わるようにする）
+    var nodes = [document.body].concat(Array.prototype.slice.call(document.body.querySelectorAll('*'))), i, el;
+    for(i=0;i<nodes.length;i++){
+      if(s === 1) break; // 元に戻すときは、元の大きさを測り直さない
+      el = nodes[i];
+      if(/^(IMG|VIDEO|IFRAME|SVG|SCRIPT|STYLE|PATH|G|CIRCLE|RECT|LINE|POLYGON|POLYLINE|ELLIPSE|USE|DEFS)$/i.test(el.tagName)) continue;
+      if(el.getAttribute('data-asobiva-fs')) continue;
+      el.setAttribute('data-asobiva-fs', getComputedStyle(el).fontSize);
+      // もともとHTMLが持っている文字の大きさの指定（例：プロフィールの「名前 120%」）を覚えておき、100%に戻すときはそれに戻す（v4.7）
+      el.setAttribute('data-asobiva-fs0', el.style.fontSize || '');
+    }
+    for(i=0;i<nodes.length;i++){
+      var base = parseFloat(nodes[i].getAttribute('data-asobiva-fs'));
+      if(isFinite(base)) nodes[i].style.fontSize = s === 1 ? (nodes[i].getAttribute('data-asobiva-fs0') || '') : (base * s) + 'px';
+    }
+    report();
+  }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-scale') applyScale(e.data.scale); });
+  parent.postMessage({ type:'asobiva-need-scale' }, '*');
+})();
+</script></body>
+</html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
+    <div class="card-section sp" style="--mb:16px"><div class="group-card">
+    <div class="card-section sp" style="--mb:10px"><div class="card" style="--ps:0.8;--pw:0.8;"><img src="images/b9d94f6f-8027-4278-a209-e711b887b8fe.png" alt="" loading="lazy"></div></div>
+    <div class="card-section sp" style="--mb:8px"><div class="html-card" style="--ps:0.8;--pw:0.8;"><iframe srcdoc="<!DOCTYPE html>
+<html lang=&quot;ja&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>参拝帖</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: &quot;Hiragino Mincho ProN&quot;, &quot;Yu Mincho&quot;, serif;
+    background: #f3efe8;
+    color: #2b2b2b;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  .banner {
+    width: 100%;
+    display: block;
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
+    overflow: hidden;
+    transition: transform 0.15s;
+  }
+  .banner:active { transform: scale(0.98); }
+  .banner img {
+    width: 100%;
+    display: block;
+  }
+
+  .content {
+    display: none;
+    max-width: 480px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .content.show {
+    display: block;
+  }
+  .content .page-bg {
+    width: 100%;
+    display: block;
+  }
+  .content .page-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 15% 6% 13% 6%;
+  }
+
+  .stats-summary {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .stat-box {
+    flex: 1;
+    background: #fffdf8;
+    border: 2px solid #d8c9a0;
+    border-radius: 12px;
+    padding: 16px 8px;
+    text-align: center;
+  }
+  .stat-box .num {
+    font-size: 28px;
+    font-weight: 900;
+    color: #b03a2e;
+  }
+  .stat-box .label {
+    font-size: 11px;
+    color: #777;
+    margin-top: 4px;
+  }
+
+  .section-title {
+    font-size: 13px;
+    color: #777;
+    margin: 22px 0 8px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+
+  .visit-table {
+    background: #fffdf8;
+    border: 2px solid #d8c9a0;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .visit-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 13px 16px;
+    border-bottom: 1px dashed #d8c9a0;
+    font-size: 14px;
+  }
+  .visit-row:last-child { border-bottom: none; }
+  .visit-row .name {
+    color: #333;
+    font-weight: 700;
+  }
+  .visit-row .count {
+    color: #b03a2e;
+    font-weight: 900;
+  }
+
+  .history-list {
+    background: #fffdf8;
+    border: 2px solid #d8c9a0;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .history-item {
+    font-size: 13px;
+    color: #555;
+    padding: 12px 16px;
+    border-bottom: 1px dashed #e5dcc5;
+    display: flex;
+    justify-content: space-between;
+  }
+  .history-item:last-child { border-bottom: none; }
+  .history-item .h-date {
+    color: #999;
+    flex-shrink: 0;
+    margin-right: 10px;
+  }
+  .history-item .h-name {
+    font-weight: 700;
+    color: #333;
+  }
+  .history-item .h-result {
+    color: #b03a2e;
+    margin-left: auto;
+    padding-left: 8px;
+  }
+
+  .empty-msg {
+    text-align: center;
+    color: #999;
+    font-size: 13px;
+    padding: 18px;
+  }
+
+  /* ───────────────────────────────────────────────
+     幅に合わせて、文字・ボタン・入力欄の大きさを決める（基準：幅390pxのときに今までと同じ）
+     背景の絵と一緒に拡大・縮小するので、どの幅でも枠からはみ出さない。
+     --u = 枠の幅の 1/390。cqw は container-type を付けた枠の幅に対する割合（iPhone は iOS 16 以降）。
+     入力欄の文字は16pxより小さくしない（小さいと iPhone が入力時に画面を拡大するため）。
+     ─────────────────────────────────────────────── */
+  .content { container-type: inline-size; }
+  .content .page-layer { --u: calc(100cqw / 390); }
+  .stats-summary { gap: calc(var(--u) * 10); margin-bottom: calc(var(--u) * 22); }
+  .stat-box { padding: calc(var(--u) * 16) calc(var(--u) * 8); border-radius: calc(var(--u) * 12); }
+  .stat-box .num { font-size: calc(var(--u) * 28); }
+  .stat-box .label { font-size: calc(var(--u) * 11); margin-top: calc(var(--u) * 4); }
+  .section-title { font-size: calc(var(--u) * 13); margin: calc(var(--u) * 22) 0 calc(var(--u) * 8); }
+  .visit-table, .history-list { border-radius: calc(var(--u) * 12); }
+  .visit-row { padding: calc(var(--u) * 13) calc(var(--u) * 16); font-size: calc(var(--u) * 14); }
+  .history-item { font-size: calc(var(--u) * 13); padding: calc(var(--u) * 12) calc(var(--u) * 16); }
+  .history-item .h-date { margin-right: calc(var(--u) * 10); }
+  .history-item .h-result { padding-left: calc(var(--u) * 8); }
+  .empty-msg { font-size: calc(var(--u) * 13); padding: calc(var(--u) * 18); }
+</style>
+</head>
+<body>
+
+  <button class=&quot;banner&quot; id=&quot;bannerBtn&quot; onclick=&quot;openContent()&quot;>
+    <img src=&quot;images/htmlimg_542fc1da.jpg&quot; alt=&quot;参拝帖&quot;>
+  </button>
+
+  <div class=&quot;content&quot; id=&quot;contentArea&quot;>
+    <img class=&quot;page-bg&quot; src=&quot;images/htmlimg_7ee7fa51.jpg&quot; alt=&quot;&quot;>
+    <div class=&quot;page-layer&quot;>
+    <div class=&quot;stats-summary&quot;>
+      <div class=&quot;stat-box&quot;>
+        <div class=&quot;num&quot; id=&quot;totalVisits&quot;>0</div>
+        <div class=&quot;label&quot;>参拝回数</div>
+      </div>
+      <div class=&quot;stat-box&quot;>
+        <div class=&quot;num&quot; id=&quot;totalEma&quot;>0</div>
+        <div class=&quot;label&quot;>奉納した絵馬</div>
+      </div>
+      <div class=&quot;stat-box&quot;>
+        <div class=&quot;num&quot; id=&quot;totalAchieved&quot;>0</div>
+        <div class=&quot;label&quot;>叶った願い</div>
+      </div>
+    </div>
+
+    <div class=&quot;section-title&quot;>お社ごとの参拝回数</div>
+    <div class=&quot;visit-table&quot; id=&quot;visitTable&quot;></div>
+
+    <div class=&quot;section-title&quot;>最近の参拝</div>
+    <div class=&quot;history-list&quot; id=&quot;historyList&quot;></div>
+    </div>
+  </div>
+
+<script>
+  const EMA_KEY = &quot;asobiva_emas&quot;;
+  const VISIT_KEY = &quot;asobiva_visit_log&quot;;
+
+  function loadEmas() {
+    try {
+      const raw = localStorage.getItem(EMA_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+  function loadVisits() {
+    try {
+      const raw = localStorage.getItem(VISIT_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function formatDate(iso) {
+    const d = new Date(iso);
+    return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`;
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/&amp;/g, '&amp;amp;').replace(/</g, '&amp;lt;').replace(/>/g, '&amp;gt;');
+  }
+
+  function openContent() {
+    document.getElementById('bannerBtn').style.display = 'none';
+    document.getElementById('contentArea').classList.add('show');
+    renderStats();
+  }
+
+  function renderStats() {
+    const visits = loadVisits();
+    const emas = loadEmas();
+
+    document.getElementById('totalVisits').textContent = visits.length;
+    document.getElementById('totalEma').textContent = emas.length;
+    document.getElementById('totalAchieved').textContent = emas.filter(e => e.achieved).length;
+
+    const counts = {};
+    visits.forEach(v => {
+      counts[v.omikuji] = (counts[v.omikuji] || 0) + 1;
+    });
+
+    const tableEl = document.getElementById('visitTable');
+    const names = Object.keys(counts);
+    if (names.length === 0) {
+      tableEl.innerHTML = '<div class=&quot;empty-msg&quot;>まだ参拝記録がありません</div>';
+    } else {
+      tableEl.innerHTML = names
+        .sort((a, b) => counts[b] - counts[a])
+        .map(name => `
+          <div class=&quot;visit-row&quot;>
+            <span class=&quot;name&quot;>${escapeHtml(name)}</span>
+            <span class=&quot;count&quot;>${counts[name]}回</span>
+          </div>
+        `).join('');
+    }
+
+    const historyEl = document.getElementById('historyList');
+    const recent = visits.slice(-10).reverse();
+    if (recent.length === 0) {
+      historyEl.innerHTML = '<div class=&quot;empty-msg&quot;>記録なし</div>';
+    } else {
+      historyEl.innerHTML = recent.map(v => `
+        <div class=&quot;history-item&quot;>
+          <span class=&quot;h-date&quot;>${formatDate(v.date)}</span>
+          <span class=&quot;h-name&quot;>${escapeHtml(v.omikuji)}</span>
+          ${v.result ? `<span class=&quot;h-result&quot;>${escapeHtml(v.result)}</span>` : ''}
+        </div>
+      `).join('');
+    }
+  }
+
+</script>
+<style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
+(function(){
+  function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-init') report(); });
+  window.addEventListener('load', report);
+  if(document.readyState==='complete') report();
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  var applied = null;
+  function applyScale(s){
+    if(!document.body || applied === s) return;
+    var first = applied === null;
+    applied = s;
+    if(first &amp;&amp; s === 1) return; // 一度も拡大・縮小していなければ、何もしない
+    // body とその中のすべての要素の元の文字の大きさを先に測ってから、まとめて倍にする
+    // （文字を直接持たない段落なども倍にして、行の間隔が文字と同じ割合で変わるようにする）
+    var nodes = [document.body].concat(Array.prototype.slice.call(document.body.querySelectorAll('*'))), i, el;
+    for(i=0;i<nodes.length;i++){
+      if(s === 1) break; // 元に戻すときは、元の大きさを測り直さない
+      el = nodes[i];
+      if(/^(IMG|VIDEO|IFRAME|SVG|SCRIPT|STYLE|PATH|G|CIRCLE|RECT|LINE|POLYGON|POLYLINE|ELLIPSE|USE|DEFS)$/i.test(el.tagName)) continue;
+      if(el.getAttribute('data-asobiva-fs')) continue;
+      el.setAttribute('data-asobiva-fs', getComputedStyle(el).fontSize);
+      // もともとHTMLが持っている文字の大きさの指定（例：プロフィールの「名前 120%」）を覚えておき、100%に戻すときはそれに戻す（v4.7）
+      el.setAttribute('data-asobiva-fs0', el.style.fontSize || '');
+    }
+    for(i=0;i<nodes.length;i++){
+      var base = parseFloat(nodes[i].getAttribute('data-asobiva-fs'));
+      if(isFinite(base)) nodes[i].style.fontSize = s === 1 ? (nodes[i].getAttribute('data-asobiva-fs0') || '') : (base * s) + 'px';
+    }
+    report();
+  }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-scale') applyScale(e.data.scale); });
+  parent.postMessage({ type:'asobiva-need-scale' }, '*');
+})();
+</script></body>
+</html>
+" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
+    <div class="card-section sp" style="--mb:8px"><div class="html-card" style="--ps:0.8;--pw:0.8;"><iframe srcdoc="<!DOCTYPE html>
+<html lang=&quot;ja&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>絵馬棚</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: &quot;Hiragino Mincho ProN&quot;, &quot;Yu Mincho&quot;, serif;
+    background: #f3efe8;
+    color: #2b2b2b;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  .banner {
+    width: 100%;
+    display: block;
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
+    overflow: hidden;
+    transition: transform 0.15s;
+  }
+  .banner:active { transform: scale(0.98); }
+  .banner img {
+    width: 100%;
+    display: block;
+  }
+
+  .content {
+    display: none;
+    padding: 0;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .content.show {
+    display: block;
+  }
+
+  .ema-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .ema-card {
+    position: relative;
+    margin: 0;
+    width: 100%;
+  }
+  .ema-card .card-bg {
+    width: 100%;
+    display: block;
+  }
+  .ema-card .card-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .ema-card .card-layer {
+    padding: 12% 7% 11% 7%;
+  }
+  .ema-card .ema-text {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #333;
+    margin-bottom: 8px;
+    word-break: break-word;
+    padding-right: 40px;
+  }
+  .ema-card .ema-date {
+    font-size: 11px;
+    color: #999;
+  }
+  .ema-card .ema-stamp {
+    position: absolute;
+    top: 7%;
+    right: 7%;
+    color: #b03a2e;
+    border: 2px solid #b03a2e;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 900;
+    transform: rotate(-12deg);
+    opacity: 0;
+    background: rgba(255,255,255,0.7);
+  }
+  .ema-card.achieved .ema-stamp {
+    opacity: 1;
+  }
+  .ema-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .ema-actions button {
+    font-size: 12px;
+    padding: 7px 14px;
+    border-radius: 16px;
+    border: 1px solid #d8c9a0;
+    background: #fff;
+    color: #777;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .ema-actions button.achieve-btn.done {
+    background: #b03a2e;
+    color: #fff;
+    border-color: #b03a2e;
+  }
+  .empty-msg {
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+    padding: 60px 20px;
+    line-height: 1.8;
+    margin: 0 18px;
+  }
+
+  /* ───────────────────────────────────────────────
+     幅に合わせて、文字・ボタン・入力欄の大きさを決める（基準：幅390pxのときに今までと同じ）
+     背景の絵と一緒に拡大・縮小するので、どの幅でも枠からはみ出さない。
+     --u = 枠の幅の 1/390。cqw は container-type を付けた枠の幅に対する割合（iPhone は iOS 16 以降）。
+     入力欄の文字は16pxより小さくしない（小さいと iPhone が入力時に画面を拡大するため）。
+     ─────────────────────────────────────────────── */
+  .ema-card { container-type: inline-size; }
+  .ema-card .card-layer, .ema-card .ema-stamp { --u: calc(100cqw / 390); }
+  .ema-card .ema-text { font-size: calc(var(--u) * 15); margin-bottom: calc(var(--u) * 8); padding-right: calc(var(--u) * 40); }
+  .ema-card .ema-date { font-size: calc(var(--u) * 11); }
+  .ema-card .ema-stamp { width: calc(var(--u) * 40); height: calc(var(--u) * 40); font-size: calc(var(--u) * 10); }
+  .ema-actions { gap: calc(var(--u) * 8); margin-top: calc(var(--u) * 8); }
+  .ema-actions button { font-size: calc(var(--u) * 12); padding: calc(var(--u) * 7) calc(var(--u) * 14); border-radius: calc(var(--u) * 16); }
+</style>
+</head>
+<body>
+
+  <button class=&quot;banner&quot; id=&quot;bannerBtn&quot; onclick=&quot;openContent()&quot;>
+    <img src=&quot;images/htmlimg_97e8df7d.jpg&quot; alt=&quot;絵馬棚&quot;>
+  </button>
+
+  <div class=&quot;content&quot; id=&quot;contentArea&quot;>
+    <div class=&quot;ema-list&quot; id=&quot;emaList&quot;></div>
+  </div>
+
+<script>
+  const EMA_KEY = &quot;asobiva_emas&quot;;
+  const EMA_BG_WIDE = &quot;images/htmlimg_673551e0.jpg&quot;;
+
+  function openContent() {
+    document.getElementById('bannerBtn').style.display = 'none';
+    document.getElementById('contentArea').classList.add('show');
+    renderEmaList();
+  }
+
+  function loadEmas() {
+    try {
+      const raw = localStorage.getItem(EMA_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+  function saveEmas(emas) {
+    localStorage.setItem(EMA_KEY, JSON.stringify(emas));
+  }
+
+  function formatDate(iso) {
+    const d = new Date(iso);
+    return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&amp;/g, '&amp;amp;').replace(/</g, '&amp;lt;').replace(/>/g, '&amp;gt;');
+  }
+
+  function renderEmaList() {
+    const emas = loadEmas();
+    const listEl = document.getElementById('emaList');
+
+    if (emas.length === 0) {
+      listEl.innerHTML = '<div class=&quot;empty-msg&quot;>まだ絵馬が奉納されていません。<br>「奉納所」から最初の願いを奉納してみましょう。</div>';
+      return;
+    }
+
+    listEl.innerHTML = emas.map(ema => {
+      return `
+      <div class=&quot;ema-card ${ema.achieved ? 'achieved' : ''}&quot; data-id=&quot;${ema.id}&quot;>
+        <img class=&quot;card-bg&quot; src=&quot;${EMA_BG_WIDE}&quot; alt=&quot;&quot;>
+        <div class=&quot;ema-stamp&quot;>叶う</div>
+        <div class=&quot;card-layer&quot;>
+          <div class=&quot;ema-text&quot;>${escapeHtml(ema.text)}</div>
+          <div class=&quot;ema-date&quot;>${formatDate(ema.date)}</div>
+          <div class=&quot;ema-actions&quot;>
+            <button class=&quot;achieve-btn ${ema.achieved ? 'done' : ''}&quot; onclick=&quot;toggleAchieved(${ema.id})&quot;>
+              ${ema.achieved ? '叶いました' : '願いが叶ったら'}
+            </button>
+            <button onclick=&quot;deleteEma(${ema.id})&quot;>削除</button>
+          </div>
+        </div>
+      </div>
+    `;
+    }).join('');
+  }
+
+  function toggleAchieved(id) {
+    const emas = loadEmas();
+    const target = emas.find(e => e.id === id);
+    if (target) target.achieved = !target.achieved;
+    saveEmas(emas);
+    renderEmaList();
+  }
+
+  function deleteEma(id) {
+    let emas = loadEmas();
+    emas = emas.filter(e => e.id !== id);
+    saveEmas(emas);
+    renderEmaList();
+  }
+</script>
+<style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
+(function(){
+  function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-init') report(); });
+  window.addEventListener('load', report);
+  if(document.readyState==='complete') report();
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  var applied = null;
+  function applyScale(s){
+    if(!document.body || applied === s) return;
+    var first = applied === null;
+    applied = s;
+    if(first &amp;&amp; s === 1) return; // 一度も拡大・縮小していなければ、何もしない
+    // body とその中のすべての要素の元の文字の大きさを先に測ってから、まとめて倍にする
+    // （文字を直接持たない段落なども倍にして、行の間隔が文字と同じ割合で変わるようにする）
+    var nodes = [document.body].concat(Array.prototype.slice.call(document.body.querySelectorAll('*'))), i, el;
+    for(i=0;i<nodes.length;i++){
+      if(s === 1) break; // 元に戻すときは、元の大きさを測り直さない
+      el = nodes[i];
+      if(/^(IMG|VIDEO|IFRAME|SVG|SCRIPT|STYLE|PATH|G|CIRCLE|RECT|LINE|POLYGON|POLYLINE|ELLIPSE|USE|DEFS)$/i.test(el.tagName)) continue;
+      if(el.getAttribute('data-asobiva-fs')) continue;
+      el.setAttribute('data-asobiva-fs', getComputedStyle(el).fontSize);
+      // もともとHTMLが持っている文字の大きさの指定（例：プロフィールの「名前 120%」）を覚えておき、100%に戻すときはそれに戻す（v4.7）
+      el.setAttribute('data-asobiva-fs0', el.style.fontSize || '');
+    }
+    for(i=0;i<nodes.length;i++){
+      var base = parseFloat(nodes[i].getAttribute('data-asobiva-fs'));
+      if(isFinite(base)) nodes[i].style.fontSize = s === 1 ? (nodes[i].getAttribute('data-asobiva-fs0') || '') : (base * s) + 'px';
+    }
+    report();
+  }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-scale') applyScale(e.data.scale); });
+  parent.postMessage({ type:'asobiva-need-scale' }, '*');
+})();
+</script></body>
+</html>
+" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
+    <div class="card-section sp" style="--mb:16px"><div class="html-card" style="--ps:0.8;--pw:0.8;"><iframe srcdoc="<!DOCTYPE html>
+<html lang=&quot;ja&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>奉納所</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: &quot;Hiragino Mincho ProN&quot;, &quot;Yu Mincho&quot;, serif;
+    background: #f3efe8;
+    color: #2b2b2b;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* バナー(ボタン) */
+  .banner {
+    width: 100%;
+    display: block;
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
+    overflow: hidden;
+    transition: transform 0.15s;
+  }
+  .banner:active { transform: scale(0.98); }
+  .banner img {
+    width: 100%;
+    display: block;
+  }
+
+  .content {
+    display: none;
+    padding: 0;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .content.show {
+    display: block;
+  }
+
+  .write-box {
+    position: relative;
+    text-align: center;
+    margin: 0;
+    width: 100%;
+  }
+  .write-box .box-bg {
+    width: 100%;
+    display: block;
+  }
+  .write-box .box-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 11% 7% 9% 7%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .ema-shape {
+    width: 130px;
+    margin: 0 auto 10px;
+  }
+  .ema-shape img {
+    width: 100%;
+    display: block;
+  }
+  textarea {
+    width: 100%;
+    min-height: 70px;
+    padding: 14px 16px;
+    font-size: 16px;
+    border: 2px solid #d8c9a0;
+    border-radius: 10px;
+    font-family: inherit;
+    background: #fffdf8;
+    resize: none;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: #b03a2e;
+  }
+  .char-count {
+    text-align: right;
+    font-size: 12px;
+    color: #999;
+    margin-top: 4px;
+  }
+  .char-count.over {
+    color: #b03a2e;
+    font-weight: 700;
+  }
+  .submit-btn {
+    width: 100%;
+    margin-top: 10px;
+    background: #b03a2e;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 14px 0;
+    font-size: 16px;
+    font-family: inherit;
+    letter-spacing: 0.3em;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .submit-btn:disabled {
+    background: #ccc;
+    cursor: default;
+  }
+
+  .done-msg {
+    display: none;
+    text-align: center;
+    margin: 20px 18px 0;
+    padding: 16px;
+    background: #fff6e0;
+    border: 2px solid #d4a847;
+    border-radius: 12px;
+    color: #8a6d1f;
+    font-size: 14px;
+  }
+  .done-msg.show { display: block; }
+
+  /* ───────────────────────────────────────────────
+     幅に合わせて、文字・ボタン・入力欄の大きさを決める（基準：幅390pxのときに今までと同じ）
+     背景の絵と一緒に拡大・縮小するので、どの幅でも枠からはみ出さない。
+     --u = 枠の幅の 1/390。cqw は container-type を付けた枠の幅に対する割合（iPhone は iOS 16 以降）。
+     入力欄の文字は16pxより小さくしない（小さいと iPhone が入力時に画面を拡大するため）。
+     ─────────────────────────────────────────────── */
+  .write-box { container-type: inline-size; }
+  .write-box .box-layer { --u: calc(100cqw / 390); }
+  .ema-shape { width: calc(var(--u) * 130); margin: 0 auto calc(var(--u) * 10); }
+  textarea { min-height: calc(var(--u) * 70); padding: calc(var(--u) * 14) calc(var(--u) * 16); font-size: max(16px, calc(var(--u) * 16)); border-radius: calc(var(--u) * 10); }
+  .char-count { font-size: calc(var(--u) * 12); margin-top: calc(var(--u) * 4); }
+  .submit-btn { margin-top: calc(var(--u) * 10); padding: calc(var(--u) * 14) 0; font-size: calc(var(--u) * 16); border-radius: calc(var(--u) * 30); }
+</style>
+</head>
+<body>
+
+  <button class=&quot;banner&quot; id=&quot;bannerBtn&quot; onclick=&quot;openContent()&quot;>
+    <img src=&quot;images/htmlimg_088065c7.jpg&quot; alt=&quot;奉納所&quot;>
+  </button>
+
+  <div class=&quot;content&quot; id=&quot;contentArea&quot;>
+    <div class=&quot;write-box&quot;>
+      <img class=&quot;box-bg&quot; src=&quot;images/htmlimg_17c53965.jpg&quot; alt=&quot;&quot;>
+      <div class=&quot;box-layer&quot;>
+        <div class=&quot;ema-shape&quot;>
+          <img src=&quot;images/htmlimg_4bc296a2.png&quot; alt=&quot;絵馬&quot;>
+        </div>
+        <textarea id=&quot;emaInput&quot; maxlength=&quot;60&quot; placeholder=&quot;願い事や決意を書いてください&quot;></textarea>
+        <div class=&quot;char-count&quot; id=&quot;charCount&quot;>0 / 30</div>
+        <button class=&quot;submit-btn&quot; id=&quot;submitEma&quot; onclick=&quot;submitEma()&quot;>奉納する</button>
+      </div>
+    </div>
+
+    <div class=&quot;done-msg&quot; id=&quot;doneMsg&quot;>絵馬を奉納しました。願いが届きますように。</div>
+  </div>
+
+<script>
+  function openContent() {
+    document.getElementById('bannerBtn').style.display = 'none';
+    document.getElementById('contentArea').classList.add('show');
+  }
+
+  const EMA_KEY = &quot;asobiva_emas&quot;;
+  const MAX_LEN = 30;
+
+  const emaInput = document.getElementById('emaInput');
+  const charCount = document.getElementById('charCount');
+  const submitBtn = document.getElementById('submitEma');
+  const doneMsg = document.getElementById('doneMsg');
+
+  emaInput.addEventListener('input', () => {
+    const len = Array.from(emaInput.value).length;
+    charCount.textContent = `${len} / ${MAX_LEN}`;
+    charCount.classList.toggle('over', len > MAX_LEN);
+    submitBtn.disabled = (len === 0 || len > MAX_LEN);
+    doneMsg.classList.remove('show');
+  });
+  submitBtn.disabled = true;
+
+  function loadEmas() {
+    try {
+      const raw = localStorage.getItem(EMA_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+  function saveEmas(emas) {
+    localStorage.setItem(EMA_KEY, JSON.stringify(emas));
+  }
+
+  function submitEma() {
+    const text = emaInput.value.trim();
+    const len = Array.from(text).length;
+    if (len === 0 || len > MAX_LEN) return;
+
+    const emas = loadEmas();
+    emas.unshift({
+      id: Date.now(),
+      text: text,
+      date: new Date().toISOString(),
+      achieved: false
+    });
+    saveEmas(emas);
+
+    emaInput.value = '';
+    charCount.textContent = `0 / ${MAX_LEN}`;
+    submitBtn.disabled = true;
+    doneMsg.classList.add('show');
+  }
+</script>
+<style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
+(function(){
+  function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-init') report(); });
+  window.addEventListener('load', report);
+  if(document.readyState==='complete') report();
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  var applied = null;
+  function applyScale(s){
+    if(!document.body || applied === s) return;
+    var first = applied === null;
+    applied = s;
+    if(first &amp;&amp; s === 1) return; // 一度も拡大・縮小していなければ、何もしない
+    // body とその中のすべての要素の元の文字の大きさを先に測ってから、まとめて倍にする
+    // （文字を直接持たない段落なども倍にして、行の間隔が文字と同じ割合で変わるようにする）
+    var nodes = [document.body].concat(Array.prototype.slice.call(document.body.querySelectorAll('*'))), i, el;
+    for(i=0;i<nodes.length;i++){
+      if(s === 1) break; // 元に戻すときは、元の大きさを測り直さない
+      el = nodes[i];
+      if(/^(IMG|VIDEO|IFRAME|SVG|SCRIPT|STYLE|PATH|G|CIRCLE|RECT|LINE|POLYGON|POLYLINE|ELLIPSE|USE|DEFS)$/i.test(el.tagName)) continue;
+      if(el.getAttribute('data-asobiva-fs')) continue;
+      el.setAttribute('data-asobiva-fs', getComputedStyle(el).fontSize);
+      // もともとHTMLが持っている文字の大きさの指定（例：プロフィールの「名前 120%」）を覚えておき、100%に戻すときはそれに戻す（v4.7）
+      el.setAttribute('data-asobiva-fs0', el.style.fontSize || '');
+    }
+    for(i=0;i<nodes.length;i++){
+      var base = parseFloat(nodes[i].getAttribute('data-asobiva-fs'));
+      if(isFinite(base)) nodes[i].style.fontSize = s === 1 ? (nodes[i].getAttribute('data-asobiva-fs0') || '') : (base * s) + 'px';
+    }
+    report();
+  }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-scale') applyScale(e.data.scale); });
+  parent.postMessage({ type:'asobiva-need-scale' }, '*');
+})();
+</script></body>
+</html>
+" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
+    </div></div>
+  </div>
+  <div class="footer-section sp-top" style="--mb:0px"><footer class="ft-left" style="color:#111111;font-weight:300;--ft-max:600px;--ft-cgap:16px;"><div class="ft-body">本サイトの作品は、作品の制作にAIを使用しています。
+ASOBIVAでは、各コンテンツの一部作品を公開しています。その他の作品は、コンテンツごとにnote・BOOTH・YouTube等の外部サービスにて公開予定です。詳細は各コンテンツページをご確認ください。最新情報はX・Instagramにてお知らせしています。
+</div><div class="ft-c">© 2026 KEIGO TSUCHIYA / i.roiro</div></footer></div>
+</div>
+<script>
+document.addEventListener('click', function(e){ var m=document.getElementById('burgerMenu'), b=document.getElementById('burgerBtn'); if(m && !m.contains(e.target) && !b.contains(e.target)) m.classList.remove('open'); });
+window.addEventListener('message', function(e){
+  if (e.data && e.data.type === 'asobiva-resize') { document.querySelectorAll('.html-card iframe').forEach(function(f){ if (f.contentWindow === e.source) asobivaFitFrame(f, e.data.height); }); }
+  if (e.data && e.data.type === 'asobiva-need-scale' && e.source) asobivaSendScale(e.source);
+});
+function asobivaCarousel(el) {
+  var L = JSON.parse(el.getAttribute('data-images'));
+  var k = (parseInt(el.getAttribute('data-k'), 10) + 1) % L.length;
+  el.setAttribute('data-k', k);
+  el.querySelector('img').src = L[k];
+  var d = el.querySelectorAll('.carousel-dots span');
+  for (var i = 0; i < d.length; i++) d[i].className = i === k ? 'active' : '';
+  var c = el.querySelector('.carousel-count');
+  if (c) c.textContent = (k + 1) + ' / ' + L.length;
+}
+function asobivaGcar(btn, d) {
+  var el = btn.closest('.gcar-card');
+  var S = el.querySelectorAll('.gcar-stage > .gcar-slide'), n = S.length;
+  if (n < 2) return;
+  var k = ((parseInt(el.getAttribute('data-k'), 10) || 0) + d + n) % n;
+  el.setAttribute('data-k', k);
+  for (var i = 0; i < n; i++) S[i].className = 'gcar-slide' + (i === k ? ' on' : '');
+  var c = el.querySelectorAll('.gcar-count'); // 上下に出しているときは両方
+  for (i = 0; i < c.length; i++) c[i].textContent = (k + 1) + ' / ' + n;
+  var nm = el.querySelectorAll('.gcar-names > div'); // 名前（v5.0：帯の下の段）
+  for (i = 0; i < nm.length; i++) nm[i].className = i === k ? 'on' : '';
+}
+function asobivaFitFrame(f, h) {
+  f.style.height = h + 'px';
+  var s = f.closest ? f.closest('.banner-slot') : null;
+  if (!s || !(h > 0)) return 0;
+  var w = f.getBoundingClientRect().width;
+  if (!(w > 0)) return 0;
+  var ar = Math.max(0.5, Math.min(8, w / h));
+  var old = parseFloat(s.style.getPropertyValue('--ar')) || 0;
+  if (Math.abs(old - ar) > old * 0.01) s.style.setProperty('--ar', ar.toFixed(4));
+  return ar;
+}
+function asobivaTextScale(f) {
+  if (!f || f.getAttribute('data-scale') !== '1') return 1;
+  var root = getComputedStyle(document.documentElement);
+  var cols = parseInt(root.getPropertyValue('--cols'), 10) || 1;
+  if (cols <= 1) return 1;
+  // いっぱい・中央のカード、またはその中（カルーセルのグループの中など）にあれば --ts-wide
+  var wide = !!(f.closest && f.closest('.card-section.is-html'));
+  var v = parseFloat(root.getPropertyValue(wide ? '--ts-wide' : '--ts-cell'));
+  return isFinite(v) && v > 0 ? v : 1;
+}
+function asobivaSendScale(target) {
+  Array.prototype.forEach.call(document.querySelectorAll('.html-card iframe'), function (f) {
+    if (target && f.contentWindow !== target) return;
+    try { if (f.contentWindow) f.contentWindow.postMessage({ type: 'asobiva-scale', scale: asobivaTextScale(f) }, '*'); } catch (e) {}
+  });
+}
+function asobivaLayout(force) {
+  var c = document.getElementById('cardContainer');
+  if (!c) return;
+  var cols = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--cols'), 10) || 1;
+  if (!force && c.getAttribute('data-cols') === String(cols)) return;
+  c.setAttribute('data-cols', String(cols));
+  var kids = Array.prototype.slice.call(c.children);
+  // 「並べる」カルーセル（v5.4）：中の1枚ずつ（.gcar-slide）を、ページのカードと同じように並べる。まず前の並びを消す
+  var spread = kids.filter(function (el) { return el.classList.contains('gcar-spread'); });
+  spread.forEach(function (el) {
+    Array.prototype.forEach.call(el.querySelectorAll('.gcar-stage > .gcar-slide'), function (s) {
+      s.classList.remove('in-row', 'row-lead', 'sp', 'sp-line', 'sp-dot');
+      s.removeAttribute('data-own-mb'); s.removeAttribute('data-own-line'); s.style.removeProperty('--mb');
+      s.removeAttribute('data-rgp'); s.style.removeProperty('--ri');
+    });
+  });
+  kids.forEach(function (el) {
+    el.classList.remove('in-row', 'row-lead');
+    el.removeAttribute('data-rgp'); el.style.removeProperty('--ri'); // 段の列の間（v5.5）
+    if (!el.hasAttribute('data-own-mb')) return;
+    el.style.setProperty('--mb', el.getAttribute('data-own-mb') || '0px');
+    el.classList.remove('sp-line', 'sp-dot');
+    var own = el.getAttribute('data-own-line');
+    if (own) el.classList.add(own);
+    el.removeAttribute('data-own-mb');
+    el.removeAttribute('data-own-line');
+  });
+  if (cols <= 1) return;
+  // 横画面：「並べる」カルーセルは、入れ物の代わりに中の1枚ずつを並べる。下の余白・線はカルーセルの設定
+  var items = [];
+  kids.forEach(function (el) {
+    if (!el.classList.contains('gcar-spread')) { items.push(el); return; }
+    Array.prototype.forEach.call(el.querySelectorAll('.gcar-stage > .gcar-slide'), function (s) {
+      s.classList.add('sp');
+      if (el.classList.contains('sp-line')) s.classList.add('sp-line');
+      else if (el.classList.contains('sp-dot')) s.classList.add('sp-dot');
+      s.style.setProperty('--mb', el.style.getPropertyValue('--mb') || '0px');
+      items.push(s);
+    });
+  });
+  // 段に分ける。段の線は左端のカードが段の幅いっぱいに引く
+  var rows = [], row = null;
+  items.forEach(function (el) {
+    if (!el.classList.contains('gcar-slide') && (!el.classList.contains('card-section') || el.classList.contains('is-html'))) { row = null; return; }
+    if (!row || row.length >= cols) {
+      row = []; rows.push(row); el.classList.add('row-lead');
+      // 段の列の間のパターン（v5.5）：段の左端のカードの data-rg（カルーセルの1枚なら、そのカルーセルの）
+      var src = el.classList.contains('gcar-slide') ? el.closest('.gcar-section') : el;
+      el._rgp = (src && src.getAttribute('data-rg')) || '';
+    }
+    var lead = row.length ? row[0] : el;
+    if (lead._rgp) { el.setAttribute('data-rgp', lead._rgp); el.style.setProperty('--ri', String(row.length)); }
+    el.classList.add('in-row');
+    row.push(el);
+  });
+  // 段の下の余白・ライン：段の最初のカード（いつも）か、最後のカード（ページの設定 data-rowsp="last"・v6.1）の設定を、段のすべてのカードに使う。
+  // ほかのカードは自分の設定を data-own-* に退避（縦画面に戻すと元に戻る）
+  var useLast = c.getAttribute('data-rowsp') === 'last';
+  rows.forEach(function (r) {
+    var from = useLast ? r[r.length - 1] : r[0];
+    var mb = from.style.getPropertyValue('--mb') || '0px';
+    var line = from.classList.contains('sp-line') ? 'sp-line' : from.classList.contains('sp-dot') ? 'sp-dot' : '';
+    r.forEach(function (el) {
+      if (el === from) return;
+      el.setAttribute('data-own-mb', el.style.getPropertyValue('--mb') || '0px');
+      el.setAttribute('data-own-line', el.classList.contains('sp-line') ? 'sp-line' : el.classList.contains('sp-dot') ? 'sp-dot' : '');
+      el.style.setProperty('--mb', mb);
+      el.classList.remove('sp-line', 'sp-dot');
+      if (line) el.classList.add(line);
+    });
+  });
+}
+function asobivaTidy() {
+  var c = document.getElementById('cardContainer');
+  if (!c) return;
+  var i, j, el, list;
+  list = c.querySelectorAll('.gcar-slide');
+  for (i = 0; i < list.length; i++) { el = list[i].querySelector('.group-card'); if (!el || !el.children.length) list[i].parentNode.removeChild(list[i]); }
+  list = c.children;
+  for (i = list.length - 1; i >= 0; i--) {
+    el = list[i];
+    var g = el.querySelector('.group-card');
+    if (el.classList.contains('card-section') && !el.classList.contains('gcar-section') && g && !g.children.length) { c.removeChild(el); continue; }
+    var car = el.querySelector('.gcar-card');
+    if (!car) continue;
+    var S = car.querySelectorAll('.gcar-stage > .gcar-slide');
+    if (!S.length) { c.removeChild(el); continue; }
+    var ui = car.querySelectorAll('.gcar-ui');
+    if (S.length < 2) for (j = 0; j < ui.length; j++) ui[j].parentNode.removeChild(ui[j]);
+    car.setAttribute('data-k', '0');
+    for (j = 0; j < S.length; j++) S[j].className = 'gcar-slide' + (j ? '' : ' on');
+    var cn = car.querySelectorAll('.gcar-count');
+    for (j = 0; j < cn.length; j++) cn[j].textContent = '1 / ' + S.length;
+    // 名前の段は、残った1枚ずつの名前で作り直す（1枚だけ・名前がなければ消す）
+    var nb = car.querySelector('.gcar-names');
+    if (nb) {
+      var any = false;
+      for (j = 0; j < S.length; j++) if (S[j].getAttribute('data-name')) any = true;
+      if (S.length < 2 || !any) nb.parentNode.removeChild(nb);
+      else {
+        nb.innerHTML = '';
+        for (j = 0; j < S.length; j++) { var d = document.createElement('div'); if (!j) d.className = 'on'; d.textContent = S[j].getAttribute('data-name') || ''; nb.appendChild(d); }
+      }
+    }
+  }
+  if (!c.children.length) { el = document.createElement('div'); el.className = 'empty-state'; el.textContent = '準備中です'; c.appendChild(el); }
+  list = document.querySelectorAll('.nav-group');
+  for (i = 0; i < list.length; i++) if (!list[i].querySelector('.nav-link-item')) list[i].parentNode.removeChild(list[i]);
+}
+asobivaTidy();
+asobivaLayout(true);
+asobivaSendScale();
+function asobivaWatchViewport() {
+  var t = null;
+  function run() { asobivaLayout(false); asobivaSendScale(); }
+  function soon() { if (t) cancelAnimationFrame(t); t = requestAnimationFrame(run); }
+  function settle() { soon(); setTimeout(run, 300); setTimeout(run, 800); }
+  window.addEventListener('resize', soon);
+  window.addEventListener('orientationchange', settle);
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', soon);
+  if (window.matchMedia) {
+    var mq = window.matchMedia('(min-width: 768px)');
+    if (mq.addEventListener) mq.addEventListener('change', settle);
+    else if (mq.addListener) mq.addListener(settle);
+  }
+}
+asobivaWatchViewport();
+</script>
+</body>
+</html>
