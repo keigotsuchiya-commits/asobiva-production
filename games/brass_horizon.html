@@ -16,7 +16,8 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden;width:100%;height:1
 body{position:fixed;inset:0;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
 #game{position:absolute;image-rendering:pixelated;image-rendering:crisp-edges;display:block}
 #dpad,#fire{position:absolute;display:none;pointer-events:none}
-#back{position:absolute;display:none;margin:0;padding:0;width:64px;height:30px;border-radius:7px;border:1px solid #9AA0B0;background:#2E3038;color:#E4E8F0;font:500 15px "Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",system-ui,sans-serif;line-height:28px;cursor:pointer}
+#back{position:absolute;display:none;margin:0;left:0;top:0;height:44px;line-height:44px;padding:0 12px;font:16px "Hiragino Kaku Gothic ProN","Hiragino Sans",Meiryo,sans-serif;color:#c8ccdc;background:none;border:0;cursor:pointer}
+#back.side{width:44px;height:auto;min-height:56px;line-height:1.3;padding:6px 0;white-space:normal;word-break:keep-all;text-align:center}
 #back:focus-visible{outline:2px solid #E8C26A;outline-offset:2px}
 #fit{position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
 </style>
@@ -33,7 +34,7 @@ body{position:fixed;inset:0;touch-action:none;-webkit-user-select:none;user-sele
 // ===== 定数 =====
 const GW=480,GH=360,AS=2,AW=240,AH=180,G_ART=160,GROUND_Y=G_ART*AS;
 const OCN='#201830';
-const M=12,GAP=8,COLMIN=100,DP=75,FB=45,BW=64,BH=30,CARD_W=720,CARD_COL=120;
+const M=12,GAP=8,COLMIN=100,DP=75,FB=45,BW=64,BH=30,CARD_W=960,CARD_H=496,BAND=44;
 const IN_CARD=(()=>{try{return window.self!==window.top}catch(e){return true}})();
 const IS_TOUCH=matchMedia('(hover: none) and (pointer: coarse)').matches;
 const cv=document.getElementById('game'),ctx=cv.getContext('2d');ctx.imageSmoothingEnabled=false;
@@ -181,29 +182,27 @@ function layout(){
   L.dpr=Math.min(3,window.devicePixelRatio||1);
   L.dp=DP;L.fb=FB;L.bpad=16;
   if(IN_CARD){ // カード：ゲーム画面の左右に十字キーと発射ボタンを並べたデモ（全体 748×388 の比率）
-    const u=W/(CARD_W+28),h=Math.round(W*(GH+28)/(CARD_W+28));
+    const u=W/(CARD_W+28),h=Math.round(W*(CARD_H+28)/(CARD_W+28)); // 『夏の忘れもの』と同じ 960×496 の比率
     document.documentElement.style.height=h+'px';document.body.style.height=h+'px';
-    const gx=(14+CARD_COL)*u,gy=14*u,gw=GW*u,gh=GH*u;
-    const left={x:14*u,y:gy,w:CARD_COL*u,h:gh},right={x:gx+gw,y:gy,w:CARD_COL*u,h:gh};
-    L.dp=GH*u*DP/345;L.fb=GH*u*FB/345;L.bpad=16*u;
+    const gh=CARD_H*u,gw=gh*4/3,gx=14*u+(CARD_W*u-gw)/2,gy=14*u,cw=(CARD_W*u-gw)/2;
+    const left={x:14*u,y:gy,w:cw,h:gh},right={x:gx+gw,y:gy,w:cw,h:gh};
+    L.dp=gh*DP/345;L.fb=gh*FB/345;L.bpad=16*gh/345;
     const by=gy+gh-L.dp/2-L.bpad;
     Object.assign(L,{gx,gy,gw,gh,left,right,btns:true,back:null,dpad:{cx:left.x+left.w/2,cy:by},fire:{cx:right.x+right.w/2,cy:by}});
   }else{
     const ins=insets();const showBtns=IS_TOUCH&&!isPortrait();
     const aw=W-ins.l-ins.r-2*M;let ah=H-ins.t-ins.b-2*M;let top=0;
-    let need=showBtns?2*(COLMIN+GAP):2*(BW+GAP);
-    if(IS_TOUCH&&isPortrait()){need=0;top=BH+GAP}
-    if(!IS_TOUCH&&(aw-need)*3/4<ah*0.85){need=0;top=BH+GAP} // PC で横に余白がないときは「戻る」を上に置く
+    const need=showBtns?2*(COLMIN+GAP):0;
+    if(!showBtns)top=BAND; // PC・縦向き：上に「戻る」の帯（『夏の忘れもの』と同じ）
     const gh=Math.max(60,Math.min(ah-top,(aw-need)*3/4)),gw=gh*4/3;
     const gx=ins.l+M+(aw-gw)/2,gy=ins.t+M+top+(ah-top-gh)/2;
     const left={x:ins.l+M,y:gy,w:gx-GAP-(ins.l+M),h:gh},right={x:gx+gw+GAP,y:gy,w:W-ins.r-M-(gx+gw+GAP),h:gh};
-    let back;
-    if(top>0)back={x:ins.l+M,y:ins.t+M,w:BW,h:BH};else back={x:left.x+(left.w-BW)/2,y:gy,w:BW,h:BH};
+    const back=showBtns?{x:ins.l+8,y:ins.t+4,side:true}:{x:ins.l+8,y:ins.t,side:false}; // 横向きのタッチは左端に縦長で
     Object.assign(L,{gx,gy,gw,gh,left,right,btns:showBtns,back});
     if(showBtns){const by=gy+gh-DP/2-16;L.dpad={cx:left.x+left.w/2,cy:by};L.fire={cx:right.x+right.w/2,cy:by}}else{L.dpad=L.fire=null}
   }
   Object.assign(cv.style,{left:L.gx+'px',top:L.gy+'px',width:L.gw+'px',height:L.gh+'px'});
-  if(L.back&&!IN_CARD){Object.assign(backBtn.style,{display:'block',left:L.back.x+'px',top:L.back.y+'px'})}else backBtn.style.display='none';
+  if(L.back&&!IN_CARD){backBtn.classList.toggle('side',!!L.back.side);Object.assign(backBtn.style,{display:'block',left:L.back.x+'px',top:L.back.y+'px'})}else backBtn.style.display='none';
   if(L.btns){
     const ds=L.dp/104,fs=L.fb/62;
     const dw=L.dp+6*L.dp/DP,dh=dw;Object.assign(dpadCv.style,{display:'block',left:(L.dpad.cx-dw/2)+'px',top:(L.dpad.cy-dh/2)+'px',width:dw+'px',height:dh+'px'});
