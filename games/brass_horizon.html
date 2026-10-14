@@ -33,7 +33,7 @@ body{position:fixed;inset:0;touch-action:none;-webkit-user-select:none;user-sele
 // ===== 定数 =====
 const GW=480,GH=360,AS=2,AW=240,AH=180,G_ART=160,GROUND_Y=G_ART*AS;
 const OCN='#201830';
-const M=12,GAP=8,COLMIN=100,DP=75,FB=45,BW=64,BH=30;
+const M=12,GAP=8,COLMIN=100,DP=75,FB=45,BW=64,BH=30,CARD_W=720,CARD_COL=120;
 const IN_CARD=(()=>{try{return window.self!==window.top}catch(e){return true}})();
 const IS_TOUCH=matchMedia('(hover: none) and (pointer: coarse)').matches;
 const cv=document.getElementById('game'),ctx=cv.getContext('2d');ctx.imageSmoothingEnabled=false;
@@ -179,10 +179,15 @@ function canPlay(){return !(IS_TOUCH&&isPortrait())}
 function layout(){
   const vv=window.visualViewport;const W=Math.round(vv?vv.width:innerWidth),H=Math.round(vv?vv.height:innerHeight);
   L.dpr=Math.min(3,window.devicePixelRatio||1);
-  if(IN_CARD){
-    const h=Math.round(W*(GH+28)/(GW+28));
+  L.dp=DP;L.fb=FB;L.bpad=16;
+  if(IN_CARD){ // カード：ゲーム画面の左右に十字キーと発射ボタンを並べたデモ（全体 748×388 の比率）
+    const u=W/(CARD_W+28),h=Math.round(W*(GH+28)/(CARD_W+28));
     document.documentElement.style.height=h+'px';document.body.style.height=h+'px';
-    const gw=W-2*M-4,gh=gw*3/4;Object.assign(L,{gx:M+2,gy:M+2,gw,gh,btns:false,left:null,right:null,back:null});
+    const gx=(14+CARD_COL)*u,gy=14*u,gw=GW*u,gh=GH*u;
+    const left={x:14*u,y:gy,w:CARD_COL*u,h:gh},right={x:gx+gw,y:gy,w:CARD_COL*u,h:gh};
+    L.dp=GH*u*DP/345;L.fb=GH*u*FB/345;L.bpad=16*u;
+    const by=gy+gh-L.dp/2-L.bpad;
+    Object.assign(L,{gx,gy,gw,gh,left,right,btns:true,back:null,dpad:{cx:left.x+left.w/2,cy:by},fire:{cx:right.x+right.w/2,cy:by}});
   }else{
     const ins=insets();const showBtns=IS_TOUCH&&!isPortrait();
     const aw=W-ins.l-ins.r-2*M;let ah=H-ins.t-ins.b-2*M;let top=0;
@@ -200,8 +205,8 @@ function layout(){
   Object.assign(cv.style,{left:L.gx+'px',top:L.gy+'px',width:L.gw+'px',height:L.gh+'px'});
   if(L.back&&!IN_CARD){Object.assign(backBtn.style,{display:'block',left:L.back.x+'px',top:L.back.y+'px'})}else backBtn.style.display='none';
   if(L.btns){
-    const ds=DP/104,fs=FB/62;
-    const dw=DP+6,dh=DP+6;Object.assign(dpadCv.style,{display:'block',left:(L.dpad.cx-dw/2)+'px',top:(L.dpad.cy-dh/2)+'px',width:dw+'px',height:dh+'px'});
+    const ds=L.dp/104,fs=L.fb/62;
+    const dw=L.dp+6*L.dp/DP,dh=dw;Object.assign(dpadCv.style,{display:'block',left:(L.dpad.cx-dw/2)+'px',top:(L.dpad.cy-dh/2)+'px',width:dw+'px',height:dh+'px'});
     dpadCv.width=Math.round(dw*L.dpr);dpadCv.height=Math.round(dh*L.dpr);dpadCv._s=ds;dpadCv._c=[dw/2,dh/2];
     const fw=66*fs+4,fh=91*fs+4;Object.assign(fireCv.style,{display:'block',left:(L.fire.cx-32*fs-2)+'px',top:(L.fire.cy-56*fs-2)+'px',width:fw+'px',height:fh+'px'});
     fireCv.width=Math.round(fw*L.dpr);fireCv.height=Math.round(fh*L.dpr);fireCv._s=fs;fireCv._c=[32*fs+2,56*fs+2];
@@ -211,15 +216,16 @@ function layout(){
 }
 let lastBtnKey='';
 function redrawButtons(force){
-  if(!L.btns)return;const key=input.dx+','+input.dy+','+(input.fireHeld?1:0);if(!force&&key===lastBtnKey)return;lastBtnKey=key;
-  let x=dpadCv.getContext('2d');x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,dpadCv.width,dpadCv.height);x.setTransform(L.dpr*dpadCv._s,0,0,L.dpr*dpadCv._s,L.dpr*dpadCv._c[0],L.dpr*dpadCv._c[1]);drawDpad(x,{x:input.dx,y:input.dy});
-  x=fireCv.getContext('2d');x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,fireCv.width,fireCv.height);x.setTransform(L.dpr*fireCv._s,0,0,L.dpr*fireCv._s,L.dpr*fireCv._c[0],L.dpr*fireCv._c[1]);drawFire(x,input.fireHeld);
+  if(!L.btns)return;const demoBtn=IN_CARD&&W&&W.demo;const bx=demoBtn?(W.aiDx||0):input.dx,byy=demoBtn?(W.aiDy||0):input.dy,bf=demoBtn?(W.aiFlash>0):input.fireHeld;
+  const key=bx+','+byy+','+(bf?1:0);if(!force&&key===lastBtnKey)return;lastBtnKey=key;
+  let x=dpadCv.getContext('2d');x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,dpadCv.width,dpadCv.height);x.setTransform(L.dpr*dpadCv._s,0,0,L.dpr*dpadCv._s,L.dpr*dpadCv._c[0],L.dpr*dpadCv._c[1]);drawDpad(x,{x:bx,y:byy});
+  x=fireCv.getContext('2d');x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,fireCv.width,fireCv.height);x.setTransform(L.dpr*fireCv._s,0,0,L.dpr*fireCv._s,L.dpr*fireCv._c[0],L.dpr*fireCv._c[1]);drawFire(x,bf);
 }
 
 // ===== 入力 =====
 const input={dx:0,dy:0,fireQueue:0,fireHeld:false,keys:new Set(),dpadPid:null,firePids:new Set()};
 function inRect(px,py,r){return r&&px>=r.x&&px<=r.x+r.w&&py>=r.y-200&&py<=r.y+r.h+200}
-function dpadDir(px,py){const dx=px-L.dpad.cx,dy=py-L.dpad.cy;const d=Math.hypot(dx,dy);if(d<8)return[0,0];const a=Math.atan2(dy,dx);const s=Math.round(a/(Math.PI/4));const t=[[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1]];return t[(s+8)%8]}
+function dpadDir(px,py){const r=dpadCv.getBoundingClientRect();const dx=px-(r.left+r.width/2),dy=py-(r.top+r.height/2);const d=Math.hypot(dx,dy);if(d<8)return[0,0];const a=Math.atan2(dy,dx);const s=Math.round(a/(Math.PI/4));const t=[[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1]];return t[(s+8)%8]}
 function onGameTap(){ // ゲーム画面を押したとき
   if(IN_CARD)return;
   if(state==='demo'){exitDemoIfActive();return}
@@ -234,18 +240,21 @@ function exitDemoIfActive(){
 document.addEventListener('pointerdown',e=>{
   if(e.target===backBtn)return;
   e.preventDefault();
+  if(IN_CARD)return;
   const px=e.clientX,py=e.clientY;
-  if(L.btns&&input.dpadPid===null&&px<L.gx&&px>=L.left.x-M&&!(py<L.back.y+L.back.h+4)){
+  const gr=cv.getBoundingClientRect(); // 指の位置と同じ基準で、実際に描かれている位置を使う
+  const br=backBtn.style.display==='none'?null:backBtn.getBoundingClientRect();
+  if(L.btns&&px<gr.left&&!(br&&py<br.bottom+4)){ // 新しく触った指に十字キーを切り替える
     input.dpadPid=e.pointerId;const[dx,dy]=dpadDir(px,py);input.dx=dx;input.dy=dy;
     if(state==='demo'){exitDemoIfActive();input.dx=dx;input.dy=dy}
     redrawButtons();return;
   }
-  if(L.btns&&px>L.gx+L.gw){
+  if(L.btns&&px>gr.right){
     input.firePids.add(e.pointerId);input.fireHeld=true;
     if(state==='demo'){exitDemoIfActive()}else if(state==='over'){if(overT>0.8)startPlay()}else input.fireQueue++;
     redrawButtons();return;
   }
-  if(px>=L.gx&&px<=L.gx+L.gw&&py>=L.gy&&py<=L.gy+L.gh){onGameTap();return}
+  if(px>=gr.left&&px<=gr.right&&py>=gr.top&&py<=gr.bottom){onGameTap();return}
   if(state==='demo'&&!IN_CARD)exitDemoIfActive();
 },{passive:false});
 document.addEventListener('pointermove',e=>{if(e.pointerId===input.dpadPid){const[dx,dy]=dpadDir(e.clientX,e.clientY);input.dx=dx;input.dy=dy;redrawButtons()}},{passive:true});
@@ -267,6 +276,8 @@ document.addEventListener('keydown',e=>{
   }
 });
 document.addEventListener('keyup',e=>{input.keys.delete(e.code)});
+function releaseAll(){input.keys.clear();input.dpadPid=null;input.dx=0;input.dy=0;input.firePids.clear();input.fireHeld=false;redrawButtons()}
+addEventListener('blur',releaseAll); // ウィンドウを切り替えたら、全部離した扱いにする
 backBtn.addEventListener('click',e=>{e.stopPropagation();history.back()});
 backBtn.addEventListener('pointerdown',e=>e.stopPropagation());
 function keyDir(){let x=0,y=0;input.keys.forEach(k=>{const v=KEYMAP[k];if(v){x+=v[0];y+=v[1]}});return[Math.sign(x),Math.sign(y)]}
@@ -279,7 +290,7 @@ function updateOrientation(){
   if(state==='demo'&&wantPlayOnRotate&&canPlay()){wantPlayOnRotate=false;startPlay()}
 }
 function flashNote(){noteFlash=1.2}
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='play')paused=true;else updateOrientation()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){releaseAll();if(state==='play')paused=true}else updateOrientation()});
 
 // ===== ゲームの中身 =====
 let state='demo',overT=0,wantPlayOnRotate=false;
@@ -333,7 +344,7 @@ function stepWorld(dt){
     if(s.dead>0){s.dead-=dt;if(s.dead<=0){if(W.lives<=0&&!W.demo){gameOver();return}spawnShip()}}
     else{
       let dx=0,dy=0;
-      if(W.demo){W.aiT+=dt;const ty=110+70*Math.sin(W.aiT*0.7)+(W.boss?Math.sin(W.aiT*1.9)*30:0);dy=Math.abs(ty-s.y)>4?Math.sign(ty-s.y):0;const tx=W.boss?50:70+30*Math.sin(W.aiT*0.4);dx=Math.abs(tx-s.x)>4?Math.sign(tx-s.x):0;W.aiFire-=dt;if(W.aiFire<=0){W.aiFire=0.28;input.fireQueue++}}
+      if(W.demo){W.aiT+=dt;const ty=110+70*Math.sin(W.aiT*0.7)+(W.boss?Math.sin(W.aiT*1.9)*30:0);dy=Math.abs(ty-s.y)>4?Math.sign(ty-s.y):0;const tx=W.boss?50:70+30*Math.sin(W.aiT*0.4);dx=Math.abs(tx-s.x)>4?Math.sign(tx-s.x):0;W.aiDx=dx;W.aiDy=dy;W.aiFire-=dt;if(W.aiFlash>0)W.aiFlash-=dt;if(W.aiFire<=0){W.aiFire=0.28;W.aiFlash=0.1;input.fireQueue++}}
       else{const[kx,ky]=keyDir();dx=input.dx||kx;dy=input.dy||ky}
       const v=150,n=(dx&&dy)?0.7071:1;s.x=Math.max(0,Math.min(GW-80,s.x+dx*v*n*dt));s.y=Math.max(26,s.y+dy*v*n*dt);
       if(W.demo)s.y=Math.min(s.y,230);
