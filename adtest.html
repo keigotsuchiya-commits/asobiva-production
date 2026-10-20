@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>広告の試し用 | ASOBIVA</title>
+<style>
+body { margin: 0; background: #fff; color: #333; font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", sans-serif; }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 16px 20px 60px; }
+h1 { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
+.note { font-size: 12px; color: #888; margin: 0 0 20px; line-height: 1.6; }
+.label { font-size: 12px; color: #888; margin: 24px 0 6px; }
+/* ASOBIVA の広告カードと同じ作り（v7.0.1） */
+.ad-card { text-align: center; overflow: hidden; outline: 1px dashed #ddd; }
+.ad-card > * { max-width: 100%; }
+.ad-card > .ad-in { display: inline-block; vertical-align: top; max-width: none; }
+.size { font-size: 11px; color: #aaa; margin-top: 4px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>広告の試し用ページ</h1>
+<p class="note">ASOBIVA の広告カードと同じ作りで、広告を並べています。点線がカードの幅です。<br>広告の下に、出ている大きさ（幅×高さ）が出ます。</p>
+
+<div class="label">AdMax</div>
+<div class="ad-card"><div class="ad-in">
+<!-- ▼▼ AdMax のコード（ここから） ▼▼ -->
+<!-- admax -->
+<script src="https://adm.shinobi.jp/s/d62f10dea86cd7dbab67bd69598d7ef6"></script>
+<!-- admax -->
+<!-- ▲▲ AdMax のコード（ここまで） ▲▲ -->
+</div></div>
+<div class="size"></div>
+
+<div class="label">Zucks</div>
+<div class="ad-card"><div class="ad-in">
+<!-- ▼▼ Zucks のコード（ここから） ▼▼ -->
+
+<!-- ▲▲ Zucks のコード（ここまで） ▲▲ -->
+</div></div>
+<div class="size"></div>
+
+</div>
+<script>
+function asobivaAdFit() {
+  var C = document.querySelectorAll('.ad-card'), i;
+  function fit(c) {
+    var a = c.querySelector('.ad-in'); if (!a) return;
+    var cs = getComputedStyle(c), cw = c.clientWidth - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
+    var w = a.offsetWidth, h = a.offsetHeight, s = (w > cw + 1 && cw > 0) ? cw / w : 1;
+    var t = s < 1 ? 'scale(' + s + ')' : '';
+    if (a.style.transform === t && a.getAttribute('data-w') === String(w) && a.getAttribute('data-h') === String(h)) return;
+    a.setAttribute('data-w', w); a.setAttribute('data-h', h);
+    a.style.transformOrigin = '0 0'; a.style.transform = t;
+    a.style.marginRight = s < 1 ? (-(w * (1 - s))) + 'px' : '';
+    a.style.marginBottom = s < 1 ? (-(h * (1 - s))) + 'px' : '';
+  }
+  function all() { for (var j = 0; j < C.length; j++) fit(C[j]); }
+  if (window.ResizeObserver) { var ro = new ResizeObserver(all); for (i = 0; i < C.length; i++) { ro.observe(C[i]); var a = C[i].querySelector('.ad-in'); if (a) ro.observe(a); } }
+  window.addEventListener('resize', all); window.addEventListener('load', all);
+  var k = 0, tm = setInterval(function () { all(); if (++k > 20) clearInterval(tm); }, 500);
+  all();
+}
+asobivaAdFit();
+// 出ている大きさを表示する（確認用）
+(function () {
+  function show() {
+    var C = document.querySelectorAll('.ad-card');
+    for (var i = 0; i < C.length; i++) {
+      var r = C[i].querySelector('.ad-in').getBoundingClientRect(), s = C[i].nextElementSibling;
+      if (s) s.textContent = r.width > 1 ? Math.round(r.width) + ' × ' + Math.round(r.height) : '（まだ出ていません）';
+    }
+  }
+  var k = 0, t = setInterval(function () { show(); if (++k > 30) clearInterval(t); }, 500);
+  window.addEventListener('resize', show);
+})();
+</script>
+</body>
+</html>
