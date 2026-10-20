@@ -1,18 +1,55 @@
-// ASOBIVA 公開設定（ASOBIVA builder v6.2 が書き出し）
+// ASOBIVA 公開設定（ASOBIVA builder v7.0 が書き出し）
 // 日本時間のその日の日付で、公開期間の外のカード・メニュー・ページを外します。
 // 期間外・非表示のページを直接開いたときは、トップへ移します。ほかのファイルはそのまま返します。
-const PAGES = {"asobiva.html":["2026-11-17",""],"music.html":["2026-11-17",""],"ehon.html":["2026-11-17",""],"marumaru.html":["2026-11-17",""],"yokai.html":["2026-11-17",""],"project-supana.html":["2027-01-01",""],"game.html":["2026-11-17",""],"uranai.html":["2026-11-17",""],"n.html":["2027-01-01",""],"page-11.html":["2027-01-01",""],"page-12.html":["2027-01-01",""],"oborogi.html":["2027-01-01",""]};
-function today(env) {
+const PAGES = {"asobiva.html":["2026-11-17",""],"asobiva-lab.html":["2027-03-01",""],"music.html":["2026-11-17",""],"filmography.html":["2027-03-01",""],"one-shot.html":["2027-01-01",""],"ehon.html":["2026-11-17",""],"project-supana.html":["2027-01-01",""],"oborogi.html":["2027-01-01",""],"marumaru.html":["2026-11-17",""],"n.html":["2027-01-01",""],"yokai.html":["2026-11-17",""],"page-13.html":["2027-01-01",""],"page-14.html":["2027-01-01",""],"game.html":["2026-11-17",""],"pazle.html":["2027-05-01",""],"shikaku.html":["2027-05-01",""],"uranai.html":["2026-11-17",""]};
+// 確認用の書き出し：下見のアドレス（〇〇.プロジェクト名.pages.dev）では 2027-05-01 の見え方にします。本番のアドレスでは今日の日付のままです。
+const FIX_DAY = '2027-05-01';
+function isPreview(url) { const h = url.hostname.toLowerCase(); return /\.pages\.dev$/.test(h) && h.split('.').length >= 4; }
+function today(env, url) {
+  if (url && isPreview(url)) return FIX_DAY;
   if (env && /^\d{4}-\d{2}-\d{2}$/.test(env.ASOBIVA_TODAY || '')) return env.ASOBIVA_TODAY; // 確認用（ふだんは設定しない）
   return new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10);
 }
 function inPeriod(f, t, d) { return (!f || f <= d) && (!t || d <= t); }
+// いいね（v6.8）：Cloudflare の D1 データベース（変数名 DB）に、カードごとの数を記録します。DB がなければ数を返しません。
+const LIKE_IDS = ["cmutb22kwfmmzq","cmv8uqjyb1zr1u","cmv9do33e4iau5","cmv0mookxrmpr2","cmuwvs5om3k9sr","cmuwuja9nrmmif","cmuv2nfjgcsn2k","cmuv2qpm2jk0ej","cmuwvqfz5ffpao","cmuwvupr3gt7gs","cmuwun1b560gdr","cmuv2rkjicpke1","cmuv2sc4d8p4sm","cmvbemvpbz8rfu","cmur49tn4cshe9","cmuzu09b0wg6me","cmus58dl7tmput","cmus58sk1c2qr3","cmus58sk5dwh3y"];
+let likeReady = false;
+async function likeDb(env) {
+  if (!env || !env.DB) return null;
+  if (!likeReady) { await env.DB.prepare('CREATE TABLE IF NOT EXISTS likes (id TEXT PRIMARY KEY, n INTEGER NOT NULL DEFAULT 0)').run(); likeReady = true; }
+  return env.DB;
+}
+function likeJson(o, s) { return new Response(JSON.stringify(o), { status: s || 200, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' } }); }
+async function likeApi(request, env, url) {
+  let db;
+  try { db = await likeDb(env); } catch (e) { db = null; }
+  if (!db) return likeJson({ error: 'no-db' }, 503);
+  if (url.pathname === '/api/likes' && request.method === 'GET') {
+    const ids = (url.searchParams.get('ids') || '').split(',').filter(x => LIKE_IDS.includes(x)).slice(0, 90);
+    const out = {}; ids.forEach(x => { out[x] = 0; });
+    if (ids.length) {
+      const r = await db.prepare('SELECT id, n FROM likes WHERE id IN (' + ids.map(() => '?').join(',') + ')').bind(...ids).all();
+      (r.results || []).forEach(x => { out[x.id] = x.n; });
+    }
+    return likeJson(out);
+  }
+  if (url.pathname === '/api/like' && request.method === 'POST') {
+    let b = null;
+    try { b = await request.json(); } catch (e) {}
+    const id = String((b && b.id) || ''), d = b && b.d === -1 ? -1 : 1;
+    if (!LIKE_IDS.includes(id)) return likeJson({ error: 'bad-id' }, 400);
+    const r = await db.prepare('INSERT INTO likes (id, n) VALUES (?1, MAX(?2, 0)) ON CONFLICT(id) DO UPDATE SET n = MAX(n + ?2, 0) RETURNING n').bind(id, d).first();
+    return likeJson({ n: r ? r.n : 0 });
+  }
+  return likeJson({ error: 'not-found' }, 404);
+}
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname === '/api/likes' || url.pathname === '/api/like') return likeApi(request, env, url);
     const m = url.pathname.match(/^\/([^\/]*)$/); // サイトの一番上の階層だけ（ビルダーのページ）
     if (!m) return env.ASSETS.fetch(request);
-    const d = today(env);
+    const d = today(env, url);
     let f = m[1];
     try { f = decodeURIComponent(f); } catch (e) {}
     f = f.toLowerCase();

@@ -54,13 +54,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: v
 /* 縦画面だけ、カード（HTML・画像・画像のカルーセル）を幅の --ps 倍にして真ん中に置く（カードごとの「縦画面の大きさ」。v3.3〜） */
 @media (max-width: 767.98px) {
   .html-card > iframe { width: calc(100% * var(--ps, 1)) !important; margin: 0 auto; }
-  .card-section > .card, .card-section > .carousel-card { width: calc(100% * var(--ps, 1)); margin-left: auto; margin-right: auto; }
+  .card-section > .card, .card-section > .carousel-card, .card-section > .like-row:not(.like-flow) { width: calc(100% * var(--ps, 1)); margin-left: auto; margin-right: auto; }
 }
 /* 横画面・PCは「横画面の大きさ」（--pw）。カードの幅（1マス・いっぱい・中央）に対する割合（v3.7） */
 @media (min-width: 768px) {
   .html-card > iframe { width: calc(100% * var(--pw, 1)) !important; margin: 0 auto; }
-  .card-section > .card, .card-section > .carousel-card { width: calc(100% * var(--pw, 1)); margin-left: auto; margin-right: auto; }
-  .card-section.html-center > .card, .card-section.html-center > .carousel-card { width: calc(min(100%, 480px) * var(--pw, 1)); }
+  .card-section > .card, .card-section > .carousel-card, .card-section > .like-row:not(.like-flow) { width: calc(100% * var(--pw, 1)); margin-left: auto; margin-right: auto; }
+  .card-section.html-center > .card, .card-section.html-center > .carousel-card, .card-section.html-center > .like-row:not(.like-flow) { width: calc(min(100%, 480px) * var(--pw, 1)); }
 }
 
 .carousel-card { width:100%; position:relative; background:var(--white); overflow:hidden; cursor:pointer; }
@@ -132,6 +132,41 @@ footer.ft-block .ft-body { max-width:var(--ft-max, 480px); margin:0 auto; text-a
 .card-section.html-center > .card-cap.cap-left { max-width: 480px; }
 /* 左揃えの左右の余白（v5.3）：カードの幅に対する割合（--ci ％）。内側の span の % はキャプション（＝カードの幅）が基準 */
 .card-cap > .cap-in { display: block; padding: 0 calc(var(--ci, 0) * 1%); }
+/* 文字のカード（v6.7） */
+.text-card { padding: 0 var(--tpad, 16px); }
+.text-card .text-body { white-space: pre-wrap; overflow-wrap: anywhere; font-size: var(--tsp, 15px); line-height: 1.8; letter-spacing: 0.02em; color: var(--ink); text-align: left; }
+.text-card.ta-c .text-body { text-align: center; }
+.text-card[data-tw] .text-body { font-family: 'AsoCapHS', -apple-system, BlinkMacSystemFont, sans-serif; }
+.text-card[data-tw="3"] .text-body { font-weight: 300; } .text-card[data-tw="4"] .text-body { font-weight: 400; } .text-card[data-tw="5"] .text-body { font-weight: 500; }
+.text-card[data-tw="6"] .text-body { font-weight: 600; } .text-card[data-tw="7"] .text-body { font-weight: 700; } .text-card[data-tw="8"] .text-body { font-weight: 800; }
+/* 更新履歴のカード（v6.7） */
+.hist-card { padding: 0 16px; }
+.hist-title { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; color: var(--ink); margin-bottom: 4px; }
+.hist-list { list-style: none; margin: 0; padding: 0; }
+.hist-list li { display: flex; gap: 14px; padding: 7px 0; border-top: 1px solid #e6e6e6; font-size: 13px; line-height: 1.6; }
+.hist-list li:first-child { border-top: none; }
+.hist-date { flex: none; color: #888; font-variant-numeric: tabular-nums; }
+.hist-text { color: var(--ink); text-decoration: none; overflow-wrap: anywhere; }
+a.hist-text { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #ccc; }
+.hist-empty { font-size: 12px; color: #888; padding: 7px 0; }
+/* 広告カード（v7.0）：貼ったコードをそのまま入れる。中身は中央・はみ出さない */
+.ad-card { text-align: center; overflow: hidden; }
+.ad-card > * { max-width: 100%; }
+.ad-ph { border: 1px dashed #bbb; border-radius: 6px; background: #fafafa; color: #999; font-size: 12px; line-height: 1.6; padding: 22px 12px; text-align: center; }
+/* いいね（v6.8・v6.9 で画像の左下に重ねる形に）：高さ0の行をカードのすぐ下に置き、ボタンをカードの左下の角に重ねる（キャプション・並びに影響しない） */
+.like-row { position: relative; height: 0; margin-left: auto; margin-right: auto; z-index: 3; }
+.like-btn { position: absolute; left: 8px; bottom: 8px; display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 9px; margin: 0; border: none; border-radius: 15px; background: rgba(255, 255, 255, 0.9); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15); font: inherit; font-size: 13px; line-height: 1; color: #555; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.like-btn svg { width: 17px; height: 17px; display: block; transition: transform 0.15s; }
+.like-btn svg path { fill: none; stroke: currentColor; stroke-width: 1.8; }
+.like-btn.on { color: #e0457b; }
+.like-btn.on svg path { fill: currentColor; }
+.like-btn:active svg { transform: scale(0.85); }
+.like-n { font-variant-numeric: tabular-nums; }
+.like-n:empty { display: none; }
+/* 文字のカードは文字に重ならないよう、下に並べる */
+.like-row.like-flow { height: auto; padding: 4px var(--tpad, 16px) 0; }
+.like-row.like-flow .like-btn { position: static; }
+@media (min-width: 768px) { .text-card .text-body { font-size: var(--tsl, 17px); } .hist-list li { font-size: 14px; } .hist-title { font-size: 14px; } }
 @media (max-width: 767.98px) {
   body:not(.admin-mode) .card-section > .card-cap.cap-left { width: calc(100% * var(--ps, 1)); }
   body:not(.admin-mode) .card-section.html-center > .card-cap.cap-left.cap-html { max-width: none; width: calc(min(100%, 480px) * var(--ps, 1)); }
@@ -140,7 +175,7 @@ footer.ft-block .ft-body { max-width:var(--ft-max, 480px); margin:0 auto; text-a
   body:not(.admin-mode) .card-section > .card-cap.cap-left { width: calc(100% * var(--pw, 1)); }
   body:not(.admin-mode) .card-section.html-center > .card-cap.cap-left { width: calc(min(100%, 480px) * var(--pw, 1)); }
 }
-.card-section.html-center .html-card, .card-section.html-center > .card, .card-section.html-center > .carousel-card, .card-section.html-center > .gcar-card { max-width:480px; margin:0 auto; }
+.card-section.html-center .html-card, .card-section.html-center > .card, .card-section.html-center > .carousel-card, .card-section.html-center > .like-row:not(.like-flow), .card-section.html-center > .gcar-card { max-width:480px; margin:0 auto; }
 @media (min-width: 768px) {
   :root { --page-max:1200px; --cols:3; }
   :root.cols-2 { --cols:2; }
@@ -153,19 +188,19 @@ footer.ft-block .ft-body { max-width:var(--ft-max, 480px); margin:0 auto; text-a
   .header-pair .banner-slot.sp { padding-bottom:0; }
   .header-pair .banner-slot.sp::after { display:none; }
 }
-:root { --side-m:80px; --col-gap:24px; --gap-b:10px; --gap-c:0px; --hdr-gap:0px; --line-s:1; --line-c:#1a1a1a; --line-mp:20px; --line-ml:20px; --line-t:20px; --header-h:50px; --logo-pct:0.35; --ts-wide:1; --ts-cell:0.7; --cap-p:15px; --cap-l:10px; }
-@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W3'),local('Hiragino Sans W3');font-weight:300;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W4'),local('Hiragino Sans W4');font-weight:400;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W5'),local('Hiragino Sans W5');font-weight:500;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W6'),local('Hiragino Sans W6');font-weight:600;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W7'),local('Hiragino Sans W7');font-weight:700;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W8'),local('Hiragino Sans W8');font-weight:800;}.card-cap, .gcar-names > div, .gcar-cell-name { font-family: 'AsoCapHS', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 300; }
+:root { --side-m:80px; --col-gap:24px; --gap-b:10px; --gap-c:0px; --hdr-gap:0px; --line-s:1; --line-c:#1a1a1a; --line-mp:20px; --line-ml:20px; --line-t:20px; --header-h:50px; --logo-pct:0.6; --ts-wide:1; --ts-cell:0.7; --cap-p:14px; --cap-l:10px; }
+@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W3'),local('Hiragino Sans W3');font-weight:300;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W4'),local('Hiragino Sans W4');font-weight:400;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W5'),local('Hiragino Sans W5');font-weight:500;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W6'),local('Hiragino Sans W6');font-weight:600;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W7'),local('Hiragino Sans W7');font-weight:700;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W8'),local('Hiragino Sans W8');font-weight:800;}.card-cap, .gcar-names > div, .gcar-cell-name { font-family: 'AsoCapHS', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 500; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="site-header no-line">
-    <a class="site-logo" href="index.html"><img src="images/logo_img_4681.jpg" alt="TOP"></a>
+    <a class="site-logo" href="index.html"><img src="images/logo_e4981fdc-3cab-4246-80ad-37873a70abd7.jpg" alt="TOP"></a>
     <button class="burger-btn" id="burgerBtn" aria-label="メニュー" onclick="document.getElementById('burgerMenu').classList.toggle('open')"><span></span><span></span><span></span></button>
-    <div class="burger-menu" id="burgerMenu"><div class="nav-list"><div class="nav-top"><a class="nav-link-item" href="index.html">TOP</a><a class="nav-link-item" href="asobiva.html" data-pf="2026-11-17">ASOBIVAとは？</a></div><div class="nav-group"><div class="nav-group-label">音楽・映像</div><a class="nav-link-item" href="music.html" data-pf="2026-11-17">0FILE</a></div><div class="nav-group"><div class="nav-group-label">絵本・イラスト</div><a class="nav-link-item" href="ehon.html" data-pf="2026-11-17">絵本コレクション</a><a class="nav-link-item current" href="project-supana.html" data-pf="2027-01-01">PROJECT SUPANA</a></div><div class="nav-group"><div class="nav-group-label">シリーズ連載</div><a class="nav-link-item" href="marumaru.html" data-pf="2026-11-17">〇〇の話</a><a class="nav-link-item" href="yokai.html" data-pf="2026-11-17">榊原幻舟の百鬼奇譚</a><a class="nav-link-item" href="n.html" data-pf="2027-01-01">蟲屋Nの昆虫図鑑</a><a class="nav-link-item" href="page-11.html" data-pf="2027-01-01">ほらばな新聞</a><a class="nav-link-item" href="page-12.html" data-pf="2027-01-01">今日の田中さん</a><a class="nav-link-item" href="oborogi.html" data-pf="2027-01-01">名を持たぬ哲学者</a></div><div class="nav-group"><div class="nav-group-label">ゲーム・占い</div><a class="nav-link-item" href="game.html" data-pf="2026-11-17">豆太ピコのゲーム</a><a class="nav-link-item" href="uranai.html" data-pf="2026-11-17">福徳神社</a></div></div></div>
+    <div class="burger-menu" id="burgerMenu"><div class="nav-list"><div class="nav-top"><a class="nav-link-item" href="index.html">TOP</a><a class="nav-link-item" href="asobiva.html" data-pf="2026-11-17">ASOBIVAとは？</a><a class="nav-link-item" href="asobiva-lab.html" data-pf="2027-03-01">ASOBIVA LAB</a></div><div class="nav-group"><div class="nav-group-label">音楽・映像・写真</div><a class="nav-link-item" href="music.html" data-pf="2026-11-17">0FILE</a><a class="nav-link-item" href="filmography.html" data-pf="2027-03-01">FILMOGRAPHY</a><a class="nav-link-item" href="one-shot.html" data-pf="2027-01-01">ONE SHOT</a></div><div class="nav-group"><div class="nav-group-label">絵本・イラスト</div><a class="nav-link-item" href="ehon.html" data-pf="2026-11-17">絵本コレクション</a><a class="nav-link-item current" href="project-supana.html" data-pf="2027-01-01">PROJECT SUPANA</a></div><div class="nav-group"><div class="nav-group-label">シリーズ連載</div><a class="nav-link-item" href="oborogi.html" data-pf="2027-01-01">名を持たぬ哲学者</a><a class="nav-link-item" href="marumaru.html" data-pf="2026-11-17">〇〇の話</a><a class="nav-link-item" href="n.html" data-pf="2027-01-01">蟲屋Nの昆虫図鑑</a><a class="nav-link-item" href="yokai.html" data-pf="2026-11-17">榊原玄舟の百鬼奇譚</a><a class="nav-link-item" href="page-13.html" data-pf="2027-01-01">ほらばな新聞</a><a class="nav-link-item" href="page-14.html" data-pf="2027-01-01">きょうの田中さん</a></div><div class="nav-group"><div class="nav-group-label">ゲーム・占い</div><a class="nav-link-item" href="game.html" data-pf="2026-11-17">豆太ピコのゲーム</a><a class="nav-link-item" href="pazle.html" data-pf="2027-05-01">あたまの体操パズル</a><a class="nav-link-item" href="shikaku.html" data-pf="2027-05-01">資格試験対策室</a><a class="nav-link-item" href="uranai.html" data-pf="2026-11-17">福徳神社</a></div></div></div>
   </div>
   <div class="header-pair sp" style="--mb:16px">
-    <div class="banner-slot" style="--ar:1.0000;--bps:0.7;--bpw:0.35;"><img src="images/1c75348d-b082-4210-8f98-96bfd298643c_2.png" alt=""></div>
+    <div class="banner-slot" style="--ar:1.0000;--bps:0.7;--bpw:0.35;"><img src="images/1c75348d-b082-4210-8f98-96bfd298643c_2.jpg" alt=""></div>
   </div>
   <div id="cardContainer">
     <div class="card-section sp is-html" style="--mb:0px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
@@ -295,7 +330,7 @@ body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;p
 })();
 </script></body>
 </html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
-    <div class="card-section sp is-html" style="--mb:16px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
+    <div class="card-section sp is-html" style="--mb:0px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
 <html lang=&quot;ja&quot;>
 <head>
 <meta charset=&quot;UTF-8&quot;>
@@ -365,125 +400,30 @@ body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;p
 })();
 </script></body>
 </html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
-    <div class="card-section sp is-html" style="--mb:16px"><div class="html-card" style="--ps:0.9;"><iframe srcdoc="<!DOCTYPE html>
+    <div class="card-section sp is-html" style="--mb:0px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
 <html lang=&quot;ja&quot;>
 <head>
 <meta charset=&quot;UTF-8&quot;>
 <meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
-<title>PROJECT SUPANA</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;}
-html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
-body{background:#ffffff;color:#1a1a1a;font-family:-apple-system,BlinkMacSystemFont,&quot;Hiragino Sans&quot;,sans-serif;font-size:min(3.720931vw,16px);}
-.tc-root{width:100%;max-width:430px;margin:0 auto;background:#ffffff;}
-.tc-main{display:flex;background:#ffffff;border-bottom:1px solid #e0e0e0;}
-.tc-main button{flex:1;min-width:0;padding:min(2.790698vw,12px) min(0.930233vw,4px);background:none;border:none;border-bottom:2px solid transparent;font-family:inherit;font-size:min(2.55814vw,11px);font-weight:500;color:#888888;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.02em;}
-.tc-main button.on{color:#1a1a1a;border-bottom-color:#1a1a1a;font-weight:700;}
-.tc-sub{display:flex;background:#ffffff;border-bottom:1px solid #e0e0e0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
-.tc-sub::-webkit-scrollbar{display:none;}
-.tc-sub button{flex-shrink:0;padding:min(2.325582vw,10px) min(3.255814vw,14px);background:none;border:none;border-bottom:2px solid transparent;font-family:inherit;font-size:min(2.55814vw,11px);font-weight:500;color:#888888;cursor:pointer;white-space:nowrap;letter-spacing:.02em;}
-.tc-sub button.on{color:#1a1a1a;border-bottom-color:#1a1a1a;font-weight:700;}
-.tc-panel{display:none;}
-.tc-panel.on{display:block;}
-.tc-item{display:block;width:100%;position:relative;background:#ffffff;}
-.gap-gap .tc-item + .tc-item{margin-top:min(2.325582vw,10px);}
-.gap-line .tc-item + .tc-item{border-top:1px solid #1a1a1a;}
-.tc-item img{display:block;width:100%;height:auto;}
-.tc-item iframe{display:block;width:100%;height:min(46.511628vw,200px);border:none;overflow:hidden;background:#ffffff;}
-.tc-car{cursor:pointer;}
-/* カルーセルの「‹ 1 / 3 ›」：ビルダーのグループのカルーセルと同じ（矢印は両端・枚数は真ん中） */
-.tc-cui{display:flex;align-items:center;justify-content:space-between;height:min(9.302326vw,40px);background:#ffffff;}
-.tc-cui button{width:min(10.232559vw,44px);height:min(9.302326vw,40px);border:none;background:none;font-family:inherit;font-size:min(6.046512vw,26px);line-height:1;color:#1a1a1a;cursor:pointer;padding:0;}
-.tc-cui span{font-size:min(2.790698vw,12px);letter-spacing:.05em;color:#888888;}
-.tc-empty{padding:min(9.302326vw,40px) min(3.720931vw,16px);text-align:center;font-size:min(3.023256vw,13px);color:#888888;}
-</style>
+<title>CHARACTERS</title>
+<link href=&quot;https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&amp;display=swap&quot; rel=&quot;stylesheet&quot;>
+<style>*{box-sizing:border-box;}
+body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;padding:0;line-height:1.7;}
+.page{max-width:600px;margin:0 auto;padding:0;}
+.divider-container{width:100%;padding:min(2.325582vw,10px) min(4.651163vw,20px) min(2.325582vw,10px) min(4.651163vw,20px);}
+.divider{width:100%;border:none;border-top:1px solid #17191a;margin:0;}
+.dv-head{display:flex;align-items:center;gap:min(3.720931vw,16px);}
+.dv-head .divider{flex:1 1 0;width:auto;min-width:0;}
+.dv-text{flex:0 1 auto;min-width:0;font-size:min(2.790698vw,12px);font-weight:400;color:#111111;letter-spacing:0.04em;line-height:1.4;overflow-wrap:anywhere;}
+.dv-center .dv-text{text-align:center;}</style>
 </head>
 <body>
-<div id=&quot;tc-root&quot; class=&quot;tc-root&quot;></div>
-<script type=&quot;application/json&quot; id=&quot;tc-data&quot;>{&quot;v&quot;:1,&quot;name&quot;:&quot;PROJECT SUPANA&quot;,&quot;gap&quot;:&quot;none&quot;,&quot;tabs&quot;:[{&quot;name&quot;:&quot;Characters&quot;,&quot;subs&quot;:[],&quot;items&quot;:[{&quot;type&quot;:&quot;carousel&quot;,&quot;images&quot;:[&quot;images/htmlimg_1cf5fe5a.jpg&quot;,&quot;images/htmlimg_42aed821.jpg&quot;,&quot;images/htmlimg_12808c22.jpg&quot;],&quot;names&quot;:[],&quot;link&quot;:&quot;&quot;},{&quot;type&quot;:&quot;html&quot;,&quot;html&quot;:&quot;\u003c!DOCTYPE html>\n\u003chtml lang=\&quot;ja\&quot;>\n\u003chead>\n\u003cmeta charset=\&quot;UTF-8\&quot;>\n\u003cmeta name=\&quot;viewport\&quot; content=\&quot;width=device-width, initial-scale=1.0\&quot;>\n\u003ctitle>image-text-block\u003c/title>\n\u003c/head>\n\u003cbody style=\&quot;margin:0;padding:0;background:#fff;\&quot;>\n\u003cstyle>\n.it0w3vav.it-wrap{width:100vw;position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;}\n.it0w3vav .it-frame-outer{box-sizing:border-box;}\n.it0w3vav .it-block{width:100%;box-sizing:border-box;padding:20px 20px 20px 20px;display:flex;align-items:flex-start;gap:clamp(14px,2.9cqw,30px);font-family:\&quot;Hiragino Sans\&quot;,\&quot;Noto Sans JP\&quot;,sans-serif;}\n.it0w3vav .it-block.it-right{flex-direction:row-reverse;}\n.it0w3vav .it-block.it-none{display:block;}\n.it0w3vav .it-img{flex:0 0 38%;max-width:38%;}\n.it0w3vav .it-img img{display:block;width:100%;height:auto;}\n.it0w3vav .it-text{flex:1;min-width:0;}\n.it0w3vav .it-text p, .it0w3vav .it-text > div{margin:0;font-size:15px;line-height:1.5;color:#111;white-space:pre-wrap;}\n.it0w3vav .it-text .it-line{margin:0;white-space:pre-wrap;}\n.it0w3vav .it-text p.it-sig{text-align:right;margin-top:0.8em;white-space:normal;}\n.it0w3vav .it-sig-wrap{text-align:right;}\n.it0w3vav .it-sig-wrap .it-sig-img{display:inline-block;height:auto;margin-top:0.4em;}\n\u003c/style>\n\n\u003cdiv class=\&quot;it-wrap it0w3vav\&quot;>\n  \u003cdiv class=\&quot;it-frame-outer\&quot;>\n    \u003cdiv class=\&quot;it-block it-none\&quot; style=\&quot;\&quot;>\n      \u003cdiv class=\&quot;it-text\&quot;>\u003cdiv style=\&quot;font-size:15px;line-height:1.5\&quot;>\u003cdiv class=\&quot;it-line\&quot;>\u003cstrong>ボルト / Bolt（14歳）\u003c/strong>\u003c/div>\u003cdiv class=\&quot;it-line\&quot;>&amp;nbsp;\u003c/div>\u003cdiv class=\&quot;it-line\&quot;>コンテナ団地C-23で暮らす少年。荷物を運び、地図を集め、誰よりも遠くまで走り回る。元気でわんぱくだが、どこか不愛想。そして誰にも説明できない違和感を、この世界に抱いている。\u003c/div>\u003cdiv class=\&quot;it-line\&quot;>&amp;nbsp;\u003c/div>\u003cdiv class=\&quot;it-line\&quot;>\u003cstrong>ナット / Nut（年齢不明）\u003c/strong>\u003c/div>\u003cdiv class=\&quot;it-line\&quot;>&amp;nbsp;\u003c/div>\u003cdiv class=\&quot;it-line\&quot;>いつもボルトのそばにいる相棒。犬のように見えるが、その正体を知る者はいない。時折、誰にも見えない何かを感じ取ることがある。その異変に気づいているのは、今のところボルトだけだ。\u003c/div>\u003c/div>\u003c/div>\n    \u003c/div>\n  \u003c/div>\n\u003c/div>\n\u003c/body>\n\u003c/html>&quot;,&quot;name&quot;:&quot;image-text-block 6.html&quot;}]},{&quot;name&quot;:&quot;Vehicles&amp;Gear&quot;,&quot;subs&quot;:[],&quot;items&quot;:[{&quot;type&quot;:&quot;carousel&quot;,&quot;images&quot;:[&quot;images/htmlimg_d397d232.jpg&quot;,&quot;images/htmlimg_2d4c716a.jpg&quot;],&quot;names&quot;:[],&quot;link&quot;:&quot;&quot;},{&quot;type&quot;:&quot;html&quot;,&quot;html&quot;:&quot;\u003c!DOCTYPE html>\n\u003chtml lang=\&quot;ja\&quot;>\n\u003chead>\n\u003cmeta charset=\&quot;UTF-8\&quot;>\n\u003cmeta name=\&quot;viewport\&quot; content=\&quot;width=device-width, initial-scale=1.0\&quot;>\n\u003ctitle>image-text-block\u003c/title>\n\u003c/head>\n\u003cbody style=\&quot;margin:0;padding:0;background:#fff;\&quot;>\n\u003cstyle>\n.itqdfgwm.it-wrap{width:100vw;position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;}\n.itqdfgwm .it-frame-outer{box-sizing:border-box;}\n.itqdfgwm .it-block{width:100%;box-sizing:border-box;padding:20px 20px 20px 20px;display:flex;align-items:flex-start;gap:clamp(14px,2.9cqw,30px);font-family:\&quot;Hiragino Sans\&quot;,\&quot;Noto Sans JP\&quot;,sans-serif;}\n.itqdfgwm .it-block.it-right{flex-direction:row-reverse;}\n.itqdfgwm .it-block.it-none{display:block;}\n.itqdfgwm .it-img{flex:0 0 38%;max-width:38%;}\n.itqdfgwm .it-img img{display:block;width:100%;height:auto;}\n.itqdfgwm .it-text{flex:1;min-width:0;}\n.itqdfgwm .it-text p, .itqdfgwm .it-text > div{margin:0;font-size:15px;line-height:1.5;color:#111;white-space:pre-wrap;}\n.itqdfgwm .it-text .it-line{margin:0;white-space:pre-wrap;}\n.itqdfgwm .it-text p.it-sig{text-align:right;margin-top:0.8em;white-space:normal;}\n.itqdfgwm .it-sig-wrap{text-align:right;}\n.itqdfgwm .it-sig-wrap .it-sig-img{display:inline-block;height:auto;margin-top:0.4em;}\n\u003c/style>\n\n\u003cdiv class=\&quot;it-wrap itqdfgwm\&quot;>\n  \u003cdiv class=\&quot;it-frame-outer\&quot;>\n    \u003cdiv class=\&quot;it-block it-none\&quot; style=\&quot;\&quot;>\n      \u003cdiv class=\&quot;it-text\&quot;>\u003cdiv style=\&quot;font-size:15px;line-height:1.5\&quot;>\u003cdiv class=\&quot;it-line\&quot;>\u003cstrong>韋駄天号 / Idaten-gou\u003c/strong>\u003c/div>\u003cdiv class=\&quot;it-line\&quot;>&amp;nbsp;\u003c/div>\u003cdiv class=\&quot;it-line\&quot;>荷を積み、道なき道を走る。韋駄天号は、仲間の足であり、倉庫であり、時には家でもある。\u003c/div>\u003c/div>\u003c/div>\n    \u003c/div>\n  \u003c/div>\n\u003c/div>\n\u003c/body>\n\u003c/html>&quot;,&quot;name&quot;:&quot;image-text-block 7.html&quot;}]},{&quot;name&quot;:&quot;Locations&quot;,&quot;subs&quot;:[],&quot;items&quot;:[{&quot;type&quot;:&quot;carousel&quot;,&quot;images&quot;:[&quot;images/htmlimg_3a0dd757.jpg&quot;,&quot;images/htmlimg_ebf9338b.jpg&quot;,&quot;images/htmlimg_bd0cf4fb.jpg&quot;],&quot;names&quot;:[],&quot;link&quot;:&quot;&quot;},{&quot;type&quot;:&quot;html&quot;,&quot;html&quot;:&quot;\u003c!DOCTYPE html>\n\u003chtml lang=\&quot;ja\&quot;>\n\u003chead>\n\u003cmeta charset=\&quot;UTF-8\&quot;>\n\u003cmeta name=\&quot;viewport\&quot; content=\&quot;width=device-width, initial-scale=1.0\&quot;>\n\u003ctitle>image-text-block\u003c/title>\n\u003c/head>\n\u003cbody style=\&quot;margin:0;padding:0;background:#fff;\&quot;>\n\u003cstyle>\n.itjns4ey.it-wrap{width:100vw;position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;}\n.itjns4ey .it-frame-outer{box-sizing:border-box;}\n.itjns4ey .it-block{width:100%;box-sizing:border-box;padding:20px 20px 20px 20px;display:flex;align-items:flex-start;gap:clamp(14px,2.9cqw,30px);font-family:\&quot;Hiragino Sans\&quot;,\&quot;Noto Sans JP\&quot;,sans-serif;}\n.itjns4ey .it-block.it-right{flex-direction:row-reverse;}\n.itjns4ey .it-block.it-none{display:block;}\n.itjns4ey .it-img{flex:0 0 38%;max-width:38%;}\n.itjns4ey .it-img img{display:block;width:100%;height:auto;}\n.itjns4ey .it-text{flex:1;min-width:0;}\n.itjns4ey .it-text p, .itjns4ey .it-text > div{margin:0;font-size:15px;line-height:1.5;color:#111;white-space:pre-wrap;}\n.itjns4ey .it-text .it-line{margin:0;white-space:pre-wrap;}\n.itjns4ey .it-text p.it-sig{text-align:right;margin-top:0.8em;white-space:normal;}\n.itjns4ey .it-sig-wrap{text-align:right;}\n.itjns4ey .it-sig-wrap .it-sig-img{display:inline-block;height:auto;margin-top:0.4em;}\n\u003c/style>\n\n\u003cdiv class=\&quot;it-wrap itjns4ey\&quot;>\n  \u003cdiv class=\&quot;it-frame-outer\&quot;>\n    \u003cdiv class=\&quot;it-block it-none\&quot; style=\&quot;\&quot;>\n      \u003cdiv class=\&quot;it-text\&quot;>\u003cdiv style=\&quot;font-size:15px;line-height:1.5\&quot;>\u003cdiv class=\&quot;it-line\&quot;>\u003cstrong>グリス工房 / Grease Workshop\u003c/strong>\u003c/div>\u003cdiv class=\&quot;it-line\&quot;>&amp;nbsp;\u003c/div>\u003cdiv class=\&quot;it-line\&quot;>コンテナ団地C-23の修理工房。工具が壁を埋め、棚には名前のわからない部品が並ぶ。ここで直せないものは、たぶん最初から壊れている。\u003c/div>\u003c/div>\u003c/div>\n    \u003c/div>\n  \u003c/div>\n\u003c/div>\n\u003c/body>\n\u003c/html>&quot;,&quot;name&quot;:&quot;image-text-block 15.html&quot;}]},{&quot;name&quot;:&quot;Posters&quot;,&quot;subs&quot;:[],&quot;items&quot;:[{&quot;type&quot;:&quot;carousel&quot;,&quot;images&quot;:[&quot;images/htmlimg_4d279603.jpg&quot;,&quot;images/htmlimg_b3e78772.jpg&quot;],&quot;names&quot;:[],&quot;link&quot;:&quot;&quot;}]}]}</script>
-<script>(function tcRuntime(){
-  var D = JSON.parse(document.getElementById('tc-data').textContent);
-  var root = document.getElementById('tc-root');
-  root.className = 'tc-root gap-' + (D.gap || 'gap');
-  // 中のHTMLが自分の高さを知らせる小さなスクリプト
-  // （枠の高さに引っぱられないように、html ではなく body の高さを測る）
-  var RS = '<scr' + 'ipt>(function(){function r(){if(document.body)parent.postMessage({type:&quot;tc-h&quot;,h:document.body.offsetHeight},&quot;*&quot;);}' +
-    'window.addEventListener(&quot;load&quot;,r);if(document.readyState===&quot;complete&quot;)r();if(window.ResizeObserver&amp;&amp;document.body)new ResizeObserver(r).observe(document.body);})();</scr' + 'ipt>' +
-    '<style>html,body{min-height:0 !important;}</style>';
-  var frames = [];
-  window.addEventListener('message', function(e){
-    if (!e.data || e.data.type !== 'tc-h') return;
-    for (var i = 0; i < frames.length; i++) if (frames[i].contentWindow === e.source) frames[i].style.height = Math.ceil(e.data.h) + 'px';
-  });
-  function el(tag, cls){ var x = document.createElement(tag); if (cls) x.className = cls; return x; }
-  function linkOf(it){
-    if (!it.link) return el('div', 'tc-item');
-    var a = el('a', 'tc-item'); a.href = it.link; a.target = '_blank'; a.rel = 'noopener'; return a;
-  }
-  function item(it){
-    if (it.type === 'html') {
-      var w = el('div', 'tc-item'), f = el('iframe');
-      f.setAttribute('scrolling', 'no'); f.setAttribute('loading', 'lazy'); f.title = it.name || '';
-      var h = String(it.html || '');
-      // body の閉じタグをそのまま書かない（ビルダーが最初の閉じタグの前に自分のスクリプトを入れるため。この関数は文字にして書き出す）
-      f.srcdoc = /<\/body>/i.test(h) ? h.replace(/<\/body>/i, function(){ return RS + '<\/body>'; }) : h + RS;
-      frames.push(f); w.appendChild(f); return w;
-    }
-    if (it.type === 'carousel') {
-      var L = it.images || [], c = el('div', 'tc-item tc-car'), k = 0;
-      var im = el('img'); im.alt = ''; im.loading = 'lazy'; im.src = L[0] || ''; c.appendChild(im);
-      if (L.length > 1) {
-        // 画像の下に「‹ 1 / 3 ›」。画像を押しても次へ進む
-        var ui = el('div', 'tc-cui'), prev = el('button'), cnt = el('span'), next = el('button');
-        prev.type = next.type = 'button'; prev.textContent = '‹'; next.textContent = '›';
-        prev.setAttribute('aria-label', '前へ'); next.setAttribute('aria-label', '次へ');
-        cnt.textContent = '1 / ' + L.length;
-        ui.appendChild(prev); ui.appendChild(cnt); ui.appendChild(next); c.appendChild(ui);
-        var go = function(d){ k = (k + d + L.length) % L.length; im.src = L[k]; cnt.textContent = (k + 1) + ' / ' + L.length; };
-        prev.onclick = function(e){ e.stopPropagation(); go(-1); };
-        next.onclick = function(e){ e.stopPropagation(); go(1); };
-        im.addEventListener('click', function(){ go(1); });
-      }
-      return c;
-    }
-    var a = linkOf(it), img = el('img'); img.alt = ''; img.loading = 'lazy'; img.src = it.src || ''; a.appendChild(img); return a;
-  }
-  function panel(items){
-    var p = el('div', 'tc-panel');
-    if (!items || !items.length) { var e = el('div', 'tc-empty'); e.textContent = '準備中です'; p.appendChild(e); }
-    else for (var i = 0; i < items.length; i++) p.appendChild(item(items[i]));
-    return p;
-  }
-  var tabs = D.tabs || [], mainBar = el('div', 'tc-main'), subBars = [], panels = [];
-  tabs.forEach(function(t, mi){
-    var b = el('button'); b.type = 'button'; b.textContent = t.name || ''; b.onclick = function(){ show(mi, 0); };
-    mainBar.appendChild(b);
-    var subs = t.subs || [];
-    if (subs.length) {
-      var sb = el('div', 'tc-sub'); sb.style.display = 'none';
-      panels[mi] = subs.map(function(s, si){
-        var x = el('button'); x.type = 'button'; x.textContent = s.name || ''; x.onclick = function(){ show(mi, si); };
-        sb.appendChild(x);
-        return panel(s.items);
-      });
-      subBars[mi] = sb;
-    } else panels[mi] = [panel(t.items)];
-  });
-  if (tabs.length > 1 || subBars.some(Boolean)) { if (tabs.length > 1) root.appendChild(mainBar); }
-  subBars.forEach(function(sb){ if (sb) root.appendChild(sb); });
-  panels.forEach(function(ps){ ps.forEach(function(p){ root.appendChild(p); }); });
-  function show(mi, si){
-    for (var i = 0; i < mainBar.children.length; i++) mainBar.children[i].className = i === mi ? 'on' : '';
-    subBars.forEach(function(sb, i){
-      if (!sb) return;
-      sb.style.display = i === mi ? '' : 'none';
-      for (var j = 0; j < sb.children.length; j++) sb.children[j].className = (i === mi &amp;&amp; j === si) ? 'on' : '';
-    });
-    panels.forEach(function(ps, i){ ps.forEach(function(p, j){ p.className = 'tc-panel' + (i === mi &amp;&amp; j === si ? ' on' : ''); }); });
-  }
-  window.tcShow = show;
-  if (tabs.length) show(0, 0);
-})();</script>
+<div class=&quot;page&quot;>
+  <div class=&quot;divider-container&quot;>
+    <div class=&quot;dv-head dv-left&quot;><span class=&quot;dv-text&quot;>CHARACTERS</span><hr class=&quot;divider&quot;></div>
+  </div>
+</div>
+<script type=&quot;application/json&quot; id=&quot;dv-data&quot;>{&quot;v&quot;:2,&quot;lineColor&quot;:&quot;#17191a&quot;,&quot;lineStyle&quot;:&quot;solid&quot;,&quot;lineWidth&quot;:1,&quot;mt&quot;:10,&quot;mb&quot;:10,&quot;ml&quot;:20,&quot;mr&quot;:20,&quot;mode&quot;:&quot;left&quot;,&quot;text&quot;:&quot;CHARACTERS&quot;,&quot;size&quot;:12,&quot;weight&quot;:400,&quot;color&quot;:&quot;#111111&quot;,&quot;ls&quot;:0.04,&quot;gap&quot;:16}</script>
 <style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
 (function(){
   function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }
@@ -519,9 +459,224 @@ body{background:#ffffff;color:#1a1a1a;font-family:-apple-system,BlinkMacSystemFo
   parent.postMessage({ type:'asobiva-need-scale' }, '*');
 })();
 </script></body>
-</html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" data-scale="1" scrolling="no"></iframe></div></div>
+</html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
+    <div class="card-section gcar-section sp html-cell" style="--mb:16px"><div class="gcar-card" data-k="0"><div class="gcar-stage">
+      <div class="gcar-slide on"><div class="group-card">
+    <div class="card-section sp" style="--mb:0px"><div class="card" style="--ps:0.8;"><img src="images/d1f0a2af-f48d-4f59-a2ad-48388826880d.jpg" alt="" loading="lazy"></div></div>
+    <div class="card-section sp" style="--mb:0px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
+<html lang=&quot;ja&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>image-text-block</title>
+</head>
+<body style=&quot;margin:0;padding:0;background:#fff;&quot;>
+<style>
+.itcpzbxg.it-wrap{width:100vw;position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;}
+.itcpzbxg .it-frame-outer{box-sizing:border-box;}
+.itcpzbxg .it-block{width:100%;box-sizing:border-box;padding:0px min(5.581396vw,24px) 0px min(5.581396vw,24px);display:flex;align-items:center;gap:min(3.255814vw,clamp(14px,2.9vw,30px));font-family:&quot;Hiragino Sans&quot;,&quot;Noto Sans JP&quot;,sans-serif;}
+.itcpzbxg .it-block.it-right{flex-direction:row-reverse;}
+.itcpzbxg .it-block.it-none{display:block;}
+.itcpzbxg .it-img{flex:0 0 38%;max-width:38%;}
+.itcpzbxg .it-img img{display:block;width:100%;height:auto;}
+.itcpzbxg .it-text{flex:1;min-width:0;}
+.itcpzbxg .it-text p, .itcpzbxg .it-text > div{margin:0;font-size:min(3.255814vw,14px);line-height:1.6;color:#111111;white-space:pre-wrap;}
+.itcpzbxg .it-text .it-line{margin:0;white-space:pre-wrap;}
+.itcpzbxg .it-text a{color:inherit;text-decoration:underline;}
+.itcpzbxg .it-text p.it-sig{display:block;text-align:right;margin:0!important;padding:0!important;border:0!important;line-height:1!important;white-space:normal;}
+.itcpzbxg .it-sig-wrap{display:block;text-align:right;line-height:0;font-size:0;}
+.itcpzbxg .it-sig-wrap .it-sig-img{display:inline-block;height:auto;}
+</style>
+
+<div class=&quot;it-wrap itcpzbxg&quot;>
+  <div class=&quot;it-frame-outer&quot;>
+    <div class=&quot;it-block it-none&quot; style=&quot;&quot;>
+      <div class=&quot;it-text&quot;><div style=&quot;font-size:min(3.255814vw,14px);line-height:1.6&quot;><div class=&quot;it-line&quot;><strong>ボルト / Bolt（14歳）</strong></div><div class=&quot;it-line&quot;>コンテナ団地C-23で暮らす少年。荷物を運び、地図を集め、誰よりも遠くまで走り回る。元気でわんぱくだが、どこか不愛想。そして誰にも説明できない違和感を、この世界に抱いている。</div><div class=&quot;it-line&quot;> </div><div class=&quot;it-line&quot;><strong>ナット / Nut（年齢不明）</strong></div><div class=&quot;it-line&quot;>いつもボルトのそばにいる相棒。犬のように見えるが、その正体を知る者はいない。時折、誰にも見えない何かを感じ取ることがある。その異変に気づいているのは、今のところボルトだけだ。</div></div></div>
+    </div>
   </div>
-  <div class="footer-section sp-top" style="--mb:0px"><footer class="ft-left" style="color:#111111;font-weight:300;--ft-max:600px;--ft-cgap:16px;"><div class="ft-body">本サイトの作品は、作品の制作にAIを使用しています。
+</div>
+<style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
+(function(){
+  function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-init') report(); });
+  window.addEventListener('load', report);
+  if(document.readyState==='complete') report();
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  var applied = null;
+  function applyScale(s){
+    if(!document.body || applied === s) return;
+    var first = applied === null;
+    applied = s;
+    if(first &amp;&amp; s === 1) return; // 一度も拡大・縮小していなければ、何もしない
+    // body とその中のすべての要素の元の文字の大きさを先に測ってから、まとめて倍にする
+    // （文字を直接持たない段落なども倍にして、行の間隔が文字と同じ割合で変わるようにする）
+    var nodes = [document.body].concat(Array.prototype.slice.call(document.body.querySelectorAll('*'))), i, el;
+    for(i=0;i<nodes.length;i++){
+      if(s === 1) break; // 元に戻すときは、元の大きさを測り直さない
+      el = nodes[i];
+      if(/^(IMG|VIDEO|IFRAME|SVG|SCRIPT|STYLE|PATH|G|CIRCLE|RECT|LINE|POLYGON|POLYLINE|ELLIPSE|USE|DEFS)$/i.test(el.tagName)) continue;
+      if(el.getAttribute('data-asobiva-fs')) continue;
+      el.setAttribute('data-asobiva-fs', getComputedStyle(el).fontSize);
+      // もともとHTMLが持っている文字の大きさの指定（例：プロフィールの「名前 120%」）を覚えておき、100%に戻すときはそれに戻す（v4.7）
+      el.setAttribute('data-asobiva-fs0', el.style.fontSize || '');
+    }
+    for(i=0;i<nodes.length;i++){
+      var base = parseFloat(nodes[i].getAttribute('data-asobiva-fs'));
+      if(isFinite(base)) nodes[i].style.fontSize = s === 1 ? (nodes[i].getAttribute('data-asobiva-fs0') || '') : (base * s) + 'px';
+    }
+    report();
+  }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-scale') applyScale(e.data.scale); });
+  parent.postMessage({ type:'asobiva-need-scale' }, '*');
+})();
+</script></body>
+</html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
+      </div></div>
+      <div class="gcar-slide"><div class="group-card">
+    <div class="card-section sp" style="--mb:0px"><div class="card" style="--ps:0.8;"><img src="images/27b8c836-bfd3-475c-9f3c-82ce7ff4675f.jpg" alt="" loading="lazy"></div></div>
+    <div class="card-section sp" style="--mb:16px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
+<html lang=&quot;ja&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>image-text-block</title>
+</head>
+<body style=&quot;margin:0;padding:0;background:#fff;&quot;>
+<style>
+.itcpzbxg.it-wrap{width:100vw;position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;}
+.itcpzbxg .it-frame-outer{box-sizing:border-box;}
+.itcpzbxg .it-block{width:100%;box-sizing:border-box;padding:0px min(5.581396vw,24px) 0px min(5.581396vw,24px);display:flex;align-items:center;gap:min(3.255814vw,clamp(14px,2.9vw,30px));font-family:&quot;Hiragino Sans&quot;,&quot;Noto Sans JP&quot;,sans-serif;}
+.itcpzbxg .it-block.it-right{flex-direction:row-reverse;}
+.itcpzbxg .it-block.it-none{display:block;}
+.itcpzbxg .it-img{flex:0 0 38%;max-width:38%;}
+.itcpzbxg .it-img img{display:block;width:100%;height:auto;}
+.itcpzbxg .it-text{flex:1;min-width:0;}
+.itcpzbxg .it-text p, .itcpzbxg .it-text > div{margin:0;font-size:min(3.255814vw,14px);line-height:1.6;color:#111111;white-space:pre-wrap;}
+.itcpzbxg .it-text .it-line{margin:0;white-space:pre-wrap;}
+.itcpzbxg .it-text a{color:inherit;text-decoration:underline;}
+.itcpzbxg .it-text p.it-sig{display:block;text-align:right;margin:0!important;padding:0!important;border:0!important;line-height:1!important;white-space:normal;}
+.itcpzbxg .it-sig-wrap{display:block;text-align:right;line-height:0;font-size:0;}
+.itcpzbxg .it-sig-wrap .it-sig-img{display:inline-block;height:auto;}
+</style>
+
+<div class=&quot;it-wrap itcpzbxg&quot;>
+  <div class=&quot;it-frame-outer&quot;>
+    <div class=&quot;it-block it-none&quot; style=&quot;&quot;>
+      <div class=&quot;it-text&quot;><div style=&quot;font-size:min(3.255814vw,14px);line-height:1.6&quot;><div class=&quot;it-line&quot;><strong>ボルト / Bolt（14歳）</strong></div><div class=&quot;it-line&quot;>コンテナ団地C-23で暮らす少年。荷物を運び、地図を集め、誰よりも遠くまで走り回る。元気でわんぱくだが、どこか不愛想。そして誰にも説明できない違和感を、この世界に抱いている。</div><div class=&quot;it-line&quot;> </div><div class=&quot;it-line&quot;><strong>ナット / Nut（年齢不明）</strong></div><div class=&quot;it-line&quot;>いつもボルトのそばにいる相棒。犬のように見えるが、その正体を知る者はいない。時折、誰にも見えない何かを感じ取ることがある。その異変に気づいているのは、今のところボルトだけだ。</div></div></div>
+    </div>
+  </div>
+</div>
+<style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
+(function(){
+  function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-init') report(); });
+  window.addEventListener('load', report);
+  if(document.readyState==='complete') report();
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  var applied = null;
+  function applyScale(s){
+    if(!document.body || applied === s) return;
+    var first = applied === null;
+    applied = s;
+    if(first &amp;&amp; s === 1) return; // 一度も拡大・縮小していなければ、何もしない
+    // body とその中のすべての要素の元の文字の大きさを先に測ってから、まとめて倍にする
+    // （文字を直接持たない段落なども倍にして、行の間隔が文字と同じ割合で変わるようにする）
+    var nodes = [document.body].concat(Array.prototype.slice.call(document.body.querySelectorAll('*'))), i, el;
+    for(i=0;i<nodes.length;i++){
+      if(s === 1) break; // 元に戻すときは、元の大きさを測り直さない
+      el = nodes[i];
+      if(/^(IMG|VIDEO|IFRAME|SVG|SCRIPT|STYLE|PATH|G|CIRCLE|RECT|LINE|POLYGON|POLYLINE|ELLIPSE|USE|DEFS)$/i.test(el.tagName)) continue;
+      if(el.getAttribute('data-asobiva-fs')) continue;
+      el.setAttribute('data-asobiva-fs', getComputedStyle(el).fontSize);
+      // もともとHTMLが持っている文字の大きさの指定（例：プロフィールの「名前 120%」）を覚えておき、100%に戻すときはそれに戻す（v4.7）
+      el.setAttribute('data-asobiva-fs0', el.style.fontSize || '');
+    }
+    for(i=0;i<nodes.length;i++){
+      var base = parseFloat(nodes[i].getAttribute('data-asobiva-fs'));
+      if(isFinite(base)) nodes[i].style.fontSize = s === 1 ? (nodes[i].getAttribute('data-asobiva-fs0') || '') : (base * s) + 'px';
+    }
+    report();
+  }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-scale') applyScale(e.data.scale); });
+  parent.postMessage({ type:'asobiva-need-scale' }, '*');
+})();
+</script></body>
+</html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
+      </div></div>
+      <div class="gcar-slide"><div class="group-card">
+    <div class="card-section sp" style="--mb:0px"><div class="card" style="--ps:0.8;"><img src="images/51f2f1c4-065c-44f7-bb94-4cbd9e480e7d.jpg" alt="" loading="lazy"></div></div>
+    <div class="card-section sp" style="--mb:16px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
+<html lang=&quot;ja&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>image-text-block</title>
+</head>
+<body style=&quot;margin:0;padding:0;background:#fff;&quot;>
+<style>
+.itcpzbxg.it-wrap{width:100vw;position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;}
+.itcpzbxg .it-frame-outer{box-sizing:border-box;}
+.itcpzbxg .it-block{width:100%;box-sizing:border-box;padding:0px min(5.581396vw,24px) 0px min(5.581396vw,24px);display:flex;align-items:center;gap:min(3.255814vw,clamp(14px,2.9vw,30px));font-family:&quot;Hiragino Sans&quot;,&quot;Noto Sans JP&quot;,sans-serif;}
+.itcpzbxg .it-block.it-right{flex-direction:row-reverse;}
+.itcpzbxg .it-block.it-none{display:block;}
+.itcpzbxg .it-img{flex:0 0 38%;max-width:38%;}
+.itcpzbxg .it-img img{display:block;width:100%;height:auto;}
+.itcpzbxg .it-text{flex:1;min-width:0;}
+.itcpzbxg .it-text p, .itcpzbxg .it-text > div{margin:0;font-size:min(3.255814vw,14px);line-height:1.6;color:#111111;white-space:pre-wrap;}
+.itcpzbxg .it-text .it-line{margin:0;white-space:pre-wrap;}
+.itcpzbxg .it-text a{color:inherit;text-decoration:underline;}
+.itcpzbxg .it-text p.it-sig{display:block;text-align:right;margin:0!important;padding:0!important;border:0!important;line-height:1!important;white-space:normal;}
+.itcpzbxg .it-sig-wrap{display:block;text-align:right;line-height:0;font-size:0;}
+.itcpzbxg .it-sig-wrap .it-sig-img{display:inline-block;height:auto;}
+</style>
+
+<div class=&quot;it-wrap itcpzbxg&quot;>
+  <div class=&quot;it-frame-outer&quot;>
+    <div class=&quot;it-block it-none&quot; style=&quot;&quot;>
+      <div class=&quot;it-text&quot;><div style=&quot;font-size:min(3.255814vw,14px);line-height:1.6&quot;><div class=&quot;it-line&quot;><strong>ボルト / Bolt（14歳）</strong></div><div class=&quot;it-line&quot;>コンテナ団地C-23で暮らす少年。荷物を運び、地図を集め、誰よりも遠くまで走り回る。元気でわんぱくだが、どこか不愛想。そして誰にも説明できない違和感を、この世界に抱いている。</div><div class=&quot;it-line&quot;> </div><div class=&quot;it-line&quot;><strong>ナット / Nut（年齢不明）</strong></div><div class=&quot;it-line&quot;>いつもボルトのそばにいる相棒。犬のように見えるが、その正体を知る者はいない。時折、誰にも見えない何かを感じ取ることがある。その異変に気づいているのは、今のところボルトだけだ。</div></div></div>
+    </div>
+  </div>
+</div>
+<style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
+(function(){
+  function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-init') report(); });
+  window.addEventListener('load', report);
+  if(document.readyState==='complete') report();
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  var applied = null;
+  function applyScale(s){
+    if(!document.body || applied === s) return;
+    var first = applied === null;
+    applied = s;
+    if(first &amp;&amp; s === 1) return; // 一度も拡大・縮小していなければ、何もしない
+    // body とその中のすべての要素の元の文字の大きさを先に測ってから、まとめて倍にする
+    // （文字を直接持たない段落なども倍にして、行の間隔が文字と同じ割合で変わるようにする）
+    var nodes = [document.body].concat(Array.prototype.slice.call(document.body.querySelectorAll('*'))), i, el;
+    for(i=0;i<nodes.length;i++){
+      if(s === 1) break; // 元に戻すときは、元の大きさを測り直さない
+      el = nodes[i];
+      if(/^(IMG|VIDEO|IFRAME|SVG|SCRIPT|STYLE|PATH|G|CIRCLE|RECT|LINE|POLYGON|POLYLINE|ELLIPSE|USE|DEFS)$/i.test(el.tagName)) continue;
+      if(el.getAttribute('data-asobiva-fs')) continue;
+      el.setAttribute('data-asobiva-fs', getComputedStyle(el).fontSize);
+      // もともとHTMLが持っている文字の大きさの指定（例：プロフィールの「名前 120%」）を覚えておき、100%に戻すときはそれに戻す（v4.7）
+      el.setAttribute('data-asobiva-fs0', el.style.fontSize || '');
+    }
+    for(i=0;i<nodes.length;i++){
+      var base = parseFloat(nodes[i].getAttribute('data-asobiva-fs'));
+      if(isFinite(base)) nodes[i].style.fontSize = s === 1 ? (nodes[i].getAttribute('data-asobiva-fs0') || '') : (base * s) + 'px';
+    }
+    report();
+  }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-scale') applyScale(e.data.scale); });
+  parent.postMessage({ type:'asobiva-need-scale' }, '*');
+})();
+</script></body>
+</html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
+      </div></div>
+    </div><div class="gcar-ui"><button type="button" class="gcar-prev" aria-label="前へ" onclick="asobivaGcar(this,-1)">‹</button><span class="gcar-count">1 / 3</span><button type="button" class="gcar-next" aria-label="次へ" onclick="asobivaGcar(this,1)">›</button></div></div></div>
+  </div>
+  <div class="footer-section sp-top" style="--mb:0px"><footer class="ft-left" style="color:#707070;font-weight:300;--ft-max:600px;--ft-cgap:16px;"><div class="ft-body">本サイトの作品は、作品の制作にAIを使用しています。
 ASOBIVAでは、各コンテンツの一部作品を公開しています。その他の作品は、コンテンツごとにnote・BOOTH・YouTube等の外部サービスにて公開予定です。詳細は各コンテンツページをご確認ください。最新情報はX・Instagramにてお知らせしています。
 </div><div class="ft-c">© 2026 KEIGO TSUCHIYA / i.roiro</div></footer></div>
 </div>
@@ -607,7 +762,24 @@ function asobivaLayout(force) {
     el.removeAttribute('data-own-mb');
     el.removeAttribute('data-own-line');
   });
-  if (cols <= 1) return;
+  // data-nla のカード（見出しなど・v6.5、縦画面も v6.6）：すぐ上の段（段でなければその1枚）の線を出さない。下の余白はそのまま。
+  // 自分の設定は data-own-* に退避（向きが変わると元に戻してから、もう一度決める）
+  function hideAbove(list, rows) {
+    list.forEach(function (el, i) {
+      if (!i || !el.hasAttribute('data-nla')) return;
+      var prev = list[i - 1], grp = [prev];
+      if (rows && prev.classList.contains('in-row')) for (var k = 0; k < rows.length; k++) if (rows[k].indexOf(prev) >= 0) { grp = rows[k]; break; }
+      grp.forEach(function (x) {
+        if (!x.classList.contains('sp-line') && !x.classList.contains('sp-dot')) return;
+        if (!x.hasAttribute('data-own-mb') && !x.classList.contains('gcar-slide')) {
+          x.setAttribute('data-own-mb', x.style.getPropertyValue('--mb') || '0px');
+          x.setAttribute('data-own-line', x.classList.contains('sp-line') ? 'sp-line' : 'sp-dot');
+        }
+        x.classList.remove('sp-line', 'sp-dot');
+      });
+    });
+  }
+  if (cols <= 1) { hideAbove(kids, null); return; }
   // 横画面：「並べる」カルーセルは、入れ物の代わりに中の1枚ずつを並べる。下の余白・線はカルーセルの設定
   var items = [];
   kids.forEach(function (el) {
@@ -651,6 +823,7 @@ function asobivaLayout(force) {
       if (line) el.classList.add(line);
     });
   });
+  hideAbove(items, rows);
 }
 function asobivaTidy() {
   var c = document.getElementById('cardContainer');
@@ -689,7 +862,52 @@ function asobivaTidy() {
   list = document.querySelectorAll('.nav-group');
   for (i = 0; i < list.length; i++) if (!list[i].querySelector('.nav-link-item')) list[i].parentNode.removeChild(list[i]);
 }
+function asobivaHistTrim() {
+  var L = document.querySelectorAll('.hist-list'), i, j;
+  for (i = 0; i < L.length; i++) {
+    var li = L[i].children;
+    for (j = 0; j < li.length; j++) li[j].style.display = j < 5 ? '' : 'none';
+    var em = L[i].parentNode.querySelector('.hist-empty');
+    if (em) em.hidden = li.length > 0;
+  }
+}
 asobivaTidy();
+asobivaHistTrim();
+function asobivaLikes() {
+  var B = document.querySelectorAll('.like-btn[data-like-id]'), i;
+  if (!B.length) return;
+  var ids = [], counts = null;
+  for (i = 0; i < B.length; i++) { var x = B[i].getAttribute('data-like-id'); if (ids.indexOf(x) < 0) ids.push(x); }
+  function liked(id) { try { return localStorage.getItem('asoLike:' + id) === '1'; } catch (e) { return false; } }
+  function setLiked(id, v) { try { if (v) localStorage.setItem('asoLike:' + id, '1'); else localStorage.removeItem('asoLike:' + id); } catch (e) {} }
+  function paint() {
+    for (var j = 0; j < B.length; j++) {
+      var id = B[j].getAttribute('data-like-id'), on = liked(id);
+      B[j].className = 'like-btn' + (on ? ' on' : '');
+      B[j].setAttribute('aria-pressed', on ? 'true' : 'false');
+      B[j].querySelector('.like-n').textContent = counts && typeof counts[id] === 'number' ? String(counts[id]) : '';
+    }
+  }
+  for (i = 0; i < B.length; i++) B[i].addEventListener('click', function (e) {
+    e.preventDefault(); e.stopPropagation();
+    var id = this.getAttribute('data-like-id'), on = !liked(id);
+    setLiked(id, on);
+    if (counts) counts[id] = Math.max(0, (counts[id] || 0) + (on ? 1 : -1));
+    paint();
+    if (!counts) return;
+    fetch('/api/like', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id, d: on ? 1 : -1 }) })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { if (d && typeof d.n === 'number') { counts[id] = d.n; paint(); } })
+      .catch(function () {});
+  });
+  paint();
+  if (!/^https?:$/.test(location.protocol) || !window.fetch) return;
+  fetch('/api/likes?ids=' + encodeURIComponent(ids.join(',')), { cache: 'no-store' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) { if (d && typeof d === 'object') { counts = d; paint(); } })
+    .catch(function () {});
+}
+asobivaLikes();
 asobivaLayout(true);
 asobivaSendScale();
 function asobivaWatchViewport() {

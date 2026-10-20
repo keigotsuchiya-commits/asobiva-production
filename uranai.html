@@ -54,13 +54,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: v
 /* 縦画面だけ、カード（HTML・画像・画像のカルーセル）を幅の --ps 倍にして真ん中に置く（カードごとの「縦画面の大きさ」。v3.3〜） */
 @media (max-width: 767.98px) {
   .html-card > iframe { width: calc(100% * var(--ps, 1)) !important; margin: 0 auto; }
-  .card-section > .card, .card-section > .carousel-card { width: calc(100% * var(--ps, 1)); margin-left: auto; margin-right: auto; }
+  .card-section > .card, .card-section > .carousel-card, .card-section > .like-row:not(.like-flow) { width: calc(100% * var(--ps, 1)); margin-left: auto; margin-right: auto; }
 }
 /* 横画面・PCは「横画面の大きさ」（--pw）。カードの幅（1マス・いっぱい・中央）に対する割合（v3.7） */
 @media (min-width: 768px) {
   .html-card > iframe { width: calc(100% * var(--pw, 1)) !important; margin: 0 auto; }
-  .card-section > .card, .card-section > .carousel-card { width: calc(100% * var(--pw, 1)); margin-left: auto; margin-right: auto; }
-  .card-section.html-center > .card, .card-section.html-center > .carousel-card { width: calc(min(100%, 480px) * var(--pw, 1)); }
+  .card-section > .card, .card-section > .carousel-card, .card-section > .like-row:not(.like-flow) { width: calc(100% * var(--pw, 1)); margin-left: auto; margin-right: auto; }
+  .card-section.html-center > .card, .card-section.html-center > .carousel-card, .card-section.html-center > .like-row:not(.like-flow) { width: calc(min(100%, 480px) * var(--pw, 1)); }
 }
 
 .carousel-card { width:100%; position:relative; background:var(--white); overflow:hidden; cursor:pointer; }
@@ -132,6 +132,41 @@ footer.ft-block .ft-body { max-width:var(--ft-max, 480px); margin:0 auto; text-a
 .card-section.html-center > .card-cap.cap-left { max-width: 480px; }
 /* 左揃えの左右の余白（v5.3）：カードの幅に対する割合（--ci ％）。内側の span の % はキャプション（＝カードの幅）が基準 */
 .card-cap > .cap-in { display: block; padding: 0 calc(var(--ci, 0) * 1%); }
+/* 文字のカード（v6.7） */
+.text-card { padding: 0 var(--tpad, 16px); }
+.text-card .text-body { white-space: pre-wrap; overflow-wrap: anywhere; font-size: var(--tsp, 15px); line-height: 1.8; letter-spacing: 0.02em; color: var(--ink); text-align: left; }
+.text-card.ta-c .text-body { text-align: center; }
+.text-card[data-tw] .text-body { font-family: 'AsoCapHS', -apple-system, BlinkMacSystemFont, sans-serif; }
+.text-card[data-tw="3"] .text-body { font-weight: 300; } .text-card[data-tw="4"] .text-body { font-weight: 400; } .text-card[data-tw="5"] .text-body { font-weight: 500; }
+.text-card[data-tw="6"] .text-body { font-weight: 600; } .text-card[data-tw="7"] .text-body { font-weight: 700; } .text-card[data-tw="8"] .text-body { font-weight: 800; }
+/* 更新履歴のカード（v6.7） */
+.hist-card { padding: 0 16px; }
+.hist-title { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; color: var(--ink); margin-bottom: 4px; }
+.hist-list { list-style: none; margin: 0; padding: 0; }
+.hist-list li { display: flex; gap: 14px; padding: 7px 0; border-top: 1px solid #e6e6e6; font-size: 13px; line-height: 1.6; }
+.hist-list li:first-child { border-top: none; }
+.hist-date { flex: none; color: #888; font-variant-numeric: tabular-nums; }
+.hist-text { color: var(--ink); text-decoration: none; overflow-wrap: anywhere; }
+a.hist-text { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #ccc; }
+.hist-empty { font-size: 12px; color: #888; padding: 7px 0; }
+/* 広告カード（v7.0）：貼ったコードをそのまま入れる。中身は中央・はみ出さない */
+.ad-card { text-align: center; overflow: hidden; }
+.ad-card > * { max-width: 100%; }
+.ad-ph { border: 1px dashed #bbb; border-radius: 6px; background: #fafafa; color: #999; font-size: 12px; line-height: 1.6; padding: 22px 12px; text-align: center; }
+/* いいね（v6.8・v6.9 で画像の左下に重ねる形に）：高さ0の行をカードのすぐ下に置き、ボタンをカードの左下の角に重ねる（キャプション・並びに影響しない） */
+.like-row { position: relative; height: 0; margin-left: auto; margin-right: auto; z-index: 3; }
+.like-btn { position: absolute; left: 8px; bottom: 8px; display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 9px; margin: 0; border: none; border-radius: 15px; background: rgba(255, 255, 255, 0.9); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15); font: inherit; font-size: 13px; line-height: 1; color: #555; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.like-btn svg { width: 17px; height: 17px; display: block; transition: transform 0.15s; }
+.like-btn svg path { fill: none; stroke: currentColor; stroke-width: 1.8; }
+.like-btn.on { color: #e0457b; }
+.like-btn.on svg path { fill: currentColor; }
+.like-btn:active svg { transform: scale(0.85); }
+.like-n { font-variant-numeric: tabular-nums; }
+.like-n:empty { display: none; }
+/* 文字のカードは文字に重ならないよう、下に並べる */
+.like-row.like-flow { height: auto; padding: 4px var(--tpad, 16px) 0; }
+.like-row.like-flow .like-btn { position: static; }
+@media (min-width: 768px) { .text-card .text-body { font-size: var(--tsl, 17px); } .hist-list li { font-size: 14px; } .hist-title { font-size: 14px; } }
 @media (max-width: 767.98px) {
   body:not(.admin-mode) .card-section > .card-cap.cap-left { width: calc(100% * var(--ps, 1)); }
   body:not(.admin-mode) .card-section.html-center > .card-cap.cap-left.cap-html { max-width: none; width: calc(min(100%, 480px) * var(--ps, 1)); }
@@ -140,7 +175,7 @@ footer.ft-block .ft-body { max-width:var(--ft-max, 480px); margin:0 auto; text-a
   body:not(.admin-mode) .card-section > .card-cap.cap-left { width: calc(100% * var(--pw, 1)); }
   body:not(.admin-mode) .card-section.html-center > .card-cap.cap-left { width: calc(min(100%, 480px) * var(--pw, 1)); }
 }
-.card-section.html-center .html-card, .card-section.html-center > .card, .card-section.html-center > .carousel-card, .card-section.html-center > .gcar-card { max-width:480px; margin:0 auto; }
+.card-section.html-center .html-card, .card-section.html-center > .card, .card-section.html-center > .carousel-card, .card-section.html-center > .like-row:not(.like-flow), .card-section.html-center > .gcar-card { max-width:480px; margin:0 auto; }
 @media (min-width: 768px) {
   :root { --page-max:1200px; --cols:3; }
   :root.cols-2 { --cols:2; }
@@ -153,19 +188,19 @@ footer.ft-block .ft-body { max-width:var(--ft-max, 480px); margin:0 auto; text-a
   .header-pair .banner-slot.sp { padding-bottom:0; }
   .header-pair .banner-slot.sp::after { display:none; }
 }
-:root { --side-m:80px; --col-gap:24px; --gap-b:10px; --gap-c:0px; --hdr-gap:0px; --line-s:1; --line-c:#1a1a1a; --line-mp:20px; --line-ml:20px; --line-t:20px; --header-h:50px; --logo-pct:0.35; --ts-wide:1; --ts-cell:0.7; --cap-p:15px; --cap-l:10px; }
-@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W3'),local('Hiragino Sans W3');font-weight:300;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W4'),local('Hiragino Sans W4');font-weight:400;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W5'),local('Hiragino Sans W5');font-weight:500;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W6'),local('Hiragino Sans W6');font-weight:600;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W7'),local('Hiragino Sans W7');font-weight:700;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W8'),local('Hiragino Sans W8');font-weight:800;}.card-cap, .gcar-names > div, .gcar-cell-name { font-family: 'AsoCapHS', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 300; }
+:root { --side-m:80px; --col-gap:24px; --gap-b:10px; --gap-c:0px; --hdr-gap:0px; --line-s:1; --line-c:#1a1a1a; --line-mp:20px; --line-ml:20px; --line-t:20px; --header-h:50px; --logo-pct:0.6; --ts-wide:1; --ts-cell:0.7; --cap-p:14px; --cap-l:10px; }
+@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W3'),local('Hiragino Sans W3');font-weight:300;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W4'),local('Hiragino Sans W4');font-weight:400;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W5'),local('Hiragino Sans W5');font-weight:500;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W6'),local('Hiragino Sans W6');font-weight:600;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W7'),local('Hiragino Sans W7');font-weight:700;}@font-face{font-family:'AsoCapHS';src:local('HiraginoSans-W8'),local('Hiragino Sans W8');font-weight:800;}.card-cap, .gcar-names > div, .gcar-cell-name { font-family: 'AsoCapHS', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 500; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="site-header no-line">
-    <a class="site-logo" href="index.html"><img src="images/logo_img_4681.jpg" alt="TOP"></a>
+    <a class="site-logo" href="index.html"><img src="images/logo_e4981fdc-3cab-4246-80ad-37873a70abd7.jpg" alt="TOP"></a>
     <button class="burger-btn" id="burgerBtn" aria-label="メニュー" onclick="document.getElementById('burgerMenu').classList.toggle('open')"><span></span><span></span><span></span></button>
-    <div class="burger-menu" id="burgerMenu"><div class="nav-list"><div class="nav-top"><a class="nav-link-item" href="index.html">TOP</a><a class="nav-link-item" href="asobiva.html" data-pf="2026-11-17">ASOBIVAとは？</a></div><div class="nav-group"><div class="nav-group-label">音楽・映像</div><a class="nav-link-item" href="music.html" data-pf="2026-11-17">0FILE</a></div><div class="nav-group"><div class="nav-group-label">絵本・イラスト</div><a class="nav-link-item" href="ehon.html" data-pf="2026-11-17">絵本コレクション</a><a class="nav-link-item" href="project-supana.html" data-pf="2027-01-01">PROJECT SUPANA</a></div><div class="nav-group"><div class="nav-group-label">シリーズ連載</div><a class="nav-link-item" href="marumaru.html" data-pf="2026-11-17">〇〇の話</a><a class="nav-link-item" href="yokai.html" data-pf="2026-11-17">榊原幻舟の百鬼奇譚</a><a class="nav-link-item" href="n.html" data-pf="2027-01-01">蟲屋Nの昆虫図鑑</a><a class="nav-link-item" href="page-11.html" data-pf="2027-01-01">ほらばな新聞</a><a class="nav-link-item" href="page-12.html" data-pf="2027-01-01">今日の田中さん</a><a class="nav-link-item" href="oborogi.html" data-pf="2027-01-01">名を持たぬ哲学者</a></div><div class="nav-group"><div class="nav-group-label">ゲーム・占い</div><a class="nav-link-item" href="game.html" data-pf="2026-11-17">豆太ピコのゲーム</a><a class="nav-link-item current" href="uranai.html" data-pf="2026-11-17">福徳神社</a></div></div></div>
+    <div class="burger-menu" id="burgerMenu"><div class="nav-list"><div class="nav-top"><a class="nav-link-item" href="index.html">TOP</a><a class="nav-link-item" href="asobiva.html" data-pf="2026-11-17">ASOBIVAとは？</a><a class="nav-link-item" href="asobiva-lab.html" data-pf="2027-03-01">ASOBIVA LAB</a></div><div class="nav-group"><div class="nav-group-label">音楽・映像・写真</div><a class="nav-link-item" href="music.html" data-pf="2026-11-17">0FILE</a><a class="nav-link-item" href="filmography.html" data-pf="2027-03-01">FILMOGRAPHY</a><a class="nav-link-item" href="one-shot.html" data-pf="2027-01-01">ONE SHOT</a></div><div class="nav-group"><div class="nav-group-label">絵本・イラスト</div><a class="nav-link-item" href="ehon.html" data-pf="2026-11-17">絵本コレクション</a><a class="nav-link-item" href="project-supana.html" data-pf="2027-01-01">PROJECT SUPANA</a></div><div class="nav-group"><div class="nav-group-label">シリーズ連載</div><a class="nav-link-item" href="oborogi.html" data-pf="2027-01-01">名を持たぬ哲学者</a><a class="nav-link-item" href="marumaru.html" data-pf="2026-11-17">〇〇の話</a><a class="nav-link-item" href="n.html" data-pf="2027-01-01">蟲屋Nの昆虫図鑑</a><a class="nav-link-item" href="yokai.html" data-pf="2026-11-17">榊原玄舟の百鬼奇譚</a><a class="nav-link-item" href="page-13.html" data-pf="2027-01-01">ほらばな新聞</a><a class="nav-link-item" href="page-14.html" data-pf="2027-01-01">きょうの田中さん</a></div><div class="nav-group"><div class="nav-group-label">ゲーム・占い</div><a class="nav-link-item" href="game.html" data-pf="2026-11-17">豆太ピコのゲーム</a><a class="nav-link-item" href="pazle.html" data-pf="2027-05-01">あたまの体操パズル</a><a class="nav-link-item" href="shikaku.html" data-pf="2027-05-01">資格試験対策室</a><a class="nav-link-item current" href="uranai.html" data-pf="2026-11-17">福徳神社</a></div></div></div>
   </div>
   <div class="header-pair sp" style="--mb:0px">
-    <div class="banner-slot" style="--ar:1.0000;--bps:0.7;--bpw:0.35;"><img src="images/58544eab-a4f0-450d-b103-b9dc7b5be2f4_2.png" alt=""></div>
+    <div class="banner-slot" style="--ar:1.0000;--bps:0.7;--bpw:0.35;"><img src="images/58544eab-a4f0-450d-b103-b9dc7b5be2f4_2.jpg" alt=""></div>
   </div>
   <div id="cardContainer" data-rowsp="last">
     <div class="card-section sp is-html" style="--mb:0px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
@@ -256,7 +291,7 @@ body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;p
 <div class=&quot;it-wrap it52aqcx&quot;>
   <div class=&quot;it-frame-outer&quot;>
     <div class=&quot;it-block it-none&quot; style=&quot;&quot;>
-      <div class=&quot;it-text&quot;><div style=&quot;font-size:15px;line-height:1.8&quot;><div class=&quot;it-line&quot;><strong>福徳神社には、さまざまな福があります。</strong></div><div class=&quot;it-line&quot;>&amp;nbsp;</div><div class=&quot;it-line&quot;><strong>福を招くこと。運を開くこと。人と人との縁を結ぶこと。無事に帰ること。そして、それぞれの願いを託すこと。</strong></div><div class=&quot;it-line&quot;>&amp;nbsp;</div><div class=&quot;it-line&quot;><strong>何を願い、何を福とするかは、人それぞれです。</strong></div><div class=&quot;it-line&quot;>&amp;nbsp;</div><div class=&quot;it-line&quot;><strong>おみくじや占いを楽しみながら、自分なりの福を見つけてみてください。</strong></div><div class=&quot;it-line&quot;>&amp;nbsp;</div><div class=&quot;it-line&quot;><strong>ここでのひとときが、あなたにとって少しでも良いものになりますように。</strong></div></div><div class=&quot;it-sig-wrap&quot;><img class=&quot;it-sig-img&quot; src=&quot;images/htmlimg_59415b56.png&quot; alt=&quot;&quot; style=&quot;width:100px;margin:50px 0px 0px 0px&quot;></div></div>
+      <div class=&quot;it-text&quot;><div style=&quot;font-size:15px;line-height:1.8&quot;><div class=&quot;it-line&quot;><strong>福徳神社には、さまざまな福があります。</strong></div><div class=&quot;it-line&quot;>&amp;nbsp;</div><div class=&quot;it-line&quot;><strong>福を招くこと。運を開くこと。人と人との縁を結ぶこと。無事に帰ること。そして、それぞれの願いを託すこと。</strong></div><div class=&quot;it-line&quot;>&amp;nbsp;</div><div class=&quot;it-line&quot;><strong>何を願い、何を福とするかは、人それぞれです。</strong></div><div class=&quot;it-line&quot;>&amp;nbsp;</div><div class=&quot;it-line&quot;><strong>おみくじや占いを楽しみながら、自分なりの福を見つけてみてください。</strong></div><div class=&quot;it-line&quot;>&amp;nbsp;</div><div class=&quot;it-line&quot;><strong>ここでのひとときが、あなたにとって少しでも良いものになりますように。</strong></div></div><div class=&quot;it-sig-wrap&quot;><img class=&quot;it-sig-img&quot; src=&quot;images/htmlimg_234b646e.jpg&quot; alt=&quot;&quot; style=&quot;width:100px;margin:50px 0px 0px 0px&quot;></div></div>
     </div>
   </div>
 </div>
@@ -2003,8 +2038,8 @@ body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;p
 })();
 </script></body>
 </html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
-    <div class="card-section sp" style="--mb:16px"><div class="group-card">
-    <div class="card-section sp" style="--mb:10px"><div class="card" style="--ps:0.8;--pw:0.8;"><img src="images/b9d94f6f-8027-4278-a209-e711b887b8fe.png" alt="" loading="lazy"></div></div>
+    <div class="card-section sp sp-line" style="--mb:40px"><div class="group-card">
+    <div class="card-section sp" style="--mb:10px"><div class="card" style="--ps:0.8;--pw:0.8;"><img src="images/767c312c-8252-49d3-8697-7fab7b797e93.jpg" alt="" loading="lazy"></div></div>
     <div class="card-section sp" style="--mb:8px"><div class="html-card" style="--ps:0.8;--pw:0.8;"><iframe srcdoc="<!DOCTYPE html>
 <html lang=&quot;ja&quot;>
 <head>
@@ -2324,6 +2359,271 @@ body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;p
 </script></body>
 </html>
 " loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
+    </div></div>
+    <div class="card-section sp sp-line" style="--mb:40px"><div class="group-card">
+    <div class="card-section sp" style="--mb:10px"><div class="card" style="--ps:0.8;--pw:0.8;"><img src="images/8644b23a-f951-448a-933d-9812ddb55501.jpg" alt="" loading="lazy"></div></div>
+    <div class="card-section sp" style="--mb:16px"><div class="html-card" style="--ps:0.8;--pw:0.8;"><iframe srcdoc="<!DOCTYPE html>
+<html lang=&quot;ja&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>奉納所</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: &quot;Hiragino Mincho ProN&quot;, &quot;Yu Mincho&quot;, serif;
+    background: #f3efe8;
+    color: #2b2b2b;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* バナー(ボタン) */
+  .banner {
+    width: 100%;
+    display: block;
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
+    overflow: hidden;
+    transition: transform 0.15s;
+  }
+  .banner:active { transform: scale(0.98); }
+  .banner img {
+    width: 100%;
+    display: block;
+  }
+
+  .content {
+    display: none;
+    padding: 0;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .content.show {
+    display: block;
+  }
+
+  .write-box {
+    position: relative;
+    text-align: center;
+    margin: 0;
+    width: 100%;
+  }
+  .write-box .box-bg {
+    width: 100%;
+    display: block;
+  }
+  .write-box .box-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 11% 7% 9% 7%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .ema-shape {
+    width: 130px;
+    margin: 0 auto 10px;
+  }
+  .ema-shape img {
+    width: 100%;
+    display: block;
+  }
+  textarea {
+    width: 100%;
+    min-height: 70px;
+    padding: 14px 16px;
+    font-size: 16px;
+    border: 2px solid #d8c9a0;
+    border-radius: 10px;
+    font-family: inherit;
+    background: #fffdf8;
+    resize: none;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: #b03a2e;
+  }
+  .char-count {
+    text-align: right;
+    font-size: 12px;
+    color: #999;
+    margin-top: 4px;
+  }
+  .char-count.over {
+    color: #b03a2e;
+    font-weight: 700;
+  }
+  .submit-btn {
+    width: 100%;
+    margin-top: 10px;
+    background: #b03a2e;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 14px 0;
+    font-size: 16px;
+    font-family: inherit;
+    letter-spacing: 0.3em;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .submit-btn:disabled {
+    background: #ccc;
+    cursor: default;
+  }
+
+  .done-msg {
+    display: none;
+    text-align: center;
+    margin: 20px 18px 0;
+    padding: 16px;
+    background: #fff6e0;
+    border: 2px solid #d4a847;
+    border-radius: 12px;
+    color: #8a6d1f;
+    font-size: 14px;
+  }
+  .done-msg.show { display: block; }
+
+  /* ───────────────────────────────────────────────
+     幅に合わせて、文字・ボタン・入力欄の大きさを決める（基準：幅390pxのときに今までと同じ）
+     背景の絵と一緒に拡大・縮小するので、どの幅でも枠からはみ出さない。
+     --u = 枠の幅の 1/390。cqw は container-type を付けた枠の幅に対する割合（iPhone は iOS 16 以降）。
+     入力欄の文字は16pxより小さくしない（小さいと iPhone が入力時に画面を拡大するため）。
+     ─────────────────────────────────────────────── */
+  .write-box { container-type: inline-size; }
+  .write-box .box-layer { --u: calc(100cqw / 390); }
+  .ema-shape { width: calc(var(--u) * 130); margin: 0 auto calc(var(--u) * 10); }
+  textarea { min-height: calc(var(--u) * 70); padding: calc(var(--u) * 14) calc(var(--u) * 16); font-size: max(16px, calc(var(--u) * 16)); border-radius: calc(var(--u) * 10); }
+  .char-count { font-size: calc(var(--u) * 12); margin-top: calc(var(--u) * 4); }
+  .submit-btn { margin-top: calc(var(--u) * 10); padding: calc(var(--u) * 14) 0; font-size: calc(var(--u) * 16); border-radius: calc(var(--u) * 30); }
+</style>
+</head>
+<body>
+
+  <button class=&quot;banner&quot; id=&quot;bannerBtn&quot; onclick=&quot;openContent()&quot;>
+    <img src=&quot;images/htmlimg_088065c7.jpg&quot; alt=&quot;奉納所&quot;>
+  </button>
+
+  <div class=&quot;content&quot; id=&quot;contentArea&quot;>
+    <div class=&quot;write-box&quot;>
+      <img class=&quot;box-bg&quot; src=&quot;images/htmlimg_17c53965.jpg&quot; alt=&quot;&quot;>
+      <div class=&quot;box-layer&quot;>
+        <div class=&quot;ema-shape&quot;>
+          <img src=&quot;images/htmlimg_4bc296a2.png&quot; alt=&quot;絵馬&quot;>
+        </div>
+        <textarea id=&quot;emaInput&quot; maxlength=&quot;60&quot; placeholder=&quot;願い事や決意を書いてください&quot;></textarea>
+        <div class=&quot;char-count&quot; id=&quot;charCount&quot;>0 / 30</div>
+        <button class=&quot;submit-btn&quot; id=&quot;submitEma&quot; onclick=&quot;submitEma()&quot;>奉納する</button>
+      </div>
+    </div>
+
+    <div class=&quot;done-msg&quot; id=&quot;doneMsg&quot;>絵馬を奉納しました。願いが届きますように。</div>
+  </div>
+
+<script>
+  function openContent() {
+    document.getElementById('bannerBtn').style.display = 'none';
+    document.getElementById('contentArea').classList.add('show');
+  }
+
+  const EMA_KEY = &quot;asobiva_emas&quot;;
+  const MAX_LEN = 30;
+
+  const emaInput = document.getElementById('emaInput');
+  const charCount = document.getElementById('charCount');
+  const submitBtn = document.getElementById('submitEma');
+  const doneMsg = document.getElementById('doneMsg');
+
+  emaInput.addEventListener('input', () => {
+    const len = Array.from(emaInput.value).length;
+    charCount.textContent = `${len} / ${MAX_LEN}`;
+    charCount.classList.toggle('over', len > MAX_LEN);
+    submitBtn.disabled = (len === 0 || len > MAX_LEN);
+    doneMsg.classList.remove('show');
+  });
+  submitBtn.disabled = true;
+
+  function loadEmas() {
+    try {
+      const raw = localStorage.getItem(EMA_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+  function saveEmas(emas) {
+    localStorage.setItem(EMA_KEY, JSON.stringify(emas));
+  }
+
+  function submitEma() {
+    const text = emaInput.value.trim();
+    const len = Array.from(text).length;
+    if (len === 0 || len > MAX_LEN) return;
+
+    const emas = loadEmas();
+    emas.unshift({
+      id: Date.now(),
+      text: text,
+      date: new Date().toISOString(),
+      achieved: false
+    });
+    saveEmas(emas);
+
+    emaInput.value = '';
+    charCount.textContent = `0 / ${MAX_LEN}`;
+    submitBtn.disabled = true;
+    doneMsg.classList.add('show');
+  }
+</script>
+<style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
+(function(){
+  function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-init') report(); });
+  window.addEventListener('load', report);
+  if(document.readyState==='complete') report();
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  var applied = null;
+  function applyScale(s){
+    if(!document.body || applied === s) return;
+    var first = applied === null;
+    applied = s;
+    if(first &amp;&amp; s === 1) return; // 一度も拡大・縮小していなければ、何もしない
+    // body とその中のすべての要素の元の文字の大きさを先に測ってから、まとめて倍にする
+    // （文字を直接持たない段落なども倍にして、行の間隔が文字と同じ割合で変わるようにする）
+    var nodes = [document.body].concat(Array.prototype.slice.call(document.body.querySelectorAll('*'))), i, el;
+    for(i=0;i<nodes.length;i++){
+      if(s === 1) break; // 元に戻すときは、元の大きさを測り直さない
+      el = nodes[i];
+      if(/^(IMG|VIDEO|IFRAME|SVG|SCRIPT|STYLE|PATH|G|CIRCLE|RECT|LINE|POLYGON|POLYLINE|ELLIPSE|USE|DEFS)$/i.test(el.tagName)) continue;
+      if(el.getAttribute('data-asobiva-fs')) continue;
+      el.setAttribute('data-asobiva-fs', getComputedStyle(el).fontSize);
+      // もともとHTMLが持っている文字の大きさの指定（例：プロフィールの「名前 120%」）を覚えておき、100%に戻すときはそれに戻す（v4.7）
+      el.setAttribute('data-asobiva-fs0', el.style.fontSize || '');
+    }
+    for(i=0;i<nodes.length;i++){
+      var base = parseFloat(nodes[i].getAttribute('data-asobiva-fs'));
+      if(isFinite(base)) nodes[i].style.fontSize = s === 1 ? (nodes[i].getAttribute('data-asobiva-fs0') || '') : (base * s) + 'px';
+    }
+    report();
+  }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-scale') applyScale(e.data.scale); });
+  parent.postMessage({ type:'asobiva-need-scale' }, '*');
+})();
+</script></body>
+</html>
+" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
+    </div></div>
+    <div class="card-section sp" style="--mb:40px"><div class="group-card">
+    <div class="card-section sp" style="--mb:10px"><div class="card" style="--ps:0.8;--pw:0.8;"><img src="images/b9d94f6f-8027-4278-a209-e711b887b8fe.jpg" alt="" loading="lazy"></div></div>
     <div class="card-section sp" style="--mb:8px"><div class="html-card" style="--ps:0.8;--pw:0.8;"><iframe srcdoc="<!DOCTYPE html>
 <html lang=&quot;ja&quot;>
 <head>
@@ -2594,268 +2894,9 @@ body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;p
 </script></body>
 </html>
 " loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
-    <div class="card-section sp" style="--mb:16px"><div class="html-card" style="--ps:0.8;--pw:0.8;"><iframe srcdoc="<!DOCTYPE html>
-<html lang=&quot;ja&quot;>
-<head>
-<meta charset=&quot;UTF-8&quot;>
-<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
-<title>奉納所</title>
-<style>
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: &quot;Hiragino Mincho ProN&quot;, &quot;Yu Mincho&quot;, serif;
-    background: #f3efe8;
-    color: #2b2b2b;
-    min-height: 100vh;
-    padding: 0;
-  }
-
-  /* バナー(ボタン) */
-  .banner {
-    width: 100%;
-    display: block;
-    cursor: pointer;
-    border: none;
-    background: none;
-    padding: 0;
-    overflow: hidden;
-    transition: transform 0.15s;
-  }
-  .banner:active { transform: scale(0.98); }
-  .banner img {
-    width: 100%;
-    display: block;
-  }
-
-  .content {
-    display: none;
-    padding: 0;
-    max-width: 480px;
-    margin: 0 auto;
-  }
-  .content.show {
-    display: block;
-  }
-
-  .write-box {
-    position: relative;
-    text-align: center;
-    margin: 0;
-    width: 100%;
-  }
-  .write-box .box-bg {
-    width: 100%;
-    display: block;
-  }
-  .write-box .box-layer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
-    padding: 11% 7% 9% 7%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .ema-shape {
-    width: 130px;
-    margin: 0 auto 10px;
-  }
-  .ema-shape img {
-    width: 100%;
-    display: block;
-  }
-  textarea {
-    width: 100%;
-    min-height: 70px;
-    padding: 14px 16px;
-    font-size: 16px;
-    border: 2px solid #d8c9a0;
-    border-radius: 10px;
-    font-family: inherit;
-    background: #fffdf8;
-    resize: none;
-  }
-  textarea:focus {
-    outline: none;
-    border-color: #b03a2e;
-  }
-  .char-count {
-    text-align: right;
-    font-size: 12px;
-    color: #999;
-    margin-top: 4px;
-  }
-  .char-count.over {
-    color: #b03a2e;
-    font-weight: 700;
-  }
-  .submit-btn {
-    width: 100%;
-    margin-top: 10px;
-    background: #b03a2e;
-    color: #fff;
-    border: none;
-    border-radius: 30px;
-    padding: 14px 0;
-    font-size: 16px;
-    font-family: inherit;
-    letter-spacing: 0.3em;
-    font-weight: 700;
-    cursor: pointer;
-  }
-  .submit-btn:disabled {
-    background: #ccc;
-    cursor: default;
-  }
-
-  .done-msg {
-    display: none;
-    text-align: center;
-    margin: 20px 18px 0;
-    padding: 16px;
-    background: #fff6e0;
-    border: 2px solid #d4a847;
-    border-radius: 12px;
-    color: #8a6d1f;
-    font-size: 14px;
-  }
-  .done-msg.show { display: block; }
-
-  /* ───────────────────────────────────────────────
-     幅に合わせて、文字・ボタン・入力欄の大きさを決める（基準：幅390pxのときに今までと同じ）
-     背景の絵と一緒に拡大・縮小するので、どの幅でも枠からはみ出さない。
-     --u = 枠の幅の 1/390。cqw は container-type を付けた枠の幅に対する割合（iPhone は iOS 16 以降）。
-     入力欄の文字は16pxより小さくしない（小さいと iPhone が入力時に画面を拡大するため）。
-     ─────────────────────────────────────────────── */
-  .write-box { container-type: inline-size; }
-  .write-box .box-layer { --u: calc(100cqw / 390); }
-  .ema-shape { width: calc(var(--u) * 130); margin: 0 auto calc(var(--u) * 10); }
-  textarea { min-height: calc(var(--u) * 70); padding: calc(var(--u) * 14) calc(var(--u) * 16); font-size: max(16px, calc(var(--u) * 16)); border-radius: calc(var(--u) * 10); }
-  .char-count { font-size: calc(var(--u) * 12); margin-top: calc(var(--u) * 4); }
-  .submit-btn { margin-top: calc(var(--u) * 10); padding: calc(var(--u) * 14) 0; font-size: calc(var(--u) * 16); border-radius: calc(var(--u) * 30); }
-</style>
-</head>
-<body>
-
-  <button class=&quot;banner&quot; id=&quot;bannerBtn&quot; onclick=&quot;openContent()&quot;>
-    <img src=&quot;images/htmlimg_088065c7.jpg&quot; alt=&quot;奉納所&quot;>
-  </button>
-
-  <div class=&quot;content&quot; id=&quot;contentArea&quot;>
-    <div class=&quot;write-box&quot;>
-      <img class=&quot;box-bg&quot; src=&quot;images/htmlimg_17c53965.jpg&quot; alt=&quot;&quot;>
-      <div class=&quot;box-layer&quot;>
-        <div class=&quot;ema-shape&quot;>
-          <img src=&quot;images/htmlimg_4bc296a2.png&quot; alt=&quot;絵馬&quot;>
-        </div>
-        <textarea id=&quot;emaInput&quot; maxlength=&quot;60&quot; placeholder=&quot;願い事や決意を書いてください&quot;></textarea>
-        <div class=&quot;char-count&quot; id=&quot;charCount&quot;>0 / 30</div>
-        <button class=&quot;submit-btn&quot; id=&quot;submitEma&quot; onclick=&quot;submitEma()&quot;>奉納する</button>
-      </div>
-    </div>
-
-    <div class=&quot;done-msg&quot; id=&quot;doneMsg&quot;>絵馬を奉納しました。願いが届きますように。</div>
-  </div>
-
-<script>
-  function openContent() {
-    document.getElementById('bannerBtn').style.display = 'none';
-    document.getElementById('contentArea').classList.add('show');
-  }
-
-  const EMA_KEY = &quot;asobiva_emas&quot;;
-  const MAX_LEN = 30;
-
-  const emaInput = document.getElementById('emaInput');
-  const charCount = document.getElementById('charCount');
-  const submitBtn = document.getElementById('submitEma');
-  const doneMsg = document.getElementById('doneMsg');
-
-  emaInput.addEventListener('input', () => {
-    const len = Array.from(emaInput.value).length;
-    charCount.textContent = `${len} / ${MAX_LEN}`;
-    charCount.classList.toggle('over', len > MAX_LEN);
-    submitBtn.disabled = (len === 0 || len > MAX_LEN);
-    doneMsg.classList.remove('show');
-  });
-  submitBtn.disabled = true;
-
-  function loadEmas() {
-    try {
-      const raw = localStorage.getItem(EMA_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch (e) {
-      return [];
-    }
-  }
-  function saveEmas(emas) {
-    localStorage.setItem(EMA_KEY, JSON.stringify(emas));
-  }
-
-  function submitEma() {
-    const text = emaInput.value.trim();
-    const len = Array.from(text).length;
-    if (len === 0 || len > MAX_LEN) return;
-
-    const emas = loadEmas();
-    emas.unshift({
-      id: Date.now(),
-      text: text,
-      date: new Date().toISOString(),
-      achieved: false
-    });
-    saveEmas(emas);
-
-    emaInput.value = '';
-    charCount.textContent = `0 / ${MAX_LEN}`;
-    submitBtn.disabled = true;
-    doneMsg.classList.add('show');
-  }
-</script>
-<style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
-(function(){
-  function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }
-  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-init') report(); });
-  window.addEventListener('load', report);
-  if(document.readyState==='complete') report();
-  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
-  var applied = null;
-  function applyScale(s){
-    if(!document.body || applied === s) return;
-    var first = applied === null;
-    applied = s;
-    if(first &amp;&amp; s === 1) return; // 一度も拡大・縮小していなければ、何もしない
-    // body とその中のすべての要素の元の文字の大きさを先に測ってから、まとめて倍にする
-    // （文字を直接持たない段落なども倍にして、行の間隔が文字と同じ割合で変わるようにする）
-    var nodes = [document.body].concat(Array.prototype.slice.call(document.body.querySelectorAll('*'))), i, el;
-    for(i=0;i<nodes.length;i++){
-      if(s === 1) break; // 元に戻すときは、元の大きさを測り直さない
-      el = nodes[i];
-      if(/^(IMG|VIDEO|IFRAME|SVG|SCRIPT|STYLE|PATH|G|CIRCLE|RECT|LINE|POLYGON|POLYLINE|ELLIPSE|USE|DEFS)$/i.test(el.tagName)) continue;
-      if(el.getAttribute('data-asobiva-fs')) continue;
-      el.setAttribute('data-asobiva-fs', getComputedStyle(el).fontSize);
-      // もともとHTMLが持っている文字の大きさの指定（例：プロフィールの「名前 120%」）を覚えておき、100%に戻すときはそれに戻す（v4.7）
-      el.setAttribute('data-asobiva-fs0', el.style.fontSize || '');
-    }
-    for(i=0;i<nodes.length;i++){
-      var base = parseFloat(nodes[i].getAttribute('data-asobiva-fs'));
-      if(isFinite(base)) nodes[i].style.fontSize = s === 1 ? (nodes[i].getAttribute('data-asobiva-fs0') || '') : (base * s) + 'px';
-    }
-    report();
-  }
-  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-scale') applyScale(e.data.scale); });
-  parent.postMessage({ type:'asobiva-need-scale' }, '*');
-})();
-</script></body>
-</html>
-" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
     </div></div>
   </div>
-  <div class="footer-section sp-top" style="--mb:0px"><footer class="ft-left" style="color:#111111;font-weight:300;--ft-max:600px;--ft-cgap:16px;"><div class="ft-body">本サイトの作品は、作品の制作にAIを使用しています。
+  <div class="footer-section sp-top" style="--mb:0px"><footer class="ft-left" style="color:#707070;font-weight:300;--ft-max:600px;--ft-cgap:16px;"><div class="ft-body">本サイトの作品は、作品の制作にAIを使用しています。
 ASOBIVAでは、各コンテンツの一部作品を公開しています。その他の作品は、コンテンツごとにnote・BOOTH・YouTube等の外部サービスにて公開予定です。詳細は各コンテンツページをご確認ください。最新情報はX・Instagramにてお知らせしています。
 </div><div class="ft-c">© 2026 KEIGO TSUCHIYA / i.roiro</div></footer></div>
 </div>
@@ -2941,7 +2982,24 @@ function asobivaLayout(force) {
     el.removeAttribute('data-own-mb');
     el.removeAttribute('data-own-line');
   });
-  if (cols <= 1) return;
+  // data-nla のカード（見出しなど・v6.5、縦画面も v6.6）：すぐ上の段（段でなければその1枚）の線を出さない。下の余白はそのまま。
+  // 自分の設定は data-own-* に退避（向きが変わると元に戻してから、もう一度決める）
+  function hideAbove(list, rows) {
+    list.forEach(function (el, i) {
+      if (!i || !el.hasAttribute('data-nla')) return;
+      var prev = list[i - 1], grp = [prev];
+      if (rows && prev.classList.contains('in-row')) for (var k = 0; k < rows.length; k++) if (rows[k].indexOf(prev) >= 0) { grp = rows[k]; break; }
+      grp.forEach(function (x) {
+        if (!x.classList.contains('sp-line') && !x.classList.contains('sp-dot')) return;
+        if (!x.hasAttribute('data-own-mb') && !x.classList.contains('gcar-slide')) {
+          x.setAttribute('data-own-mb', x.style.getPropertyValue('--mb') || '0px');
+          x.setAttribute('data-own-line', x.classList.contains('sp-line') ? 'sp-line' : 'sp-dot');
+        }
+        x.classList.remove('sp-line', 'sp-dot');
+      });
+    });
+  }
+  if (cols <= 1) { hideAbove(kids, null); return; }
   // 横画面：「並べる」カルーセルは、入れ物の代わりに中の1枚ずつを並べる。下の余白・線はカルーセルの設定
   var items = [];
   kids.forEach(function (el) {
@@ -2985,6 +3043,7 @@ function asobivaLayout(force) {
       if (line) el.classList.add(line);
     });
   });
+  hideAbove(items, rows);
 }
 function asobivaTidy() {
   var c = document.getElementById('cardContainer');
@@ -3023,7 +3082,52 @@ function asobivaTidy() {
   list = document.querySelectorAll('.nav-group');
   for (i = 0; i < list.length; i++) if (!list[i].querySelector('.nav-link-item')) list[i].parentNode.removeChild(list[i]);
 }
+function asobivaHistTrim() {
+  var L = document.querySelectorAll('.hist-list'), i, j;
+  for (i = 0; i < L.length; i++) {
+    var li = L[i].children;
+    for (j = 0; j < li.length; j++) li[j].style.display = j < 5 ? '' : 'none';
+    var em = L[i].parentNode.querySelector('.hist-empty');
+    if (em) em.hidden = li.length > 0;
+  }
+}
 asobivaTidy();
+asobivaHistTrim();
+function asobivaLikes() {
+  var B = document.querySelectorAll('.like-btn[data-like-id]'), i;
+  if (!B.length) return;
+  var ids = [], counts = null;
+  for (i = 0; i < B.length; i++) { var x = B[i].getAttribute('data-like-id'); if (ids.indexOf(x) < 0) ids.push(x); }
+  function liked(id) { try { return localStorage.getItem('asoLike:' + id) === '1'; } catch (e) { return false; } }
+  function setLiked(id, v) { try { if (v) localStorage.setItem('asoLike:' + id, '1'); else localStorage.removeItem('asoLike:' + id); } catch (e) {} }
+  function paint() {
+    for (var j = 0; j < B.length; j++) {
+      var id = B[j].getAttribute('data-like-id'), on = liked(id);
+      B[j].className = 'like-btn' + (on ? ' on' : '');
+      B[j].setAttribute('aria-pressed', on ? 'true' : 'false');
+      B[j].querySelector('.like-n').textContent = counts && typeof counts[id] === 'number' ? String(counts[id]) : '';
+    }
+  }
+  for (i = 0; i < B.length; i++) B[i].addEventListener('click', function (e) {
+    e.preventDefault(); e.stopPropagation();
+    var id = this.getAttribute('data-like-id'), on = !liked(id);
+    setLiked(id, on);
+    if (counts) counts[id] = Math.max(0, (counts[id] || 0) + (on ? 1 : -1));
+    paint();
+    if (!counts) return;
+    fetch('/api/like', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id, d: on ? 1 : -1 }) })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { if (d && typeof d.n === 'number') { counts[id] = d.n; paint(); } })
+      .catch(function () {});
+  });
+  paint();
+  if (!/^https?:$/.test(location.protocol) || !window.fetch) return;
+  fetch('/api/likes?ids=' + encodeURIComponent(ids.join(',')), { cache: 'no-store' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) { if (d && typeof d === 'object') { counts = d; paint(); } })
+    .catch(function () {});
+}
+asobivaLikes();
 asobivaLayout(true);
 asobivaSendScale();
 function asobivaWatchViewport() {
