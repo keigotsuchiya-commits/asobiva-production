@@ -15,21 +15,33 @@ h1 { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
 .ad-card { text-align: center; overflow: hidden; outline: 1px dashed #ddd; }
 .ad-card > * { max-width: 100%; }
 .ad-card > .ad-in { display: inline-block; vertical-align: top; max-width: none; }
+/* サイズ可変を試す枠：囲みを最初から幅いっぱい・左から置く（AdMax が自分で広がれる） */
+.ad-card.wide > .ad-in { display: block; text-align: left; }
 .size { font-size: 11px; color: #aaa; margin-top: 4px; text-align: center; }
 </style>
 </head>
 <body>
 <div class="wrap">
 <h1>広告の試し用ページ</h1>
-<p class="note">ASOBIVA の広告カードと同じ作りで、広告を並べています。点線がカードの幅です。<br>広告の下に、出ている大きさ（幅×高さ）が出ます。</p>
+<p class="note">ASOBIVA の広告カードと同じ作りで、広告を並べています。点線がカードの幅です。<br>広告の下に、出ている大きさ（幅×高さ）が出ます。<br>同じ AdMax の広告を2回置いています。2つめが出ないときは、同じ広告を1ページに2回置いたせいかもしれません。</p>
 
-<div class="label">AdMax</div>
+<div class="label">AdMax（今の ASOBIVA と同じ・実サイズ）</div>
 <div class="ad-card"><div class="ad-in">
 <!-- ▼▼ AdMax のコード（ここから） ▼▼ -->
 <!-- admax -->
 <script src="https://adm.shinobi.jp/s/d62f10dea86cd7dbab67bd69598d7ef6"></script>
 <!-- admax -->
 <!-- ▲▲ AdMax のコード（ここまで） ▲▲ -->
+</div></div>
+<div class="size"></div>
+
+<div class="label">AdMax（サイズ可変・幅いっぱいに広がれる形）</div>
+<div class="ad-card wide"><div class="ad-in">
+<!-- ▼▼ AdMax サイズ可変のコード（ここから） ▼▼ -->
+<!-- admax -->
+<script src="https://adm.shinobi.jp/s/d62f10dea86cd7dbab67bd69598d7ef6"></script>
+<!-- admax -->
+<!-- ▲▲ AdMax サイズ可変のコード（ここまで） ▲▲ -->
 </div></div>
 <div class="size"></div>
 
@@ -68,8 +80,14 @@ asobivaAdFit();
   function show() {
     var C = document.querySelectorAll('.ad-card');
     for (var i = 0; i < C.length; i++) {
-      var r = C[i].querySelector('.ad-in').getBoundingClientRect(), s = C[i].nextElementSibling;
-      if (s) s.textContent = r.width > 1 ? Math.round(r.width) + ' × ' + Math.round(r.height) : '（まだ出ていません）';
+      // 広告の中身（画像・iframe など）が実際に占めている範囲を測る
+      var E = C[i].querySelectorAll('.ad-in *'), L = 1e9, T = 1e9, R = -1e9, B = -1e9, s = C[i].nextElementSibling;
+      for (var j = 0; j < E.length; j++) {
+        if (/^(SCRIPT|STYLE|NOSCRIPT)$/.test(E[j].tagName)) continue;
+        var r = E[j].getBoundingClientRect(); if (r.width < 2 || r.height < 2) continue;
+        L = Math.min(L, r.left); T = Math.min(T, r.top); R = Math.max(R, r.right); B = Math.max(B, r.bottom);
+      }
+      if (s) s.textContent = R > L ? Math.round(R - L) + ' × ' + Math.round(B - T) + '（カードの幅 ' + Math.round(C[i].clientWidth) + '）' : '（まだ出ていません）';
     }
   }
   var k = 0, t = setInterval(function () { show(); if (++k > 30) clearInterval(t); }, 500);
