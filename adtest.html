@@ -17,13 +17,15 @@ h1 { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
 .ad-card > .ad-in { display: inline-block; vertical-align: top; max-width: none; }
 /* サイズ可変を試す枠：囲みを最初から幅いっぱい・左から置く（AdMax が自分で広がれる） */
 .ad-card.wide > .ad-in { display: block; text-align: left; }
+/* 広く出して縮める枠：直接開いたときと同じ広さ（980）で広告を出し、全体をカードの幅まで縮める（asobivaAdFit） */
+.ad-card.big > .ad-in { display: block; width: 980px; text-align: left; }
 .size { font-size: 11px; color: #aaa; margin-top: 4px; text-align: center; }
 </style>
 </head>
 <body>
 <div class="wrap">
 <h1>広告の試し用ページ</h1>
-<p class="note">ASOBIVA の広告カードと同じ作りで、広告を並べています。点線がカードの幅です。<br>広告の下に、出ている大きさ（幅×高さ）が出ます。<br>同じ AdMax の広告を2回置いています。2つめが出ないときは、同じ広告を1ページに2回置いたせいかもしれません。</p>
+<p class="note">ASOBIVA の広告カードと同じ作りで、広告を並べています。点線がカードの幅です。<br>広告の下に、出ている大きさ（幅×高さ）が出ます。<br>同じ AdMax の広告を3回置いています。出ないものがあるときは、同じ広告を1ページに何回も置いたせいかもしれません。</p>
 
 <div class="label">AdMax（今の ASOBIVA と同じ・実サイズ）</div>
 <div class="ad-card"><div class="ad-in">
@@ -42,6 +44,16 @@ h1 { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
 <script src="https://adm.shinobi.jp/s/d62f10dea86cd7dbab67bd69598d7ef6"></script>
 <!-- admax -->
 <!-- ▲▲ AdMax サイズ可変のコード（ここまで） ▲▲ -->
+</div></div>
+<div class="size"></div>
+
+<div class="label">AdMax（広く出して縮める・直接開いたときと同じ作り）</div>
+<div class="ad-card big"><div class="ad-in">
+<!-- ▼▼ AdMax 広く出して縮めるコード（ここから） ▼▼ -->
+<!-- admax -->
+<script src="https://adm.shinobi.jp/s/d62f10dea86cd7dbab67bd69598d7ef6"></script>
+<!-- admax -->
+<!-- ▲▲ AdMax 広く出して縮めるコード（ここまで） ▲▲ -->
 </div></div>
 <div class="size"></div>
 
