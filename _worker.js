@@ -1,4 +1,4 @@
-// ASOBIVA 公開設定（ASOBIVA builder v7.0 が書き出し）
+// ASOBIVA 公開設定（ASOBIVA builder v7.0.1 が書き出し）
 // 日本時間のその日の日付で、公開期間の外のカード・メニュー・ページを外します。
 // 期間外・非表示のページを直接開いたときは、トップへ移します。ほかのファイルはそのまま返します。
 const PAGES = {"asobiva.html":["2026-11-17",""],"asobiva-lab.html":["2027-03-01",""],"music.html":["2026-11-17",""],"filmography.html":["2027-03-01",""],"one-shot.html":["2027-01-01",""],"ehon.html":["2026-11-17",""],"project-supana.html":["2027-01-01",""],"oborogi.html":["2027-01-01",""],"marumaru.html":["2026-11-17",""],"n.html":["2027-01-01",""],"yokai.html":["2026-11-17",""],"page-13.html":["2027-01-01",""],"page-14.html":["2027-01-01",""],"game.html":["2026-11-17",""],"pazle.html":["2027-05-01",""],"shikaku.html":["2027-05-01",""],"uranai.html":["2026-11-17",""]};

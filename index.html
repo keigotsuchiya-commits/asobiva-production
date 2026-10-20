@@ -152,6 +152,7 @@ a.hist-text { text-decoration: underline; text-underline-offset: 3px; text-decor
 /* 広告カード（v7.0）：貼ったコードをそのまま入れる。中身は中央・はみ出さない */
 .ad-card { text-align: center; overflow: hidden; }
 .ad-card > * { max-width: 100%; }
+.ad-card > .ad-in { display: inline-block; vertical-align: top; max-width: none; } /* v7.0.1：幅より大きい広告は、全体をそのまま縮小（asobivaAdFit） */
 .ad-ph { border: 1px dashed #bbb; border-radius: 6px; background: #fafafa; color: #999; font-size: 12px; line-height: 1.6; padding: 22px 12px; text-align: center; }
 /* いいね（v6.8・v6.9 で画像の左下に重ねる形に）：高さ0の行をカードのすぐ下に置き、ボタンをカードの左下の角に重ねる（キャプション・並びに影響しない） */
 .like-row { position: relative; height: 0; margin-left: auto; margin-right: auto; z-index: 3; }
@@ -333,7 +334,7 @@ body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;p
 })();
 </script></body>
 </html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
-    <div class="card-section sp is-html" style="--mb:60px" data-pf="2026-11-17"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
+    <div class="card-section sp is-html" style="--mb:16px" data-pf="2026-11-17"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
 <html lang=&quot;ja&quot;>
 <head>
 <meta charset=&quot;UTF-8&quot;>
@@ -408,7 +409,7 @@ body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;p
 <head>
 <meta charset=&quot;UTF-8&quot;>
 <meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
-<title>CHANGELOG</title>
+<title>更新履歴</title>
 <link href=&quot;https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&amp;display=swap&quot; rel=&quot;stylesheet&quot;>
 <style>*{box-sizing:border-box;}
 body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;padding:0;line-height:1.7;}
@@ -423,10 +424,10 @@ body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;p
 <body>
 <div class=&quot;page&quot;>
   <div class=&quot;divider-container&quot;>
-    <div class=&quot;dv-head dv-left&quot;><span class=&quot;dv-text&quot;>CHANGELOG</span><hr class=&quot;divider&quot;></div>
+    <div class=&quot;dv-head dv-left&quot;><span class=&quot;dv-text&quot;>更新履歴</span><hr class=&quot;divider&quot;></div>
   </div>
 </div>
-<script type=&quot;application/json&quot; id=&quot;dv-data&quot;>{&quot;v&quot;:2,&quot;lineColor&quot;:&quot;#17191a&quot;,&quot;lineStyle&quot;:&quot;solid&quot;,&quot;lineWidth&quot;:1,&quot;mt&quot;:10,&quot;mb&quot;:10,&quot;ml&quot;:20,&quot;mr&quot;:20,&quot;mode&quot;:&quot;left&quot;,&quot;text&quot;:&quot;CHANGELOG&quot;,&quot;size&quot;:12,&quot;weight&quot;:400,&quot;color&quot;:&quot;#111111&quot;,&quot;ls&quot;:0.04,&quot;gap&quot;:16}</script>
+<script type=&quot;application/json&quot; id=&quot;dv-data&quot;>{&quot;v&quot;:2,&quot;lineColor&quot;:&quot;#17191a&quot;,&quot;lineStyle&quot;:&quot;solid&quot;,&quot;lineWidth&quot;:1,&quot;mt&quot;:10,&quot;mb&quot;:10,&quot;ml&quot;:20,&quot;mr&quot;:20,&quot;mode&quot;:&quot;left&quot;,&quot;text&quot;:&quot;更新履歴&quot;,&quot;size&quot;:12,&quot;weight&quot;:400,&quot;color&quot;:&quot;#111111&quot;,&quot;ls&quot;:0.04,&quot;gap&quot;:16}</script>
 <style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
 (function(){
   function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }

@@ -152,6 +152,7 @@ a.hist-text { text-decoration: underline; text-underline-offset: 3px; text-decor
 /* 広告カード（v7.0）：貼ったコードをそのまま入れる。中身は中央・はみ出さない */
 .ad-card { text-align: center; overflow: hidden; }
 .ad-card > * { max-width: 100%; }
+.ad-card > .ad-in { display: inline-block; vertical-align: top; max-width: none; } /* v7.0.1：幅より大きい広告は、全体をそのまま縮小（asobivaAdFit） */
 .ad-ph { border: 1px dashed #bbb; border-radius: 6px; background: #fafafa; color: #999; font-size: 12px; line-height: 1.6; padding: 22px 12px; text-align: center; }
 /* いいね（v6.8・v6.9 で画像の左下に重ねる形に）：高さ0の行をカードのすぐ下に置き、ボタンをカードの左下の角に重ねる（キャプション・並びに影響しない） */
 .like-row { position: relative; height: 0; margin-left: auto; margin-right: auto; z-index: 3; }

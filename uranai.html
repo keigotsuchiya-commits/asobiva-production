@@ -152,6 +152,7 @@ a.hist-text { text-decoration: underline; text-underline-offset: 3px; text-decor
 /* 広告カード（v7.0）：貼ったコードをそのまま入れる。中身は中央・はみ出さない */
 .ad-card { text-align: center; overflow: hidden; }
 .ad-card > * { max-width: 100%; }
+.ad-card > .ad-in { display: inline-block; vertical-align: top; max-width: none; } /* v7.0.1：幅より大きい広告は、全体をそのまま縮小（asobivaAdFit） */
 .ad-ph { border: 1px dashed #bbb; border-radius: 6px; background: #fafafa; color: #999; font-size: 12px; line-height: 1.6; padding: 22px 12px; text-align: center; }
 /* いいね（v6.8・v6.9 で画像の左下に重ねる形に）：高さ0の行をカードのすぐ下に置き、ボタンをカードの左下の角に重ねる（キャプション・並びに影響しない） */
 .like-row { position: relative; height: 0; margin-left: auto; margin-right: auto; z-index: 3; }
@@ -2895,6 +2896,118 @@ body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;p
 </html>
 " loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
     </div></div>
+    <div class="card-section sp is-html" style="--mb:0px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
+<html lang=&quot;ja&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>区切り線</title>
+<link href=&quot;https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&amp;display=swap&quot; rel=&quot;stylesheet&quot;>
+<style>*{box-sizing:border-box;}
+body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;padding:0;line-height:1.7;}
+.page{max-width:600px;margin:0 auto;padding:24px 20px;}
+.divider-container{width:100%;margin-top:0px;margin-bottom:0px;}
+.divider{width:100%;border:none;border-top:1px solid #17191a;margin:0;}</style>
+</head>
+<body>
+<div class=&quot;page&quot;>
+  <div class=&quot;divider-container&quot;>
+    <hr class=&quot;divider&quot;>
+  </div>
+</div>
+<style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
+(function(){
+  function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-init') report(); });
+  window.addEventListener('load', report);
+  if(document.readyState==='complete') report();
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  var applied = null;
+  function applyScale(s){
+    if(!document.body || applied === s) return;
+    var first = applied === null;
+    applied = s;
+    if(first &amp;&amp; s === 1) return; // 一度も拡大・縮小していなければ、何もしない
+    // body とその中のすべての要素の元の文字の大きさを先に測ってから、まとめて倍にする
+    // （文字を直接持たない段落なども倍にして、行の間隔が文字と同じ割合で変わるようにする）
+    var nodes = [document.body].concat(Array.prototype.slice.call(document.body.querySelectorAll('*'))), i, el;
+    for(i=0;i<nodes.length;i++){
+      if(s === 1) break; // 元に戻すときは、元の大きさを測り直さない
+      el = nodes[i];
+      if(/^(IMG|VIDEO|IFRAME|SVG|SCRIPT|STYLE|PATH|G|CIRCLE|RECT|LINE|POLYGON|POLYLINE|ELLIPSE|USE|DEFS)$/i.test(el.tagName)) continue;
+      if(el.getAttribute('data-asobiva-fs')) continue;
+      el.setAttribute('data-asobiva-fs', getComputedStyle(el).fontSize);
+      // もともとHTMLが持っている文字の大きさの指定（例：プロフィールの「名前 120%」）を覚えておき、100%に戻すときはそれに戻す（v4.7）
+      el.setAttribute('data-asobiva-fs0', el.style.fontSize || '');
+    }
+    for(i=0;i<nodes.length;i++){
+      var base = parseFloat(nodes[i].getAttribute('data-asobiva-fs'));
+      if(isFinite(base)) nodes[i].style.fontSize = s === 1 ? (nodes[i].getAttribute('data-asobiva-fs0') || '') : (base * s) + 'px';
+    }
+    report();
+  }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-scale') applyScale(e.data.scale); });
+  parent.postMessage({ type:'asobiva-need-scale' }, '*');
+})();
+</script></body>
+</html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
+    <div class="card-section sp is-html" style="--mb:0px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
+<html lang=&quot;ja&quot;>
+<head>
+<meta charset=&quot;utf-8&quot;>
+<style>
+html, body { margin: 0; padding: 0; background: #fff; }
+.sns-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 0;
+}
+svg { width: 100%; height: 100%; display: block; }
+a:hover { opacity: 0.6; }
+</style>
+</head>
+<body>
+<div class=&quot;sns-row&quot;>
+<a href=&quot;https://x.com/asobiva_info?s=11&amp;t=nlfW12xppBRr8PYP8kdywA&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; style=&quot;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;text-decoration:none;&quot;><svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot;><path d=&quot;M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z&quot; fill=&quot;#000&quot;/></svg></a><a href=&quot;https://www.instagram.com/asobiva_info?igsh=eGpidXBxd2NxOTh4&amp;utm_source=qr&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; style=&quot;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;text-decoration:none;&quot;><svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot;><rect x=&quot;2&quot; y=&quot;2&quot; width=&quot;20&quot; height=&quot;20&quot; rx=&quot;5.5&quot; stroke=&quot;#000&quot; stroke-width=&quot;1.8&quot;/><circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;4.5&quot; stroke=&quot;#000&quot; stroke-width=&quot;1.8&quot;/><circle cx=&quot;17.5&quot; cy=&quot;6.5&quot; r=&quot;1&quot; fill=&quot;#000&quot;/></svg></a>
+</div>
+<style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
+(function(){
+  function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-init') report(); });
+  window.addEventListener('load', report);
+  if(document.readyState==='complete') report();
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  var applied = null;
+  function applyScale(s){
+    if(!document.body || applied === s) return;
+    var first = applied === null;
+    applied = s;
+    if(first &amp;&amp; s === 1) return; // 一度も拡大・縮小していなければ、何もしない
+    // body とその中のすべての要素の元の文字の大きさを先に測ってから、まとめて倍にする
+    // （文字を直接持たない段落なども倍にして、行の間隔が文字と同じ割合で変わるようにする）
+    var nodes = [document.body].concat(Array.prototype.slice.call(document.body.querySelectorAll('*'))), i, el;
+    for(i=0;i<nodes.length;i++){
+      if(s === 1) break; // 元に戻すときは、元の大きさを測り直さない
+      el = nodes[i];
+      if(/^(IMG|VIDEO|IFRAME|SVG|SCRIPT|STYLE|PATH|G|CIRCLE|RECT|LINE|POLYGON|POLYLINE|ELLIPSE|USE|DEFS)$/i.test(el.tagName)) continue;
+      if(el.getAttribute('data-asobiva-fs')) continue;
+      el.setAttribute('data-asobiva-fs', getComputedStyle(el).fontSize);
+      // もともとHTMLが持っている文字の大きさの指定（例：プロフィールの「名前 120%」）を覚えておき、100%に戻すときはそれに戻す（v4.7）
+      el.setAttribute('data-asobiva-fs0', el.style.fontSize || '');
+    }
+    for(i=0;i<nodes.length;i++){
+      var base = parseFloat(nodes[i].getAttribute('data-asobiva-fs'));
+      if(isFinite(base)) nodes[i].style.fontSize = s === 1 ? (nodes[i].getAttribute('data-asobiva-fs0') || '') : (base * s) + 'px';
+    }
+    report();
+  }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-scale') applyScale(e.data.scale); });
+  parent.postMessage({ type:'asobiva-need-scale' }, '*');
+})();
+</script></body>
+</html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
   </div>
   <div class="footer-section sp-top" style="--mb:0px"><footer class="ft-left" style="color:#707070;font-weight:300;--ft-max:600px;--ft-cgap:16px;"><div class="ft-body">本サイトの作品は、作品の制作にAIを使用しています。
 ASOBIVAでは、各コンテンツの一部作品を公開しています。その他の作品は、コンテンツごとにnote・BOOTH・YouTube等の外部サービスにて公開予定です。詳細は各コンテンツページをご確認ください。最新情報はX・Instagramにてお知らせしています。
