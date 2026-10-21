@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="まとめてアップ">
+<title>まとめてアップ</title>
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--ink:#1f2328;--sub:#656d76;--line:#d8dee4;--accent:#1f6feb;--accent-ink:#fff;--soft:#eef1f4;
+  --new:#1a7f37;--new-bg:#dafbe1;--mod:#9a6700;--mod-bg:#fff8c5;--same:#656d76;--del:#cf222e;--del-bg:#ffebe9}
+@media (prefers-color-scheme: dark){:root{--bg:#0d1117;--card:#161b22;--ink:#e6edf3;--sub:#8d96a0;--line:#30363d;--accent:#4493f8;--accent-ink:#0d1117;--soft:#21262d;
+  --new:#3fb950;--new-bg:#12261e;--mod:#d29922;--mod-bg:#2b2111;--same:#8d96a0;--del:#f85149;--del-bg:#2d1214}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;font-size:16px;line-height:1.55;padding-bottom:calc(32px + env(safe-area-inset-bottom))}
+button,input,select{font:inherit;color:inherit}
+header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:calc(10px + env(safe-area-inset-top)) 16px 0}
+header h1{font-size:17px;margin:0 0 8px}
+.tabs{display:flex;gap:4px}
+.tabs button{flex:1;border:0;background:none;padding:10px 4px;border-bottom:2px solid transparent;color:var(--sub);font-weight:600}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--accent)}
+main{padding:16px;max-width:720px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+label{display:block;font-size:13px;color:var(--sub);margin:10px 0 4px}
+label:first-child{margin-top:0}
+input[type=text],input[type=password],input[type=search],select{width:100%;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:10px 12px;font-size:16px}
+.btn{border:1px solid var(--line);background:var(--card);padding:11px 14px;border-radius:10px;font-weight:600}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.danger{background:var(--del);color:#fff;border-color:var(--del)}
+.btn.block{display:block;width:100%;text-align:center}
+.btn:disabled{opacity:.45}
+.row{display:flex;gap:8px;align-items:center}
+.spacer{flex:1}
+.muted{color:var(--sub);font-size:13px}
+.note{font-size:13px;color:var(--sub);background:var(--soft);border-radius:10px;padding:10px 12px;margin-bottom:14px}
+.err{font-size:14px;color:var(--del);background:var(--del-bg);border-radius:10px;padding:10px 12px;margin-bottom:14px;white-space:pre-wrap}
+.ok{font-size:14px;color:var(--new);background:var(--new-bg);border-radius:10px;padding:10px 12px;margin-bottom:14px}
+.ok a{color:inherit}
+.list{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
+.item{display:flex;gap:10px;align-items:center;padding:9px 12px;border-top:1px solid var(--line);font-size:14px}
+.item:first-child{border-top:0}
+.item .path{flex:1;min-width:0;word-break:break-all}
+.tag{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.t-new{color:var(--new);background:var(--new-bg)}
+.t-mod{color:var(--mod);background:var(--mod-bg)}
+.t-same{color:var(--same);background:var(--soft)}
+.summary{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.repo{display:flex;align-items:center;gap:8px;padding:9px 0;border-top:1px solid var(--line)}
+.repo:first-of-type{border-top:0}
+.repo .name{flex:1;word-break:break-all}
+.x{border:0;background:none;color:var(--del);font-weight:600;padding:6px}
+input[type=checkbox]{width:20px;height:20px;accent-color:var(--del)}
+.hidden{display:none}
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);width:100%;max-width:720px;border-radius:16px 16px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));max-height:85vh;overflow:auto}
+.sheet h3{margin:0 0 10px;font-size:17px}
+.progress{font-size:14px;color:var(--sub);margin:10px 0}
+</style>
+</head>
+<body>
+<header>
+  <h1>まとめてアップ</h1>
+  <div class="tabs">
+    <button data-tab="up" class="on">アップ</button>
+    <button data-tab="clean">整理</button>
+    <button data-tab="set">設定</button>
+  </div>
+</header>
+<main id="main"></main>
+<div id="layer"></div>
+<input type="file" id="fileInput" multiple class="hidden">
+
+<script>
+"use strict";
+/* ---------- 保存 ---------- */
+const KEY='ghup_v1';
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{};}catch(e){return {};}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(CFG));}catch(e){}}
+const CFG=Object.assign({token:'',repos:[],lastRepo:0,lastFolder:{}},load());
+
+/* ---------- 状態 ---------- */
+const S={tab:CFG.token&&CFG.repos.length?'up':'set',tree:null,treeKey:null,head:null,files:[],stripTop:true,hasTop:false,
+  folder:'',subfolder:'',busy:false,msg:null,err:null,filter:'',checked:new Set()};
+
+/* ---------- 共通 ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const repoName=r=>`${r.owner}/${r.repo}`;
+function curRepo(){return CFG.repos[CFG.lastRepo]||CFG.repos[0]||null;}
+
+async function gh(method,path,body){
+  const res=await fetch('https://api.github.com'+path,{method,headers:{
+    'Authorization':'Bearer '+CFG.token,'Accept':'application/vnd.github+json',
+    ...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined});
+  let data=null; try{data=await res.json();}catch(_){}
+  if(!res.ok){
+    const m=data&&data.message?data.message:'';
+    let ja='GitHubとのやりとりで問題が起きました（'+res.status+'）';
+    if(res.status===401) ja='合い鍵が正しくないか、期限が切れています。設定を確認してください。';
+    else if(res.status===403) ja='この合い鍵では、この操作ができません。合い鍵の権限（Contents の読み書き）を確認してください。';
+    else if(res.status===404) ja='リポジトリかブランチが見つかりません。名前と、合い鍵の対象リポジトリを確認してください。';
+    else if(res.status===409) ja='リポジトリが空か、途中で他の変更が入りました。もう一度読み込んでください。';
+    else if(res.status===422) ja='GitHubが受け付けませんでした。';
+    const e=new Error(ja+(m?'\n（'+m+'）':'')); e.status=res.status; throw e;
+  }
+  return data;
+}
+async function ensureBranch(r){
+  if(r.branch) return r.branch;
+  const info=await gh('GET',`/repos/${r.owner}/${r.repo}`);
+  r.branch=info.default_branch; save(); return r.branch;
+}
+async function loadTree(force){
+  const r=curRepo(); if(!r) return;
+  const key=repoName(r);
+  if(!force&&S.tree&&S.treeKey===key) return;
+  const br=await ensureBranch(r);
+  const ref=await gh('GET',`/repos/${r.owner}/${r.repo}/git/ref/heads/${encodeURIComponent(br)}`);
+  const headSha=ref.object.sha;
+  const commit=await gh('GET',`/repos/${r.owner}/${r.repo}/git/commits/${headSha}`);
+  const t=await gh('GET',`/repos/${r.owner}/${r.repo}/git/trees/${commit.tree.sha}?recursive=1`);
+  const map=new Map(), dirs=[''];
+  for(const e of t.tree){ if(e.type==='blob') map.set(e.path,{sha:e.sha,mode:e.mode}); else if(e.type==='tree') dirs.push(e.path); }
+  S.tree={map,dirs:dirs.sort(),truncated:!!t.truncated}; S.treeKey=key; S.head={sha:headSha,tree:commit.tree.sha};
+}
+
+/* ---------- ファイル ---------- */
+async function gitBlobSha(bytes){
+  const head=new TextEncoder().encode(`blob ${bytes.length}\0`);
+  const buf=new Uint8Array(head.length+bytes.length); buf.set(head); buf.set(bytes,head.length);
+  const h=await crypto.subtle.digest('SHA-1',buf);
+  return [...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function toB64(bytes){let s='';const CH=0x8000;for(let i=0;i<bytes.length;i+=CH)s+=String.fromCharCode.apply(null,bytes.subarray(i,i+CH));return btoa(s);}
+const SKIP=p=>/(^|\/)(__MACOSX|\.DS_Store)(\/|$)/.test(p)||/(^|\/)\._/.test(p);
+
+/* ZIPを外部の部品なしで開く（無圧縮と通常の圧縮に対応） */
+async function unzip(buf){
+  const dv=new DataView(buf), u8=new Uint8Array(buf);
+  let eocd=-1;
+  for(let i=buf.byteLength-22;i>=Math.max(0,buf.byteLength-65557);i--){ if(dv.getUint32(i,true)===0x06054b50){eocd=i;break;} }
+  if(eocd<0) throw new Error('ZIPファイルを読めませんでした（壊れているか、ZIPではありません）。');
+  const count=dv.getUint16(eocd+10,true); let p=dv.getUint32(eocd+16,true);
+  if(p===0xffffffff) throw new Error('このZIPは大きすぎて開けません。');
+  const dec=new TextDecoder('utf-8'), out=[];
+  for(let k=0;k<count;k++){
+    if(dv.getUint32(p,true)!==0x02014b50) throw new Error('ZIPの中身を読めませんでした。');
+    const method=dv.getUint16(p+10,true), csize=dv.getUint32(p+20,true);
+    const nl=dv.getUint16(p+28,true), el=dv.getUint16(p+30,true), cl=dv.getUint16(p+32,true), lo=dv.getUint32(p+42,true);
+    const name=dec.decode(u8.subarray(p+46,p+46+nl));
+    p+=46+nl+el+cl;
+    if(name.endsWith('/')) continue;
+    const start=lo+30+dv.getUint16(lo+26,true)+dv.getUint16(lo+28,true);
+    const data=u8.slice(start,start+csize);
+    let bytes;
+    if(method===0) bytes=data;
+    else if(method===8){
+      if(typeof DecompressionStream==='undefined') throw new Error('このブラウザではZIPを開けません。iOSを新しくしてください。');
+      bytes=new Uint8Array(await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());
+    }else throw new Error(`「${name}」は対応していない圧縮方式です。`);
+    out.push({name,bytes});
+  }
+  return out;
+}
+async function readPicked(fileList){
+  const out=[];
+  for(const f of fileList){
+    if(/\.zip$/i.test(f.name)){
+      const entries=await unzip(await f.arrayBuffer());
+      for(const z of entries) if(!SKIP(z.name)) out.push({rel:z.name,bytes:z.bytes,from:f.name});
+    }else if(!SKIP(f.name)){
+      out.push({rel:f.name,bytes:new Uint8Array(await f.arrayBuffer()),from:null});
+    }
+  }
+  return out;
+}
+function topFolderOf(files){
+  if(!files.length||files.some(f=>!f.rel.includes('/'))) return null;
+  const tops=new Set(files.map(f=>f.rel.split('/')[0]));
+  return tops.size===1?[...tops][0]:null;
+}
+function destPath(f){
+  let rel=f.rel;
+  if(S.hasTop&&S.stripTop) rel=rel.split('/').slice(1).join('/');
+  const base=[S.folder,S.subfolder.trim().replace(/^\/+|\/+$/g,'')].filter(Boolean).join('/');
+  return base?base+'/'+rel:rel;
+}
+async function computeStatus(){
+  for(const f of S.files){
+    f.path=destPath(f);
+    if(!f.sha) f.sha=await gitBlobSha(f.bytes);
+    const ex=S.tree&&S.tree.map.get(f.path);
+    f.status=!ex?'new':(ex.sha===f.sha?'same':'mod');
+  }
+}
+
+/* ---------- 画面 ---------- */
+function msgHtml(){return (S.err?`<div class="err">${esc(S.err)}</div>`:'')+(S.msg?`<div class="ok">${S.msg}</div>`:'');}
+function repoSelect(){
+  return `<label>リポジトリ</label><select id="repoSel">${CFG.repos.map((r,i)=>`<option value="${i}" ${i===CFG.lastRepo?'selected':''}>${esc(repoName(r))}${r.branch?'（'+esc(r.branch)+'）':''}</option>`).join('')}</select>`;
+}
+async function render(){
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===S.tab));
+  const m=$('#main');
+  if(S.tab==='set'){m.innerHTML=vSet();return;}
+  if(!CFG.token||!CFG.repos.length){m.innerHTML=`<div class="note">最初に「設定」で、合い鍵とリポジトリを登録してください。</div>`;return;}
+  if(S.tab==='up') m.innerHTML=vUp(); else m.innerHTML=vClean();
+}
+function vSet(){
+  return `${msgHtml()}
+  <div class="card">
+    <label>GitHubの合い鍵（Fine-grained token）</label>
+    <input type="password" id="token" value="${esc(CFG.token)}" placeholder="github_pat_…" autocomplete="off">
+    <p class="muted">GitHubの「Settings → Developer settings → Fine-grained tokens」で作ります。対象は使うリポジトリだけ、権限は「Contents：Read and write」にしてください。合い鍵はこのiPhoneの中だけに保存されます。</p>
+    <button class="btn primary block" data-a="saveToken">合い鍵を保存</button>
+  </div>
+  <div class="card">
+    <label>リポジトリ</label>
+    ${CFG.repos.length?CFG.repos.map((r,i)=>`<div class="repo"><span class="name">${esc(repoName(r))}${r.branch?'<span class="muted">（'+esc(r.branch)+'）</span>':''}</span><button class="x" data-a="delRepo" data-i="${i}">外す</button></div>`).join(''):'<p class="muted">まだありません。</p>'}
+    <label>追加するリポジトリ（持ち主/名前）</label>
+    <input type="text" id="newRepo" placeholder="例：keigotsuchiya-commits/asobiva-test" autocapitalize="off" autocorrect="off">
+    <label>ブランチ（空なら自動）</label>
+    <input type="text" id="newBranch" placeholder="例：main" autocapitalize="off" autocorrect="off">
+    <button class="btn block" style="margin-top:12px" data-a="addRepo">追加して接続を確かめる</button>
+  </div>`;
+}
+function vUp(){
+  const t=S.tree;
+  const folders=t?t.dirs.map(d=>`<option value="${esc(d)}" ${d===S.folder?'selected':''}>${d?esc(d):'（いちばん上）'}</option>`).join(''):'';
+  let list='';
+  if(S.files.length){
+    const c={new:0,mod:0,same:0}; S.files.forEach(f=>c[f.status]++);
+    list=`<div class="summary"><span class="tag t-new">新しく増える ${c.new}</span><span class="tag t-mod">上書き ${c.mod}</span><span class="tag t-same">変わらない ${c.same}</span></div>
+    <div class="list">${S.files.map(f=>`<div class="item"><span class="path">${esc(f.path)}</span><span class="tag t-${f.status}">${f.status==='new'?'新規':f.status==='mod'?'上書き':'同じ'}</span></div>`).join('')}</div>
+    ${S.hasTop?`<label class="row" style="margin-top:12px;color:var(--ink);font-size:14px"><input type="checkbox" id="stripTop" ${S.stripTop?'checked':''} style="accent-color:var(--accent)"> ZIPのいちばん外のフォルダ「${esc(topFolderOf(S.files))}」を外して置く</label>`:''}
+    <button class="btn primary block" style="margin-top:14px" data-a="push" ${(c.new+c.mod)&&!S.busy?'':'disabled'}>${c.new+c.mod} 件をまとめてアップ</button>
+    <button class="btn block" style="margin-top:8px" data-a="clearFiles">選び直す</button>`;
+  }
+  return `${msgHtml()}
+  <div class="card">
+    ${repoSelect()}
+    <label>置く場所（フォルダ）</label>
+    ${t?`<select id="folderSel">${folders}</select>`:'<div class="muted">読み込み中…</div>'}
+    <label>その中に新しいフォルダを作る（任意）</label>
+    <input type="text" id="subfolder" value="${esc(S.subfolder)}" placeholder="例：games" autocapitalize="off" autocorrect="off">
+    ${t&&t.truncated?'<p class="muted">ファイルが多すぎて、一覧の一部しか読めていません。</p>':''}
+  </div>
+  <button class="btn ${S.files.length?'':'primary'} block" data-a="pick" ${t&&!S.busy?'':'disabled'}>ファイルかZIPを選ぶ（複数可）</button>
+  ${S.busy?`<div class="progress" id="progress">${esc(S.busy)}</div>`:''}
+  <div style="margin-top:14px">${list}</div>`;
+}
+function vClean(){
+  const t=S.tree;
+  if(!t) return `${msgHtml()}<div class="card">${repoSelect()}<p class="muted">読み込み中…</p></div>`;
+  const q=S.filter.trim().toLowerCase();
+  const paths=[...t.map.keys()].sort().filter(p=>!q||p.toLowerCase().includes(q));
+  const shown=paths.slice(0,500);
+  return `${msgHtml()}
+  <div class="card">${repoSelect()}
+    <label>絞り込み</label><input type="search" id="filter" value="${esc(S.filter)}" placeholder="ファイル名やフォルダ名">
+  </div>
+  <div class="row" style="margin-bottom:8px"><span class="muted">${paths.length}件${paths.length>500?'（先頭500件を表示）':''}・選択 ${S.checked.size}件</span><span class="spacer"></span>
+    <button class="btn" data-a="checkShown">表示中を全部選ぶ</button><button class="btn" data-a="uncheckAll">外す</button></div>
+  <div class="list">${shown.map(p=>`<label class="item" style="margin:0;color:var(--ink)"><input type="checkbox" data-p="${esc(p)}" ${S.checked.has(p)?'checked':''}><span class="path">${esc(p)}</span></label>`).join('')||'<div class="item muted">ありません。</div>'}</div>
+  <button class="btn danger block" style="margin-top:14px" data-a="askDelete" ${S.checked.size&&!S.busy?'':'disabled'}>${S.checked.size} 件をまとめて消す</button>
+  ${S.busy?`<div class="progress">${esc(S.busy)}</div>`:''}
+  <p class="muted">消したファイルも、GitHubの履歴から元に戻せます。</p>`;
+}
+
+/* ---------- 処理 ---------- */
+function setBusy(t){S.busy=t;const p=$('#progress');if(p)p.textContent=t;}
+async function refreshTree(force){
+  try{S.err=null; await loadTree(force);}catch(e){S.err=e.message;}
+  const r=curRepo(); if(r){const lf=CFG.lastFolder[repoName(r)]; S.folder=(S.tree&&S.tree.dirs.includes(lf))?lf:'';}
+  if(S.files.length) await computeStatus();
+  render();
+}
+async function commitChanges(entries,message){
+  const r=curRepo();
+  await loadTree(true); // 直前の状態に合わせる
+  const tree=await gh('POST',`/repos/${r.owner}/${r.repo}/git/trees`,{base_tree:S.head.tree,tree:entries});
+  const commit=await gh('POST',`/repos/${r.owner}/${r.repo}/git/commits`,{message,tree:tree.sha,parents:[S.head.sha]});
+  await gh('PATCH',`/repos/${r.owner}/${r.repo}/git/refs/heads/${encodeURIComponent(r.branch)}`,{sha:commit.sha});
+  return commit;
+}
+const A={
+  async saveToken(){CFG.token=$('#token').value.trim();save();S.tree=null;S.msg='合い鍵を保存しました。';S.err=null;render();},
+  async addRepo(){
+    const v=$('#newRepo').value.trim().replace(/^https?:\/\/github\.com\//,'').replace(/\.git$/,'').replace(/\/+$/,'');
+    const m=v.match(/^([^\/\s]+)\/([^\/\s]+)$/);
+    if(!m){S.err='「持ち主/名前」の形で入れてください。';S.msg=null;render();return;}
+    if(!CFG.token){S.err='先に合い鍵を保存してください。';S.msg=null;render();return;}
+    const r={owner:m[1],repo:m[2],branch:$('#newBranch').value.trim()};
+    try{
+      const info=await gh('GET',`/repos/${r.owner}/${r.repo}`);
+      if(!r.branch) r.branch=info.default_branch;
+      if(info.permissions&&info.permissions.push===false) throw new Error('このリポジトリには書き込みの権限がありません。');
+      CFG.repos.push(r); CFG.lastRepo=CFG.repos.length-1; save(); S.tree=null;
+      S.msg=`「${esc(repoName(r))}」に接続できました。`; S.err=null;
+    }catch(e){S.err=e.message;S.msg=null;}
+    render();
+  },
+  delRepo(el){CFG.repos.splice(+el.dataset.i,1);CFG.lastRepo=0;save();S.tree=null;render();},
+  pick(){S.msg=null;$('#fileInput').value='';$('#fileInput').click();},
+  clearFiles(){S.files=[];S.msg=null;render();},
+  async push(){
+    const todo=S.files.filter(f=>f.status!=='same'); if(!todo.length) return;
+    const r=curRepo(); S.err=null; S.msg=null;
+    try{
+      const entries=[];
+      for(let i=0;i<todo.length;i++){
+        setBusy(`送っています… ${i+1}/${todo.length}`);
+        const ex=S.tree.map.get(todo[i].path);
+        const b=await gh('POST',`/repos/${r.owner}/${r.repo}/git/blobs`,{content:toB64(todo[i].bytes),encoding:'base64'});
+        entries.push({path:todo[i].path,mode:(ex&&ex.mode)||'100644',type:'blob',sha:b.sha});
+      }
+      setBusy('まとめています…');
+      const names=todo.length===1?todo[0].path:`${todo.length} files`;
+      const commit=await commitChanges(entries,`Upload ${names}`);
+      CFG.lastFolder[repoName(r)]=S.folder; save();
+      S.files=[]; S.busy=false;
+      S.msg=`${todo.length}件をアップしました。${commit.html_url?` <a href="${esc(commit.html_url)}" target="_blank" rel="noopener">GitHubで見る</a>`:''}`;
+      await loadTree(true);
+    }catch(e){S.busy=false;S.err=e.message;}
+    render();
+  },
+  checkShown(){document.querySelectorAll('input[data-p]').forEach(c=>S.checked.add(c.dataset.p));render();},
+  uncheckAll(){S.checked.clear();render();},
+  askDelete(){
+    const list=[...S.checked].sort();
+    $('#layer').innerHTML=`<div class="sheet-bg"><div class="sheet"><h3>${list.length}件を消します</h3>
+      <div class="list" style="max-height:40vh;overflow:auto">${list.map(p=>`<div class="item"><span class="path">${esc(p)}</span></div>`).join('')}</div>
+      <p class="muted">GitHubの履歴からは元に戻せます。</p>
+      <div class="row" style="margin-top:12px"><span class="spacer"></span><button class="btn" data-a="closeSheet">やめる</button><button class="btn danger" data-a="doDelete">消す</button></div></div></div>`;
+  },
+  closeSheet(){$('#layer').innerHTML='';},
+  async doDelete(){
+    $('#layer').innerHTML='';
+    const list=[...S.checked]; S.err=null; S.msg=null; setBusy('消しています…'); render();
+    try{
+      await loadTree(true);
+      const entries=list.filter(p=>S.tree.map.has(p)).map(p=>({path:p,mode:S.tree.map.get(p).mode,type:'blob',sha:null}));
+      if(!entries.length) throw new Error('選んだファイルは、もうリポジトリにありません。');
+      const commit=await commitChanges(entries,entries.length===1?`Delete ${entries[0].path}`:`Delete ${entries.length} files`);
+      S.checked.clear(); S.busy=false;
+      S.msg=`${entries.length}件を消しました。${commit.html_url?` <a href="${esc(commit.html_url)}" target="_blank" rel="noopener">GitHubで見る</a>`:''}`;
+      await loadTree(true);
+    }catch(e){S.busy=false;S.err=e.message;}
+    render();
+  },
+};
+
+/* ---------- イベント ---------- */
+document.addEventListener('click',e=>{
+  const tb=e.target.closest('.tabs button');
+  if(tb){S.tab=tb.dataset.tab;S.msg=null;S.err=null;render();if(S.tab!=='set')refreshTree(false);return;}
+  const el=e.target.closest('[data-a]'); if(!el) return;
+  const fn=A[el.dataset.a]; if(fn){e.preventDefault();fn(el);}
+});
+document.addEventListener('change',async e=>{
+  const t=e.target;
+  if(t.id==='repoSel'){CFG.lastRepo=+t.value;save();S.tree=null;S.checked.clear();render();refreshTree(true);}
+  else if(t.id==='folderSel'){S.folder=t.value;await computeStatus();render();}
+  else if(t.id==='stripTop'){S.stripTop=t.checked;await computeStatus();render();}
+  else if(t.dataset&&t.dataset.p!==undefined){t.checked?S.checked.add(t.dataset.p):S.checked.delete(t.dataset.p);
+    const b=document.querySelector('[data-a="askDelete"]'); if(b){b.disabled=!S.checked.size;b.textContent=`${S.checked.size} 件をまとめて消す`;}}
+});
+let subTimer;
+document.addEventListener('input',e=>{
+  if(e.target.id==='subfolder'){S.subfolder=e.target.value;clearTimeout(subTimer);subTimer=setTimeout(async()=>{
+    await computeStatus(); const pos=e.target.selectionStart; render(); const i=$('#subfolder'); if(i){i.focus();try{i.setSelectionRange(pos,pos);}catch(_){}}},500);}
+  if(e.target.id==='filter'){S.filter=e.target.value;clearTimeout(subTimer);subTimer=setTimeout(()=>{const pos=e.target.selectionStart;render();const i=$('#filter');if(i){i.focus();try{i.setSelectionRange(pos,pos);}catch(_){}}},300);}
+});
+$('#fileInput').addEventListener('change',async e=>{
+  const fl=[...e.target.files]; if(!fl.length) return;
+  S.err=null; S.msg=null; setBusy('ファイルを読んでいます…'); render();
+  try{
+    const add=await readPicked(fl);
+    const byRel=new Map(S.files.map(f=>[f.rel,f])); add.forEach(f=>byRel.set(f.rel,f));
+    S.files=[...byRel.values()].sort((a,b)=>a.rel.localeCompare(b.rel));
+    S.hasTop=!!topFolderOf(S.files);
+    await computeStatus();
+    if(!S.files.length) S.err='アップできるファイルがありませんでした。';
+  }catch(err){S.err=err.message||'ファイルを読めませんでした。';}
+  S.busy=false; render();
+});
+
+/* ---------- 起動 ---------- */
+render(); if(S.tab!=='set') refreshTree(false);
+</script>
+</body>
+</html>
