@@ -154,9 +154,9 @@ a.hist-text { text-decoration: underline; text-underline-offset: 3px; text-decor
 .ad-card > * { max-width: 100%; }
 .ad-card > .ad-in { display: inline-block; vertical-align: top; max-width: none; } /* v7.0.1：幅より大きい広告は、全体をそのまま縮小（asobivaAdFit） */
 .ad-ph { border: 1px dashed #bbb; border-radius: 6px; background: #fafafa; color: #999; font-size: 12px; line-height: 1.6; padding: 22px 12px; text-align: center; }
-/* いいね（v6.8・v6.9 で画像の左下に重ねる形に）：高さ0の行をカードのすぐ下に置き、ボタンをカードの左下の角に重ねる（キャプション・並びに影響しない） */
-.like-row { position: relative; height: 0; margin-left: auto; margin-right: auto; z-index: 3; }
-.like-btn { position: absolute; left: 8px; bottom: 8px; display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 9px; margin: 0; border: none; border-radius: 15px; background: rgba(255, 255, 255, 0.9); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15); font: inherit; font-size: 13px; line-height: 1; color: #555; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+/* いいね（v6.8・v7.1 で下の段の右端に）：カードの段の一番下（キャプションがあればその下）に段を置き、ボタンは右端。画像・HTMLに重ならない */
+.like-row { display: flex; justify-content: flex-end; padding: 6px 8px 0 0; box-sizing: border-box; margin-left: auto; margin-right: auto; }
+.like-btn { position: relative; display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 9px; margin: 0; border: none; border-radius: 15px; background: rgba(255, 255, 255, 0.9); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15); font: inherit; font-size: 13px; line-height: 1; color: #555; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .like-btn svg { width: 17px; height: 17px; display: block; transition: transform 0.15s; }
 .like-btn svg path { fill: none; stroke: currentColor; stroke-width: 1.8; }
 .like-btn.on { color: #e0457b; }
@@ -198,10 +198,10 @@ a.hist-text { text-decoration: underline; text-underline-offset: 3px; text-decor
   <div class="site-header no-line">
     <a class="site-logo" href="index.html"><img src="images/logo_e4981fdc-3cab-4246-80ad-37873a70abd7.jpg" alt="TOP"></a>
     <button class="burger-btn" id="burgerBtn" aria-label="メニュー" onclick="document.getElementById('burgerMenu').classList.toggle('open')"><span></span><span></span><span></span></button>
-    <div class="burger-menu" id="burgerMenu"><div class="nav-list"><div class="nav-top"><a class="nav-link-item" href="index.html">TOP</a><a class="nav-link-item" href="asobiva.html" data-pf="2026-11-17">ASOBIVAとは？</a><a class="nav-link-item" href="asobiva-lab.html" data-pf="2027-03-01">ASOBIVA LAB</a></div><div class="nav-group"><div class="nav-group-label">音楽・映像・写真</div><a class="nav-link-item" href="music.html" data-pf="2026-11-17">0FILE</a><a class="nav-link-item" href="filmography.html" data-pf="2027-03-01">FILMOGRAPHY</a><a class="nav-link-item" href="one-shot.html" data-pf="2027-01-01">ONE SHOT</a></div><div class="nav-group"><div class="nav-group-label">絵本・イラスト</div><a class="nav-link-item" href="ehon.html" data-pf="2026-11-17">絵本コレクション</a><a class="nav-link-item" href="project-supana.html" data-pf="2027-01-01">PROJECT SUPANA</a></div><div class="nav-group"><div class="nav-group-label">シリーズ連載</div><a class="nav-link-item" href="oborogi.html" data-pf="2027-01-01">名を持たぬ哲学者</a><a class="nav-link-item" href="marumaru.html" data-pf="2026-11-17">〇〇の話</a><a class="nav-link-item" href="n.html" data-pf="2027-01-01">蟲屋Nの昆虫図鑑</a><a class="nav-link-item" href="yokai.html" data-pf="2026-11-17">榊原玄舟の百鬼奇譚</a><a class="nav-link-item current" href="page-13.html" data-pf="2027-01-01">ほらばな新聞</a><a class="nav-link-item" href="page-14.html" data-pf="2027-01-01">きょうの田中さん</a></div><div class="nav-group"><div class="nav-group-label">ゲーム・占い</div><a class="nav-link-item" href="game.html" data-pf="2026-11-17">豆太ピコのゲーム</a><a class="nav-link-item" href="pazle.html" data-pf="2027-05-01">あたまの体操パズル</a><a class="nav-link-item" href="shikaku.html" data-pf="2027-05-01">資格試験対策室</a><a class="nav-link-item" href="uranai.html" data-pf="2026-11-17">福徳神社</a></div></div></div>
+    <div class="burger-menu" id="burgerMenu"><div class="nav-list"><div class="nav-top"><a class="nav-link-item" href="index.html">TOP</a><a class="nav-link-item" href="asobiva.html" data-pf="2026-11-17">ASOBIVAとは？</a><a class="nav-link-item" href="asobiva-lab.html" data-pf="2027-03-01">ASOBIVA LAB</a></div><div class="nav-group"><div class="nav-group-label">音楽・映像・写真</div><a class="nav-link-item" href="music.html" data-pf="2026-11-17">0FILE</a><a class="nav-link-item" href="filmography.html" data-pf="2027-03-01">FILMOGRAPHY</a><a class="nav-link-item" href="one-shot.html" data-pf="2027-01-01">ONE SHOT</a></div><div class="nav-group"><div class="nav-group-label">絵本・図鑑・イラスト</div><a class="nav-link-item" href="ehon.html" data-pf="2026-11-17">絵本コレクション</a><a class="nav-link-item" href="project-supana.html" data-pf="2027-01-01">PROJECT SUPANA</a><a class="nav-link-item" href="n.html" data-pf="2027-01-01">蟲屋Nの昆虫図鑑</a><a class="nav-link-item" href="yokai.html" data-pf="2026-11-17">榊原玄舟の百鬼奇譚</a></div><div class="nav-group"><div class="nav-group-label">シリーズ連載</div><a class="nav-link-item" href="oborogi.html" data-pf="2026-12-01">名を持たぬ哲学者</a><a class="nav-link-item" href="marumaru.html" data-pf="2026-11-17">〇〇の話</a><a class="nav-link-item current" href="page-13.html" data-pf="2027-01-01">ほらばな新聞</a><a class="nav-link-item" href="page-14.html" data-pf="2027-01-01">きょうの田中さん</a></div><div class="nav-group"><div class="nav-group-label">学習・シュミレーション</div><a class="nav-link-item" href="shikaku.html" data-pf="2027-05-01">資格試験対策室</a><a class="nav-link-item" href="timelapse.html" data-pf="2027-05-01">TIMELAPSE</a></div><div class="nav-group"><div class="nav-group-label">ゲーム・パズル</div><a class="nav-link-item" href="game.html" data-pf="2026-11-17">豆太ピコのゲーム</a><a class="nav-link-item" href="pazle.html" data-pf="2027-05-01">あたまの体操パズル</a></div><div class="nav-group"><div class="nav-group-label">占い</div><a class="nav-link-item" href="uranai.html" data-pf="2026-11-17">福徳神社</a><a class="nav-link-item" href="page-20.html" data-pf="2027-05-01">占い手帳</a></div></div></div>
   </div>
   <div class="header-pair sp" style="--mb:16px">
-    <div class="banner-slot" style="--ar:1.0000;--bps:0.7;--bpw:0.35;"><img src="images/95d14e4e-e015-4f8c-9aa6-9eb57997d2f9_2.jpg" alt=""></div>
+    <div class="banner-slot" style="--ar:1.0000;--bps:0.7;--bpw:0.35;"><img src="images/38386136-a493-4885-aa07-336bb5774305_2.jpg" alt=""></div>
   </div>
   <div id="cardContainer">
     <div class="card-section sp is-html" style="--mb:0px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
@@ -332,7 +332,7 @@ body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;p
 })();
 </script></body>
 </html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
-    <div class="card-section sp is-html" style="--mb:16px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
+    <div class="card-section sp is-html" style="--mb:0px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
 <html lang=&quot;ja&quot;>
 <head>
 <meta charset=&quot;UTF-8&quot;>
@@ -402,88 +402,26 @@ body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;p
 })();
 </script></body>
 </html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
-    <div class="card-section gcar-section gcar-spread sp html-cell" style="--mb:16px"><div class="gcar-card" data-k="0"><div class="gcar-ui"><button type="button" class="gcar-prev" aria-label="前へ" onclick="asobivaGcar(this,-1)">‹</button><span class="gcar-count">1 / 2</span><button type="button" class="gcar-next" aria-label="次へ" onclick="asobivaGcar(this,1)">›</button></div><div class="gcar-stage">
-      <div class="gcar-slide on"><div class="group-card">
-    <div class="card-section sp" style="--mb:16px"><div class="html-card" style="--ps:0.9;"><iframe srcdoc="<!DOCTYPE html>
+    <div class="card-section sp sp-line html-cell" style="--mb:0px"><a class="card" href="asobiva_view.html#f=https%3A%2F%2Fasobiva.i-roiro.com%2F%E7%AC%AC317%E5%8F%B7.html"><img src="images/img_6025.jpg" alt="" loading="lazy"></a></div>
+    <div class="card-section sp sp-line html-cell" style="--mb:0px"><a class="card" href="asobiva_view.html#f=https%3A%2F%2Fasobiva.i-roiro.com%2F%E7%AC%AC763%E5%8F%B7.html"><img src="images/img_6055.jpg" alt="" loading="lazy"></a></div>
+    <div class="card-section sp html-cell" data-nla="1" style="--mb:0px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
 <html lang=&quot;ja&quot;>
 <head>
-<meta charset=&quot;utf-8&quot;/>
-<meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1&quot;/>
-<title>ほらばな新聞 第317号</title>
-<style>
-body{margin:0;background:#fff;color:#111;font-size:min(3.720931vw,16px);font-family:-apple-system,BlinkMacSystemFont,&quot;Hiragino Mincho ProN&quot;,serif;line-height:1.9;}
-.paper{max-width:430px;margin:0 auto;background:#fff;padding:min(0.930233vw,4px) min(4.651163vw,20px) min(4.651163vw,20px);box-sizing:border-box;}
-.masthead{padding:0 0 min(0.465117vw,2px);margin-bottom:min(0.930233vw,4px);}
-.paper-header{position:relative;display:flex;align-items:baseline;padding:0 0 min(0.465117vw,2px);margin-bottom:0;font-size:min(2.093024vw,9px);font-weight:400;border-bottom:1px solid #000;}
-.paper-header-issue{}
-.paper-header-name{position:absolute;left:50%;transform:translateX(-50%);font-weight:400;}
-.paper-header-date{margin-left:auto;}
-.title{font-size:min(9.767442vw,42px);font-weight:700;margin-top:min(0.930233vw,4px);}
-.meta{font-size:min(3.255814vw,14px);text-align:right;padding-right:min(0.930233vw,4px);}
-.logo-wrap{margin-top:min(0.930233vw,4px);margin-bottom:0;}
-h1{font-size:min(7.906977vw,34px);margin:0 0 min(2.790698vw,12px);line-height:1.3;}
-h2{font-size:min(5.581396vw,24px);margin:min(7.441861vw,32px) 0 min(1.860466vw,8px);}
-.hero{display:flex;align-items:center;justify-content:center;margin-bottom:min(0.930233vw,4px);background:#f7f7f7;}
-.thumb{display:flex;align-items:center;justify-content:center;margin:min(1.860466vw,8px) 0 min(2.790698vw,12px);background:#f7f7f7;}
-.hero img,.thumb img{width:100%;height:100%;object-fit:cover;display:block;}
-.byline{text-align:right;font-size:min(3.255814vw,14px);margin-top:min(2.325582vw,10px);}
-.dispatch{font-size:0.85em;color:#111;margin:0 0 0.5em;line-height:1.5;}
-.headline-band{background:#111;color:#fff;padding:min(2.325582vw,10px) min(2.790698vw,12px);margin:0 0 min(3.720931vw,16px);}
-.headline-band h1{color:#fff;margin:0;}
-.ad{border:1px solid #666;padding:min(2.790698vw,12px);margin-top:min(5.581396vw,24px);text-align:center;}
-.ad-inner{width:96%;margin:0 auto;}
-.ad-title{font-size:min(3.720931vw,16px);font-weight:700;text-align:left;margin:0 0 min(1.395349vw,6px);}
-.ad-copy{font-size:min(4.651163vw,20px);font-weight:700;line-height:1.5;text-align:left;margin:min(0.930233vw,4px) 0 min(0.465117vw,2px);}
-.company{text-align:right;font-size:min(2.55814vw,11px);color:#666;margin-top:min(0.465117vw,2px);}
-.ad-photo{width:96%!important;max-width:none!important;height:auto!important;display:block;margin:0 auto min(2.325582vw,10px) auto;}
-.logo-wrap{margin-bottom:min(0.930233vw,4px);}
-.paper-logo{max-width:100%;height:auto;display:block;}
-</style>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>区切り線</title>
+<link href=&quot;https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&amp;display=swap&quot; rel=&quot;stylesheet&quot;>
+<style>*{box-sizing:border-box;}
+body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;padding:0;line-height:1.7;}
+.page{max-width:600px;margin:0 auto;padding:24px 20px;}
+.divider-container{width:100%;margin-top:0px;margin-bottom:0px;}
+.divider{width:100%;border:none;border-top:1px solid #17191a;margin:0;}</style>
 </head>
 <body>
-<div class=&quot;paper&quot;>
-  <div class=&quot;masthead&quot;>
-    <div class=&quot;paper-header&quot;><span class=&quot;paper-header-issue&quot;>第317号</span><span class=&quot;paper-header-name&quot;>ほらばな新聞</span><span class=&quot;paper-header-date&quot;>2026年6月10日（水）</span></div>
-    <div class=&quot;logo-wrap&quot;><img class=&quot;paper-logo&quot; src=&quot;images/htmlimg_225aae99.jpg&quot; alt=&quot;ほらばな新聞&quot;/></div>
-    <div class=&quot;meta&quot;>第317号　2026年6月10日（水）　0円</div>
+<div class=&quot;page&quot;>
+  <div class=&quot;divider-container&quot;>
+    <hr class=&quot;divider&quot;>
   </div>
-  <div class=&quot;headline-band&quot;><h1>昨日、昨日が行方不明</h1></div>
-  <div class=&quot;hero&quot;><img src=&quot;images/htmlimg_ab438a86.jpg&quot; alt=&quot;&quot;/></div>
-  <div class=&quot;dispatch&quot;>【時間市・未明】</div>
-  <p>昨日未明、「昨日」が行方不明になったことが明らかになった。</p>
-<p>時間管理局によると、本日午前6時頃から全国各地で「昨日の記録だけが存在しない」という通報が相次いでいる。市民の多くは昨日を過ごした記憶を持っているものの、その記録だけが不自然に欠落しているという。</p>
-<p>写真帳には一昨日と本日の写真だけが残り、電子カレンダーでは昨日の日付部分だけが白紙になっていた。市内在住の会社員は「確かに会社へ行った記憶はある。昼食の内容まで覚えているのに、その日が昨日だった証拠がどこにもない」と話した。</p>
-<p>市内の小学校でも影響が出ている。一部の児童からは「昨日が存在しないなら宿題も存在しないのではないか」との主張が出ているが、学校側は「教育上の観点から昨日は存在したものとして扱う」と発表した。</p>
-<p>時間管理局では、「昨日」の自発的失踪説と第三者による持ち去り説の両面から調査を進めている。なお、一昨日および明日の安全は確認されている。</p>
-  <div class=&quot;byline&quot;>（社会部・時計野刻夫）</div>
-  <h2>月面商店街 夏祭り開催</h2>
-  <div class=&quot;thumb&quot;><img src=&quot;images/htmlimg_c731c2e0.jpg&quot; alt=&quot;&quot;/></div>
-  <div class=&quot;dispatch&quot;>【月面商店街・昨年度】</div>
-  <p>月面第三区商店街振興組合は、恒例の夏祭りを今月末に開催すると発表した。</p>
-<p>今年の目玉企画は「無重力金魚すくい大会」。参加者は専用宇宙服を着用し、空中を漂う金魚を追いかけながら競技を行う。</p>
-<p>昨年は金魚が会場外へ流出する事故が発生したため、今年は金魚全員にGPSを装着するという。</p>
-  <div class=&quot;byline&quot;>（科学部・月見うさ彦）</div>
-  <h2>地下42階で新しい空を発見</h2>
-  <div class=&quot;thumb&quot;><img src=&quot;images/htmlimg_f7ff810b.jpg&quot; alt=&quot;&quot;/></div>
-  <div class=&quot;dispatch&quot;>【穴沢市・昼】</div>
-  <p>地下42階の旧施設跡地で、青空に似た現象が発見された。</p>
-<p>調査隊によると、天井が存在しないように見える空間が広がり、白い雲のようなものまで確認できたという。</p>
-<p>専門家は「空なのか天井なのか判断できない」とコメントしているが、観光客の予約はすでに来月分まで埋まっている。</p>
-  <div class=&quot;byline&quot;>（調査部・深井穴郎）</div>
-  <h2>雲の清掃員不足深刻化</h2>
-  <div class=&quot;thumb&quot;><img src=&quot;images/htmlimg_f16677c4.jpg&quot; alt=&quot;&quot;/></div>
-  <div class=&quot;dispatch&quot;>【永和ビル・朝】</div>
-  <p>全国雲管理協会は、雲の清掃員不足が過去最悪水準に達したと発表した。</p>
-<p>近年は若年層の雲離れが進み、就職希望者が減少しているという。</p>
-<p>一部地域では清掃が追いつかず、積乱雲への落書きや夕焼けの色むらなどが確認されている。</p>
-  <div class=&quot;byline&quot;>（生活部・雲野ふわり）</div>
-  <div class=&quot;ad&quot;><div class=&quot;ad-inner&quot;>
-    <div class=&quot;ad-title&quot;>透明化飲料「スケルトン」</div>
-    <img class=&quot;ad-photo&quot; src=&quot;images/htmlimg_765df628.jpg&quot; alt=&quot;&quot;/>
-    <div class=&quot;ad-copy&quot;>見られたくない日に。</div>
-    <div class=&quot;company&quot;>株式会社透明生活</div>
-  </div></div>
-  <div style=&quot;text-align:right;font-size:min(2.790698vw,12px);margin-top:min(3.720931vw,16px);color:#888;&quot;>発行：ASOBIVA</div>
 </div>
 <style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
 (function(){
@@ -521,81 +459,26 @@ h2{font-size:min(5.581396vw,24px);margin:min(7.441861vw,32px) 0 min(1.860466vw,8
 })();
 </script></body>
 </html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
-      </div></div>
-      <div class="gcar-slide"><div class="group-card">
-    <div class="card-section sp" style="--mb:16px"><div class="html-card" style="--ps:0.9;"><iframe srcdoc="<!DOCTYPE html>
+    <div class="card-section sp html-cell" style="--mb:0px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
 <html lang=&quot;ja&quot;>
 <head>
-<meta charset=&quot;utf-8&quot;/>
-<meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1&quot;/>
-<title>ほらばな新聞 第763号</title>
+<meta charset=&quot;utf-8&quot;>
 <style>
-body{margin:0;background:#fff;color:#111;font-size:min(3.720931vw,16px);font-family:-apple-system,BlinkMacSystemFont,&quot;Hiragino Mincho ProN&quot;,serif;line-height:1.9;}
-.paper{max-width:430px;margin:0 auto;background:#fff;padding:min(0.930233vw,4px) min(4.651163vw,20px) min(4.651163vw,20px);box-sizing:border-box;}
-.masthead{padding:0 0 min(0.465117vw,2px);margin-bottom:min(0.930233vw,4px);}
-.paper-header{position:relative;display:flex;align-items:baseline;padding:0 0 min(0.465117vw,2px);margin-bottom:0;font-size:min(2.093024vw,9px);font-weight:400;border-bottom:1px solid #000;}
-.paper-header-issue{}
-.paper-header-name{position:absolute;left:50%;transform:translateX(-50%);font-weight:400;}
-.paper-header-date{margin-left:auto;}
-.title{font-size:min(9.767442vw,42px);font-weight:700;margin-top:min(0.930233vw,4px);}
-.meta{font-size:min(3.255814vw,14px);text-align:right;padding-right:min(0.930233vw,4px);}
-.logo-wrap{margin-top:min(0.930233vw,4px);margin-bottom:0;}
-h1{font-size:min(7.906977vw,34px);margin:0 0 min(2.790698vw,12px);line-height:1.3;}
-h2{font-size:min(5.581396vw,24px);margin:min(7.441861vw,32px) 0 min(1.860466vw,8px);}
-.hero{display:flex;align-items:center;justify-content:center;margin-bottom:min(0.930233vw,4px);background:#f7f7f7;}
-.thumb{display:flex;align-items:center;justify-content:center;margin:min(1.860466vw,8px) 0 min(2.790698vw,12px);background:#f7f7f7;}
-.hero img,.thumb img{width:100%;height:100%;object-fit:cover;display:block;}
-.byline{text-align:right;font-size:min(3.255814vw,14px);margin-top:min(2.325582vw,10px);}
-.dispatch{font-size:0.85em;color:#111;margin:0 0 0.5em;line-height:1.5;}
-.headline-band{background:#111;color:#fff;padding:min(2.325582vw,10px) min(2.790698vw,12px);margin:0 0 min(3.720931vw,16px);}
-.headline-band h1{color:#fff;margin:0;}
-.ad{border:1px solid #666;padding:min(2.790698vw,12px);margin-top:min(5.581396vw,24px);text-align:center;}
-.ad-inner{width:96%;margin:0 auto;}
-.ad-title{font-size:min(3.720931vw,16px);font-weight:700;text-align:left;margin:0 0 min(1.395349vw,6px);}
-.ad-copy{font-size:min(4.651163vw,20px);font-weight:700;line-height:1.5;text-align:left;margin:min(0.930233vw,4px) 0 min(0.465117vw,2px);}
-.company{text-align:right;font-size:min(2.55814vw,11px);color:#666;margin-top:min(0.465117vw,2px);}
-.ad-photo{width:96%!important;max-width:none!important;height:auto!important;display:block;margin:0 auto min(2.325582vw,10px) auto;}
-.logo-wrap{margin-bottom:min(0.930233vw,4px);}
-.paper-logo{max-width:100%;height:auto;display:block;}
+html, body { margin: 0; padding: 0; background: #fff; }
+.sns-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 0;
+}
+svg { width: 100%; height: 100%; display: block; }
+a:hover { opacity: 0.6; }
 </style>
 </head>
 <body>
-<div class=&quot;paper&quot;>
-  <div class=&quot;masthead&quot;>
-    <div class=&quot;paper-header&quot;><span class=&quot;paper-header-issue&quot;>第763号</span><span class=&quot;paper-header-name&quot;>ほらばな新聞</span><span class=&quot;paper-header-date&quot;>令和7年6月25日</span></div>
-    <div class=&quot;logo-wrap&quot;><img class=&quot;paper-logo&quot; src=&quot;images/htmlimg_225aae99.jpg&quot; alt=&quot;ほらばな新聞&quot;/></div>
-    <div class=&quot;meta&quot;>第763号　令和7年6月25日　0円</div>
-  </div>
-  <div class=&quot;headline-band&quot;><h1>返事が早すぎる男性</h1></div>
-  <div class=&quot;hero&quot;><img src=&quot;images/htmlimg_01833efb.jpg&quot; alt=&quot;&quot;/></div>
-  <div class=&quot;dispatch&quot;>【愛知県碧南市・午前10時】</div>
-  <p>愛知県碧南市の部品メーカー・丸田工業株式会社で先月、社内表彰制度「いきいき社員賞」の受賞者として営業部の坂口さん(31)が選ばれた。受賞理由は「メール返信速度が全社平均の14倍」。平均返信時間2分17秒という記録が人事部の目に留まったという。</p>
-<p>坂口さんは表彰式で「特に意識していたわけではない」と述べた。受信と同時に返信する習慣は入社1年目から自然についたもので、「読んだら返す、それだけです」と話した。</p>
-<p>ただし社内の反応は一様ではない。「返事が早すぎてこちらの準備が追いつかない」「返信を読む前に次のメールが来る」という声も複数の同僚から上がっており、営業部内では非公式に「坂口速」と呼ばれている。</p>
-<p>人事部の担当者は「表彰基準を速度だけで測ったのは今回が初めて」と認めつつ、「来年度の基準は見直しも含めて検討中」と述べた。坂口さんはこの取材への返答も、質問票を受け取ってから1分44秒で送り返してきた。</p>
-  <div class=&quot;byline&quot;>（社会部・時計野刻夫）</div>
-  <h2>透明傘屋の在庫問題</h2>
-  <div class=&quot;thumb&quot;><img src=&quot;images/htmlimg_9914348e.jpg&quot; alt=&quot;&quot;/></div>
-  <div class=&quot;dispatch&quot;>【大阪・堺筋本町・雨の日】</div>
-  <p>大阪市内で透明ビニール傘だけを扱う専門店「とうめい堂」が、在庫管理に苦慮していることを明らかにした。「どこに何本あるか把握しにくい」というのが主な理由で、現在は柄に番号シールを貼る運用で対応している。店主は「商品の特性上、仕方ない部分もある」と話した。売上は好調とのこと。</p>
-  <div class=&quot;byline&quot;>（生活部・習慣田くりお）</div>
-  <h2>深夜図書館の常連客</h2>
-  <div class=&quot;thumb&quot;><img src=&quot;images/htmlimg_d1ab86ab.jpg&quot; alt=&quot;&quot;/></div>
-  <div class=&quot;dispatch&quot;>【架空地・灯台下市・深夜0時】</div>
-  <p>灯台下市立図書館が今年導入した深夜開館サービス(23時〜翌2時)に、毎週同じ人物が来館していることが司書の間で話題になっている。いつも同じ席に座り、何も借りずに帰るという。貸出記録はゼロ。館長は「来館自体は歓迎している」と述べた。</p>
-  <div class=&quot;byline&quot;>（調査部・謎野さぐる）</div>
-  <h2>「しばらく」の長さ調査へ</h2>
-  <div class=&quot;thumb&quot;><img src=&quot;images/htmlimg_75c49e07.jpg&quot; alt=&quot;&quot;/></div>
-  <div class=&quot;dispatch&quot;>【東京・霞が関・午後1時】</div>
-  <p>消費者庁は今月、電話窓口などで使われる「しばらくお待ちください」の実態調査を初めて実施すると発表した。「しばらく」の認識が事業者と利用者で乖離しているという苦情が年間で一定数寄せられていることが背景にある。担当者は「公表まで、しばらくお待ちください」と述べた。</p>
-  <div class=&quot;byline&quot;>（社会部・群衆野ひとし）</div>
-  <div class=&quot;ad&quot;><div class=&quot;ad-inner&quot;>
-    <div class=&quot;ad-title&quot;>返信は、ごゆっくりどうぞ。</div>
-    <img class=&quot;ad-photo&quot; src=&quot;images/htmlimg_b1e29e6f.jpg&quot; alt=&quot;&quot;/>
-    <div class=&quot;ad-copy&quot;>急かしません。ただ、待っています。</div>
-    <div class=&quot;company&quot;>灯台下市立図書館</div>
-  </div></div>
-  <div style=&quot;text-align:right;font-size:min(2.790698vw,12px);margin-top:min(3.720931vw,16px);color:#888;&quot;>発行：ASOBIVA</div>
+<div class=&quot;sns-row&quot;>
+<a href=&quot;https://x.com/asobiva_info?s=11&amp;t=nlfW12xppBRr8PYP8kdywA&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; style=&quot;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;text-decoration:none;&quot;><svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot;><path d=&quot;M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z&quot; fill=&quot;#000&quot;/></svg></a><a href=&quot;https://www.instagram.com/asobiva_info?igsh=eGpidXBxd2NxOTh4&amp;utm_source=qr&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; style=&quot;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;text-decoration:none;&quot;><svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot;><rect x=&quot;2&quot; y=&quot;2&quot; width=&quot;20&quot; height=&quot;20&quot; rx=&quot;5.5&quot; stroke=&quot;#000&quot; stroke-width=&quot;1.8&quot;/><circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;4.5&quot; stroke=&quot;#000&quot; stroke-width=&quot;1.8&quot;/><circle cx=&quot;17.5&quot; cy=&quot;6.5&quot; r=&quot;1&quot; fill=&quot;#000&quot;/></svg></a>
 </div>
 <style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
 (function(){
@@ -633,8 +516,6 @@ h2{font-size:min(5.581396vw,24px);margin:min(7.441861vw,32px) 0 min(1.860466vw,8
 })();
 </script></body>
 </html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
-      </div></div>
-    </div><div class="gcar-ui"><button type="button" class="gcar-prev" aria-label="前へ" onclick="asobivaGcar(this,-1)">‹</button><span class="gcar-count">1 / 2</span><button type="button" class="gcar-next" aria-label="次へ" onclick="asobivaGcar(this,1)">›</button></div></div></div>
   </div>
   <div class="footer-section sp-top" style="--mb:0px"><footer class="ft-left" style="color:#707070;font-weight:300;--ft-max:600px;--ft-cgap:16px;"><div class="ft-body">本サイトの作品は、作品の制作にAIを使用しています。
 ASOBIVAでは、各コンテンツの一部作品を公開しています。その他の作品は、コンテンツごとにnote・BOOTH・YouTube等の外部サービスにて公開予定です。詳細は各コンテンツページをご確認ください。最新情報はX・Instagramにてお知らせしています。

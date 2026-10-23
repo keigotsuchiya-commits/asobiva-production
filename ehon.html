@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>絵本・イラスト | 絵本コレクション | ASOBIVA</title>
+<title>絵本・図鑑・イラスト | 絵本コレクション | ASOBIVA</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root { --bg:#e0e0e0; --white:#ffffff; --ink:#1a1a1a; --ink-soft:#888; --border:#e0e0e0; --page-max:480px; --cols:1; --header-h:44px; --side-m:24px; --col-gap:24px; --hdr-gap:24px; }
@@ -154,9 +154,9 @@ a.hist-text { text-decoration: underline; text-underline-offset: 3px; text-decor
 .ad-card > * { max-width: 100%; }
 .ad-card > .ad-in { display: inline-block; vertical-align: top; max-width: none; } /* v7.0.1：幅より大きい広告は、全体をそのまま縮小（asobivaAdFit） */
 .ad-ph { border: 1px dashed #bbb; border-radius: 6px; background: #fafafa; color: #999; font-size: 12px; line-height: 1.6; padding: 22px 12px; text-align: center; }
-/* いいね（v6.8・v6.9 で画像の左下に重ねる形に）：高さ0の行をカードのすぐ下に置き、ボタンをカードの左下の角に重ねる（キャプション・並びに影響しない） */
-.like-row { position: relative; height: 0; margin-left: auto; margin-right: auto; z-index: 3; }
-.like-btn { position: absolute; left: 8px; bottom: 8px; display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 9px; margin: 0; border: none; border-radius: 15px; background: rgba(255, 255, 255, 0.9); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15); font: inherit; font-size: 13px; line-height: 1; color: #555; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+/* いいね（v6.8・v7.1 で下の段の右端に）：カードの段の一番下（キャプションがあればその下）に段を置き、ボタンは右端。画像・HTMLに重ならない */
+.like-row { display: flex; justify-content: flex-end; padding: 6px 8px 0 0; box-sizing: border-box; margin-left: auto; margin-right: auto; }
+.like-btn { position: relative; display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 9px; margin: 0; border: none; border-radius: 15px; background: rgba(255, 255, 255, 0.9); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15); font: inherit; font-size: 13px; line-height: 1; color: #555; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .like-btn svg { width: 17px; height: 17px; display: block; transition: transform 0.15s; }
 .like-btn svg path { fill: none; stroke: currentColor; stroke-width: 1.8; }
 .like-btn.on { color: #e0457b; }
@@ -198,7 +198,7 @@ a.hist-text { text-decoration: underline; text-underline-offset: 3px; text-decor
   <div class="site-header no-line">
     <a class="site-logo" href="index.html"><img src="images/logo_e4981fdc-3cab-4246-80ad-37873a70abd7.jpg" alt="TOP"></a>
     <button class="burger-btn" id="burgerBtn" aria-label="メニュー" onclick="document.getElementById('burgerMenu').classList.toggle('open')"><span></span><span></span><span></span></button>
-    <div class="burger-menu" id="burgerMenu"><div class="nav-list"><div class="nav-top"><a class="nav-link-item" href="index.html">TOP</a><a class="nav-link-item" href="asobiva.html" data-pf="2026-11-17">ASOBIVAとは？</a><a class="nav-link-item" href="asobiva-lab.html" data-pf="2027-03-01">ASOBIVA LAB</a></div><div class="nav-group"><div class="nav-group-label">音楽・映像・写真</div><a class="nav-link-item" href="music.html" data-pf="2026-11-17">0FILE</a><a class="nav-link-item" href="filmography.html" data-pf="2027-03-01">FILMOGRAPHY</a><a class="nav-link-item" href="one-shot.html" data-pf="2027-01-01">ONE SHOT</a></div><div class="nav-group"><div class="nav-group-label">絵本・イラスト</div><a class="nav-link-item current" href="ehon.html" data-pf="2026-11-17">絵本コレクション</a><a class="nav-link-item" href="project-supana.html" data-pf="2027-01-01">PROJECT SUPANA</a></div><div class="nav-group"><div class="nav-group-label">シリーズ連載</div><a class="nav-link-item" href="oborogi.html" data-pf="2027-01-01">名を持たぬ哲学者</a><a class="nav-link-item" href="marumaru.html" data-pf="2026-11-17">〇〇の話</a><a class="nav-link-item" href="n.html" data-pf="2027-01-01">蟲屋Nの昆虫図鑑</a><a class="nav-link-item" href="yokai.html" data-pf="2026-11-17">榊原玄舟の百鬼奇譚</a><a class="nav-link-item" href="page-13.html" data-pf="2027-01-01">ほらばな新聞</a><a class="nav-link-item" href="page-14.html" data-pf="2027-01-01">きょうの田中さん</a></div><div class="nav-group"><div class="nav-group-label">ゲーム・占い</div><a class="nav-link-item" href="game.html" data-pf="2026-11-17">豆太ピコのゲーム</a><a class="nav-link-item" href="pazle.html" data-pf="2027-05-01">あたまの体操パズル</a><a class="nav-link-item" href="shikaku.html" data-pf="2027-05-01">資格試験対策室</a><a class="nav-link-item" href="uranai.html" data-pf="2026-11-17">福徳神社</a></div></div></div>
+    <div class="burger-menu" id="burgerMenu"><div class="nav-list"><div class="nav-top"><a class="nav-link-item" href="index.html">TOP</a><a class="nav-link-item" href="asobiva.html" data-pf="2026-11-17">ASOBIVAとは？</a><a class="nav-link-item" href="asobiva-lab.html" data-pf="2027-03-01">ASOBIVA LAB</a></div><div class="nav-group"><div class="nav-group-label">音楽・映像・写真</div><a class="nav-link-item" href="music.html" data-pf="2026-11-17">0FILE</a><a class="nav-link-item" href="filmography.html" data-pf="2027-03-01">FILMOGRAPHY</a><a class="nav-link-item" href="one-shot.html" data-pf="2027-01-01">ONE SHOT</a></div><div class="nav-group"><div class="nav-group-label">絵本・図鑑・イラスト</div><a class="nav-link-item current" href="ehon.html" data-pf="2026-11-17">絵本コレクション</a><a class="nav-link-item" href="project-supana.html" data-pf="2027-01-01">PROJECT SUPANA</a><a class="nav-link-item" href="n.html" data-pf="2027-01-01">蟲屋Nの昆虫図鑑</a><a class="nav-link-item" href="yokai.html" data-pf="2026-11-17">榊原玄舟の百鬼奇譚</a></div><div class="nav-group"><div class="nav-group-label">シリーズ連載</div><a class="nav-link-item" href="oborogi.html" data-pf="2026-12-01">名を持たぬ哲学者</a><a class="nav-link-item" href="marumaru.html" data-pf="2026-11-17">〇〇の話</a><a class="nav-link-item" href="page-13.html" data-pf="2027-01-01">ほらばな新聞</a><a class="nav-link-item" href="page-14.html" data-pf="2027-01-01">きょうの田中さん</a></div><div class="nav-group"><div class="nav-group-label">学習・シュミレーション</div><a class="nav-link-item" href="shikaku.html" data-pf="2027-05-01">資格試験対策室</a><a class="nav-link-item" href="timelapse.html" data-pf="2027-05-01">TIMELAPSE</a></div><div class="nav-group"><div class="nav-group-label">ゲーム・パズル</div><a class="nav-link-item" href="game.html" data-pf="2026-11-17">豆太ピコのゲーム</a><a class="nav-link-item" href="pazle.html" data-pf="2027-05-01">あたまの体操パズル</a></div><div class="nav-group"><div class="nav-group-label">占い</div><a class="nav-link-item" href="uranai.html" data-pf="2026-11-17">福徳神社</a><a class="nav-link-item" href="page-20.html" data-pf="2027-05-01">占い手帳</a></div></div></div>
   </div>
   <div class="header-pair sp" style="--mb:16px">
     <div class="banner-slot" style="--ar:1.0000;--bps:0.7;--bpw:0.35;"><img src="images/1793593d-5b31-4776-b48e-b60c4a200e4a_2.jpg" alt=""></div>
@@ -462,11 +462,12 @@ body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;p
 })();
 </script></body>
 </html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
-    <div class="card-section sp sp-dot html-cell" style="--mb:16px"><a class="card" href="https://asobiva.i-roiro.com/kininaruki"><img src="images/ee627a5b-e6e3-4470-ad46-862f2c017e39.jpg" alt="" loading="lazy"></a><a class="card-cap cap-left" style="--ci:9;" href="https://asobiva.i-roiro.com/kininaruki"><span class="cap-in">いつもの道、いつもの朝。マルコは今日も、同じ坂道を歩いていく。</span></a></div>
-    <div class="card-section sp sp-dot html-cell" style="--mb:16px" data-pf="2026-12-01"><a class="card" href="https://asobiva.i-roiro.com/kokoniiruyo"><img src="images/f1df348e-f008-439d-920d-e04fc0383339.jpg" alt="" loading="lazy"></a></div>
-    <div class="card-section sp sp-dot html-cell" style="--mb:16px" data-pf="2026-12-01"><div class="card"><img src="images/6dce7d04-4154-4a0b-bfa7-0772077310ac.jpg" alt="" loading="lazy"></div></div>
-    <div class="card-section sp sp-dot html-cell" style="--mb:16px" data-pf="2026-12-01"><div class="card"><img src="images/accaf44b-8b45-434f-bd9c-9eb09dacf7d8.jpg" alt="" loading="lazy"></div></div>
-    <div class="card-section sp sp-dot html-cell" style="--mb:16px" data-pf="2027-01-01"><div class="card"><img src="images/89ebdfe2-57fc-4730-a7d4-543a798323c3.jpg" alt="" loading="lazy"></div></div>
+    <div class="card-section sp sp-line html-cell" style="--mb:16px"><a class="card" href="https://asobiva.i-roiro.com/kininaruki"><img src="images/ee627a5b-e6e3-4470-ad46-862f2c017e39.jpg" alt="" loading="lazy"></a><a class="card-cap cap-left" style="--ci:9;" href="https://asobiva.i-roiro.com/kininaruki"><span class="cap-in">いつもの道、いつもの朝。マルコは今日も、同じ坂道を歩いていく。</span></a><div class="like-row"><button type="button" class="like-btn" data-like-id="cmux59rgqn2lhf" aria-label="いいね" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.6-4.6-9.4-9.3C1.4 8 3.4 4.8 6.7 4.8c2 0 3.5 1.2 5.3 3.1 1.8-1.9 3.3-3.1 5.3-3.1 3.3 0 5.3 3.2 4.1 6.4-1.8 4.7-9.4 9.3-9.4 9.3z"/></svg><span class="like-n"></span></button></div></div>
+    <div class="card-section sp sp-line html-cell" style="--mb:16px" data-pf="2026-12-01"><a class="card" href="https://asobiva.i-roiro.com/kokoniiruyo"><img src="images/f1df348e-f008-439d-920d-e04fc0383339.jpg" alt="" loading="lazy"></a><a class="card-cap cap-left" style="--ci:9;" href="https://asobiva.i-roiro.com/kokoniiruyo"><span class="cap-in">麦畑の真ん中。鳥が来るたび、彼は大きく腕を広げた。</span></a><div class="like-row"><button type="button" class="like-btn" data-like-id="cmux7n840ogq4o" aria-label="いいね" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.6-4.6-9.4-9.3C1.4 8 3.4 4.8 6.7 4.8c2 0 3.5 1.2 5.3 3.1 1.8-1.9 3.3-3.1 5.3-3.1 3.3 0 5.3 3.2 4.1 6.4-1.8 4.7-9.4 9.3-9.4 9.3z"/></svg><span class="like-n"></span></button></div></div>
+    <div class="card-section sp sp-line html-cell" style="--mb:16px"><div class="card"><img src="images/cc072216-1ded-4487-bed2-af82d8696c52_4.jpg" alt="" loading="lazy"></div></div>
+    <div class="card-section sp sp-line html-cell" style="--mb:16px" data-pf="2027-01-01"><div class="card"><img src="images/6dce7d04-4154-4a0b-bfa7-0772077310ac.jpg" alt="" loading="lazy"></div></div>
+    <div class="card-section sp sp-line html-cell" style="--mb:16px" data-pf="2027-01-01"><div class="card"><img src="images/accaf44b-8b45-434f-bd9c-9eb09dacf7d8.jpg" alt="" loading="lazy"></div></div>
+    <div class="card-section sp sp-line html-cell" style="--mb:16px" data-pf="2027-01-01"><div class="card"><img src="images/89ebdfe2-57fc-4730-a7d4-543a798323c3.jpg" alt="" loading="lazy"></div></div>
     <div class="card-section sp is-html" data-nla="1" style="--mb:16px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
 <html lang=&quot;ja&quot;>
 <head>
@@ -527,9 +528,9 @@ body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;p
 })();
 </script></body>
 </html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
-    <div class="card-section sp sp-dot html-cell" style="--mb:16px" data-pf="2027-01-01"><div class="card"><img src="images/7864e35a-246c-48e6-b6b7-0302c7e06d1c.jpg" alt="" loading="lazy"></div></div>
-    <div class="card-section sp html-cell" style="--mb:16px"><div class="card"><img src="images/cc072216-1ded-4487-bed2-af82d8696c52_3.jpg" alt="" loading="lazy"></div></div>
-    <div class="card-section sp is-html" style="--mb:0px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
+    <div class="card-section sp sp-line html-cell" style="--mb:16px" data-pf="2027-01-01"><div class="card"><img src="images/7864e35a-246c-48e6-b6b7-0302c7e06d1c.jpg" alt="" loading="lazy"></div></div>
+    <div class="card-section sp sp-line html-cell" style="--mb:16px"><div class="card"><img src="images/cc072216-1ded-4487-bed2-af82d8696c52_3.jpg" alt="" loading="lazy"></div></div>
+    <div class="card-section sp is-html" data-nla="1" style="--mb:0px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
 <html lang=&quot;ja&quot;>
 <head>
 <meta charset=&quot;UTF-8&quot;>

@@ -154,9 +154,9 @@ a.hist-text { text-decoration: underline; text-underline-offset: 3px; text-decor
 .ad-card > * { max-width: 100%; }
 .ad-card > .ad-in { display: inline-block; vertical-align: top; max-width: none; } /* v7.0.1：幅より大きい広告は、全体をそのまま縮小（asobivaAdFit） */
 .ad-ph { border: 1px dashed #bbb; border-radius: 6px; background: #fafafa; color: #999; font-size: 12px; line-height: 1.6; padding: 22px 12px; text-align: center; }
-/* いいね（v6.8・v6.9 で画像の左下に重ねる形に）：高さ0の行をカードのすぐ下に置き、ボタンをカードの左下の角に重ねる（キャプション・並びに影響しない） */
-.like-row { position: relative; height: 0; margin-left: auto; margin-right: auto; z-index: 3; }
-.like-btn { position: absolute; left: 8px; bottom: 8px; display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 9px; margin: 0; border: none; border-radius: 15px; background: rgba(255, 255, 255, 0.9); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15); font: inherit; font-size: 13px; line-height: 1; color: #555; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+/* いいね（v6.8・v7.1 で下の段の右端に）：カードの段の一番下（キャプションがあればその下）に段を置き、ボタンは右端。画像・HTMLに重ならない */
+.like-row { display: flex; justify-content: flex-end; padding: 6px 8px 0 0; box-sizing: border-box; margin-left: auto; margin-right: auto; }
+.like-btn { position: relative; display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 9px; margin: 0; border: none; border-radius: 15px; background: rgba(255, 255, 255, 0.9); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15); font: inherit; font-size: 13px; line-height: 1; color: #555; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .like-btn svg { width: 17px; height: 17px; display: block; transition: transform 0.15s; }
 .like-btn svg path { fill: none; stroke: currentColor; stroke-width: 1.8; }
 .like-btn.on { color: #e0457b; }
@@ -198,7 +198,7 @@ a.hist-text { text-decoration: underline; text-underline-offset: 3px; text-decor
   <div class="site-header no-line">
     <a class="site-logo" href="index.html"><img src="images/logo_e4981fdc-3cab-4246-80ad-37873a70abd7.jpg" alt="TOP"></a>
     <button class="burger-btn" id="burgerBtn" aria-label="メニュー" onclick="document.getElementById('burgerMenu').classList.toggle('open')"><span></span><span></span><span></span></button>
-    <div class="burger-menu" id="burgerMenu"><div class="nav-list"><div class="nav-top"><a class="nav-link-item" href="index.html">TOP</a><a class="nav-link-item" href="asobiva.html" data-pf="2026-11-17">ASOBIVAとは？</a><a class="nav-link-item" href="asobiva-lab.html" data-pf="2027-03-01">ASOBIVA LAB</a></div><div class="nav-group"><div class="nav-group-label">音楽・映像・写真</div><a class="nav-link-item" href="music.html" data-pf="2026-11-17">0FILE</a><a class="nav-link-item" href="filmography.html" data-pf="2027-03-01">FILMOGRAPHY</a><a class="nav-link-item" href="one-shot.html" data-pf="2027-01-01">ONE SHOT</a></div><div class="nav-group"><div class="nav-group-label">絵本・イラスト</div><a class="nav-link-item" href="ehon.html" data-pf="2026-11-17">絵本コレクション</a><a class="nav-link-item" href="project-supana.html" data-pf="2027-01-01">PROJECT SUPANA</a></div><div class="nav-group"><div class="nav-group-label">シリーズ連載</div><a class="nav-link-item current" href="oborogi.html" data-pf="2027-01-01">名を持たぬ哲学者</a><a class="nav-link-item" href="marumaru.html" data-pf="2026-11-17">〇〇の話</a><a class="nav-link-item" href="n.html" data-pf="2027-01-01">蟲屋Nの昆虫図鑑</a><a class="nav-link-item" href="yokai.html" data-pf="2026-11-17">榊原玄舟の百鬼奇譚</a><a class="nav-link-item" href="page-13.html" data-pf="2027-01-01">ほらばな新聞</a><a class="nav-link-item" href="page-14.html" data-pf="2027-01-01">きょうの田中さん</a></div><div class="nav-group"><div class="nav-group-label">ゲーム・占い</div><a class="nav-link-item" href="game.html" data-pf="2026-11-17">豆太ピコのゲーム</a><a class="nav-link-item" href="pazle.html" data-pf="2027-05-01">あたまの体操パズル</a><a class="nav-link-item" href="shikaku.html" data-pf="2027-05-01">資格試験対策室</a><a class="nav-link-item" href="uranai.html" data-pf="2026-11-17">福徳神社</a></div></div></div>
+    <div class="burger-menu" id="burgerMenu"><div class="nav-list"><div class="nav-top"><a class="nav-link-item" href="index.html">TOP</a><a class="nav-link-item" href="asobiva.html" data-pf="2026-11-17">ASOBIVAとは？</a><a class="nav-link-item" href="asobiva-lab.html" data-pf="2027-03-01">ASOBIVA LAB</a></div><div class="nav-group"><div class="nav-group-label">音楽・映像・写真</div><a class="nav-link-item" href="music.html" data-pf="2026-11-17">0FILE</a><a class="nav-link-item" href="filmography.html" data-pf="2027-03-01">FILMOGRAPHY</a><a class="nav-link-item" href="one-shot.html" data-pf="2027-01-01">ONE SHOT</a></div><div class="nav-group"><div class="nav-group-label">絵本・図鑑・イラスト</div><a class="nav-link-item" href="ehon.html" data-pf="2026-11-17">絵本コレクション</a><a class="nav-link-item" href="project-supana.html" data-pf="2027-01-01">PROJECT SUPANA</a><a class="nav-link-item" href="n.html" data-pf="2027-01-01">蟲屋Nの昆虫図鑑</a><a class="nav-link-item" href="yokai.html" data-pf="2026-11-17">榊原玄舟の百鬼奇譚</a></div><div class="nav-group"><div class="nav-group-label">シリーズ連載</div><a class="nav-link-item current" href="oborogi.html" data-pf="2026-12-01">名を持たぬ哲学者</a><a class="nav-link-item" href="marumaru.html" data-pf="2026-11-17">〇〇の話</a><a class="nav-link-item" href="page-13.html" data-pf="2027-01-01">ほらばな新聞</a><a class="nav-link-item" href="page-14.html" data-pf="2027-01-01">きょうの田中さん</a></div><div class="nav-group"><div class="nav-group-label">学習・シュミレーション</div><a class="nav-link-item" href="shikaku.html" data-pf="2027-05-01">資格試験対策室</a><a class="nav-link-item" href="timelapse.html" data-pf="2027-05-01">TIMELAPSE</a></div><div class="nav-group"><div class="nav-group-label">ゲーム・パズル</div><a class="nav-link-item" href="game.html" data-pf="2026-11-17">豆太ピコのゲーム</a><a class="nav-link-item" href="pazle.html" data-pf="2027-05-01">あたまの体操パズル</a></div><div class="nav-group"><div class="nav-group-label">占い</div><a class="nav-link-item" href="uranai.html" data-pf="2026-11-17">福徳神社</a><a class="nav-link-item" href="page-20.html" data-pf="2027-05-01">占い手帳</a></div></div></div>
   </div>
   <div class="header-pair sp" style="--mb:0px">
     <div class="banner-slot" style="--ar:1.0000;--bps:0.7;--bpw:0.35;"><img src="images/img_5678_2.jpg" alt=""></div>
@@ -402,203 +402,8 @@ body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;p
 })();
 </script></body>
 </html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
-    <div class="card-section gcar-section gcar-spread sp html-cell" style="--mb:16px"><div class="gcar-card" data-k="0"><div class="gcar-stage">
-      <div class="gcar-slide on"><div class="group-card">
-    <div class="card-section sp" style="--mb:0px"><div class="html-card" style="--ps:0.9;"><iframe srcdoc="<!DOCTYPE html>
-<html lang=&quot;ja&quot;>
-<head>
-<meta charset=&quot;UTF-8&quot;>
-<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
-<title>名を持たぬ哲学者｜第一回：沈黙の塔</title>
-<style>
-* { box-sizing:border-box; margin:0; padding:0; }
-body { font-family:'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif; background:#fff; color:#333; font-size:min(3.720931vw,16px); }
-.p-article { max-width: 430px; margin:0 auto; }
-.p-header-img { width:100%; height:auto; display:block; }
-.p-body { padding:min(5.581396vw,24px) min(4.651163vw,20px) min(13.023256vw,56px); }
-.p-title { font-size:min(3.953489vw,17px); font-weight:bold; line-height:1.6; color:#1a1a1a; margin-bottom:min(3.720931vw,16px); letter-spacing:0.02em; }
-.p-author { display:flex; align-items:center; gap:min(2.325582vw,10px); margin-bottom:min(6.511628vw,28px); padding-bottom:min(4.651163vw,20px); border-bottom: 1px solid #eee; }
-.p-author-avatar { width:min(9.302326vw,40px); height:min(9.302326vw,40px); border-radius: 50%; background:#bbb; flex-shrink:0; overflow:hidden; margin-top:min(0.697675vw,3px); }
-.p-author-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
-.p-author-name { font-size:min(3.023256vw,13px); color:#333; font-weight:bold; line-height:1.4; }
-.p-author-date { font-size:min(2.790698vw,12px); color:#aaa; margin-top:min(0.465117vw,2px); }
-.p-text-block { font-size:min(3.488373vw,15px); line-height:2.0; color:#333; margin-bottom:min(5.581396vw,24px); letter-spacing:0.02em; }
-.p-bold-block { font-size:min(3.488373vw,15px); line-height:2.0; color:#1a1a1a; margin-bottom:min(5.581396vw,24px); letter-spacing:0.02em; font-weight:bold; }
-.p-quote-block { background:#f7f7f7; border-radius: 4px; padding:min(3.255814vw,14px) min(4.186047vw,18px); margin-bottom:min(5.581396vw,24px); font-size:min(3.488373vw,15px); line-height:1.8; color:#1a1a1a; font-weight:bold; letter-spacing:0.02em; }
-.p-divider { border: none; border-top: 1px solid #e8e8e8; margin:min(7.441861vw,32px) 0; }
-.p-next { font-size:min(3.255814vw,14px); line-height:1.8; color:#333; display:flex; gap:min(1.395349vw,6px); align-items:baseline; }
-</style>
-</head>
-<body>
-<div class=&quot;p-article&quot;><img class=&quot;p-header-img&quot; src=&quot;images/htmlimg_32375e6e.jpg&quot; alt=&quot;&quot;><div class=&quot;p-body&quot;><h1 class=&quot;p-title&quot;>名を持たぬ哲学者｜第一回：沈黙の塔</h1><div class=&quot;p-author&quot;><div class=&quot;p-author-avatar&quot;><img src=&quot;images/htmlimg_63423413.jpg&quot; alt=&quot;&quot;></div><div><div class=&quot;p-author-name&quot;>朧木 周吾郎 | SHUGORO OBOROGI</div><div class=&quot;p-author-date&quot;>2026年6月28日 20:39</div></div></div><p class=&quot;p-text-block&quot;>その哲学者の名を、私は知らない。<br>誰の記録にも残っていなかった。書物にも、口伝にも。ただ、いくつかの痕跡だけがある。ある石板。誰にも読まれなかった本。崩れかけた、塔。</p><p class=&quot;p-text-block&quot;>彼の名は、おそらく語られることを望まなかった。けれど、“何か”は残したかったのだろう。語られずに、しかし確かにそこにあるもの。</p><p class=&quot;p-text-block&quot;>私は、そんな痕跡を集めている。調査でもなく、研究でもない。ただ、聞こえなかった声の気配をなぞっているだけだ。</p><p class=&quot;p-text-block&quot;>その夜、私はある町の外れにいた。舗装されていない道。電灯の切れた角。かつて「時間を知らせていた」塔があるという噂を聞いて、私はそこへ向かった。</p><p class=&quot;p-text-block&quot;>塔は、ただそこに立っていた。鐘はなかった。時計の針も、落ちていた。音はなく、風さえも吹いていなかった。私は、そこで沈黙を試みた。それは、“言葉が通じない場所”での礼儀のような気がしたから。</p><p class=&quot;p-text-block&quot;>1時間と、13分。まるで何かの“儀式”のような時間だった。塔の足元に、石板があった。そこには刻まれていた。</p><p class=&quot;p-bold-block&quot;>「言葉にされなかったものが、あなたの正体だ。」</p><p class=&quot;p-text-block&quot;>この言葉を残したのが、彼だとは限らない。けれど、そう思いたくなるような沈黙だった。</p><p class=&quot;p-text-block&quot;>私はいま、“名を持たぬ哲学者”の痕跡を少しずつ辿っている。それは、記録ではなく記憶でもない、沈黙の残響を拾い集める行為だ。この塔は、その始まりにすぎない。</p><hr class=&quot;p-divider&quot;><div class=&quot;p-next&quot;><span>◆</span> 次回：「白紙の書棚」──声を持たない記憶と、読まれなかった書物について。</div><hr class=&quot;p-divider&quot;></div></div>
-<style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
-(function(){
-  function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }
-  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-init') report(); });
-  window.addEventListener('load', report);
-  if(document.readyState==='complete') report();
-  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
-  var applied = null;
-  function applyScale(s){
-    if(!document.body || applied === s) return;
-    var first = applied === null;
-    applied = s;
-    if(first &amp;&amp; s === 1) return; // 一度も拡大・縮小していなければ、何もしない
-    // body とその中のすべての要素の元の文字の大きさを先に測ってから、まとめて倍にする
-    // （文字を直接持たない段落なども倍にして、行の間隔が文字と同じ割合で変わるようにする）
-    var nodes = [document.body].concat(Array.prototype.slice.call(document.body.querySelectorAll('*'))), i, el;
-    for(i=0;i<nodes.length;i++){
-      if(s === 1) break; // 元に戻すときは、元の大きさを測り直さない
-      el = nodes[i];
-      if(/^(IMG|VIDEO|IFRAME|SVG|SCRIPT|STYLE|PATH|G|CIRCLE|RECT|LINE|POLYGON|POLYLINE|ELLIPSE|USE|DEFS)$/i.test(el.tagName)) continue;
-      if(el.getAttribute('data-asobiva-fs')) continue;
-      el.setAttribute('data-asobiva-fs', getComputedStyle(el).fontSize);
-      // もともとHTMLが持っている文字の大きさの指定（例：プロフィールの「名前 120%」）を覚えておき、100%に戻すときはそれに戻す（v4.7）
-      el.setAttribute('data-asobiva-fs0', el.style.fontSize || '');
-    }
-    for(i=0;i<nodes.length;i++){
-      var base = parseFloat(nodes[i].getAttribute('data-asobiva-fs'));
-      if(isFinite(base)) nodes[i].style.fontSize = s === 1 ? (nodes[i].getAttribute('data-asobiva-fs0') || '') : (base * s) + 'px';
-    }
-    report();
-  }
-  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-scale') applyScale(e.data.scale); });
-  parent.postMessage({ type:'asobiva-need-scale' }, '*');
-})();
-</script></body>
-</html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
-      </div></div>
-      <div class="gcar-slide"><div class="group-card">
-    <div class="card-section sp" style="--mb:0px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
-<html lang=&quot;ja&quot;>
-<head>
-<meta charset=&quot;UTF-8&quot;>
-<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
-<title>名を持たぬ哲学者｜第二回：白紙の書棚</title>
-<style>
-* { box-sizing:border-box; margin:0; padding:0; }
-body { font-family:'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif; background:#fff; color:#333; font-size:min(3.720931vw,16px); }
-.p-article { max-width: 430px; margin:0 auto; }
-.p-header-img { width:100%; height:auto; display:block; }
-.p-body { padding:min(5.581396vw,24px) min(4.651163vw,20px) min(13.023256vw,56px); }
-.p-title { font-size:min(3.953489vw,17px); font-weight:bold; line-height:1.6; color:#1a1a1a; margin-bottom:min(3.720931vw,16px); letter-spacing:0.02em; }
-.p-author { display:flex; align-items:center; gap:min(2.325582vw,10px); margin-bottom:min(6.511628vw,28px); padding-bottom:min(4.651163vw,20px); border-bottom: 1px solid #eee; }
-.p-author-avatar { width:min(9.302326vw,40px); height:min(9.302326vw,40px); border-radius: 50%; background:#bbb; flex-shrink:0; overflow:hidden; margin-top:min(0.697675vw,3px); }
-.p-author-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
-.p-author-name { font-size:min(3.023256vw,13px); color:#333; font-weight:bold; line-height:1.4; }
-.p-author-date { font-size:min(2.790698vw,12px); color:#aaa; margin-top:min(0.465117vw,2px); }
-.p-text-block { font-size:min(3.488373vw,15px); line-height:2.0; color:#333; margin-bottom:min(5.581396vw,24px); letter-spacing:0.02em; }
-.p-bold-block { font-size:min(3.488373vw,15px); line-height:2.0; color:#1a1a1a; margin-bottom:min(5.581396vw,24px); letter-spacing:0.02em; font-weight:bold; }
-.p-quote-block { background:#f7f7f7; border-radius: 4px; padding:min(3.255814vw,14px) min(4.186047vw,18px); margin-bottom:min(5.581396vw,24px); font-size:min(3.488373vw,15px); line-height:1.8; color:#1a1a1a; font-weight:bold; letter-spacing:0.02em; }
-.p-divider { border: none; border-top: 1px solid #e8e8e8; margin:min(7.441861vw,32px) 0; }
-.p-next { font-size:min(3.255814vw,14px); line-height:1.8; color:#333; display:flex; gap:min(1.395349vw,6px); align-items:baseline; }
-</style>
-</head>
-<body>
-<div class=&quot;p-article&quot;><img class=&quot;p-header-img&quot; src=&quot;images/htmlimg_a1ac13f9.jpg&quot; alt=&quot;&quot;><div class=&quot;p-body&quot;><h1 class=&quot;p-title&quot;>名を持たぬ哲学者｜第二回：白紙の書棚</h1><div class=&quot;p-author&quot;><div class=&quot;p-author-avatar&quot;><img src=&quot;images/htmlimg_63423413.jpg&quot; alt=&quot;&quot;></div><div><div class=&quot;p-author-name&quot;>朧木 周吾郎 | SHUGORO OBOROGI</div><div class=&quot;p-author-date&quot;>2026年6月28日 20:45</div></div></div><p class=&quot;p-text-block&quot;>その日、私は崩れかけた家屋の中にいた。かつて誰かが暮らしていた場所。壁は剥がれ、天井は落ちかけていた。埃が積もった床の上に、古びた書棚がひとつだけ残されていた。</p><p class=&quot;p-text-block&quot;>本があった。だが、どのページにも文字はなかった。ただの白紙だった。けれど、ページはわずかに擦れていた。誰かが、その本を読んだように。文字がないのに、読むことはできるのだろうか？それとも、読むという行為そのものが、この白紙に意味を与えていたのだろうか。</p><p class=&quot;p-text-block&quot;>私は本をめくった。そこに「何かを書き残そうとした」形跡はない。ただ、白いページが連なっていた。けれど、不思議なことに、確かに誰かの“記憶”を読んでいるような気がした。読み終えたあと、私は棚の裏側にひとつの刻印を見つけた。</p><p class=&quot;p-bold-block&quot;>「読むという行為が、書かれていないものに意味を与えることもある。」<br></p><p class=&quot;p-text-block&quot;>この言葉を誰が残したかは、わからない。けれど、またあの哲学者の気配がした。彼は、語らないことで語る人物だった。白紙の本もまた、彼の“思考の痕跡”だったのかもしれない。私は今日も、言葉にされなかったものを拾い集めている。それは、記録でも記憶でもない、沈黙の中に残された読まれた痕跡。この白紙の書棚も、そのひとつだ。</p><hr class=&quot;p-divider&quot;><div class=&quot;p-next&quot;><span>◆</span> 次回：「名を呼ばれなかった椅子」──座ることのない場所と、身体の不在について。</div><hr class=&quot;p-divider&quot;></div></div>
-<style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
-(function(){
-  function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }
-  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-init') report(); });
-  window.addEventListener('load', report);
-  if(document.readyState==='complete') report();
-  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
-  var applied = null;
-  function applyScale(s){
-    if(!document.body || applied === s) return;
-    var first = applied === null;
-    applied = s;
-    if(first &amp;&amp; s === 1) return; // 一度も拡大・縮小していなければ、何もしない
-    // body とその中のすべての要素の元の文字の大きさを先に測ってから、まとめて倍にする
-    // （文字を直接持たない段落なども倍にして、行の間隔が文字と同じ割合で変わるようにする）
-    var nodes = [document.body].concat(Array.prototype.slice.call(document.body.querySelectorAll('*'))), i, el;
-    for(i=0;i<nodes.length;i++){
-      if(s === 1) break; // 元に戻すときは、元の大きさを測り直さない
-      el = nodes[i];
-      if(/^(IMG|VIDEO|IFRAME|SVG|SCRIPT|STYLE|PATH|G|CIRCLE|RECT|LINE|POLYGON|POLYLINE|ELLIPSE|USE|DEFS)$/i.test(el.tagName)) continue;
-      if(el.getAttribute('data-asobiva-fs')) continue;
-      el.setAttribute('data-asobiva-fs', getComputedStyle(el).fontSize);
-      // もともとHTMLが持っている文字の大きさの指定（例：プロフィールの「名前 120%」）を覚えておき、100%に戻すときはそれに戻す（v4.7）
-      el.setAttribute('data-asobiva-fs0', el.style.fontSize || '');
-    }
-    for(i=0;i<nodes.length;i++){
-      var base = parseFloat(nodes[i].getAttribute('data-asobiva-fs'));
-      if(isFinite(base)) nodes[i].style.fontSize = s === 1 ? (nodes[i].getAttribute('data-asobiva-fs0') || '') : (base * s) + 'px';
-    }
-    report();
-  }
-  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-scale') applyScale(e.data.scale); });
-  parent.postMessage({ type:'asobiva-need-scale' }, '*');
-})();
-</script></body>
-</html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
-      </div></div>
-      <div class="gcar-slide"><div class="group-card">
-    <div class="card-section sp" style="--mb:0px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
-<html lang=&quot;ja&quot;>
-<head>
-<meta charset=&quot;UTF-8&quot;>
-<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
-<title>名を持たぬ哲学者｜第三回：名を呼ばれなかった椅子</title>
-<style>
-* { box-sizing:border-box; margin:0; padding:0; }
-body { font-family:'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif; background:#fff; color:#333; font-size:min(3.720931vw,16px); }
-.p-article { max-width: 430px; margin:0 auto; }
-.p-header-img { width:100%; height:auto; display:block; }
-.p-body { padding:min(5.581396vw,24px) min(4.651163vw,20px) min(13.023256vw,56px); }
-.p-title { font-size:min(3.953489vw,17px); font-weight:bold; line-height:1.6; color:#1a1a1a; margin-bottom:min(3.720931vw,16px); letter-spacing:0.02em; }
-.p-author { display:flex; align-items:center; gap:min(2.325582vw,10px); margin-bottom:min(6.511628vw,28px); padding-bottom:min(4.651163vw,20px); border-bottom: 1px solid #eee; }
-.p-author-avatar { width:min(9.302326vw,40px); height:min(9.302326vw,40px); border-radius: 50%; background:#bbb; flex-shrink:0; overflow:hidden; margin-top:min(0.697675vw,3px); }
-.p-author-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
-.p-author-name { font-size:min(3.023256vw,13px); color:#333; font-weight:bold; line-height:1.4; }
-.p-author-date { font-size:min(2.790698vw,12px); color:#aaa; margin-top:min(0.465117vw,2px); }
-.p-text-block { font-size:min(3.488373vw,15px); line-height:2.0; color:#333; margin-bottom:min(5.581396vw,24px); letter-spacing:0.02em; }
-.p-bold-block { font-size:min(3.488373vw,15px); line-height:2.0; color:#1a1a1a; margin-bottom:min(5.581396vw,24px); letter-spacing:0.02em; font-weight:bold; }
-.p-quote-block { background:#f7f7f7; border-radius: 4px; padding:min(3.255814vw,14px) min(4.186047vw,18px); margin-bottom:min(5.581396vw,24px); font-size:min(3.488373vw,15px); line-height:1.8; color:#1a1a1a; font-weight:bold; letter-spacing:0.02em; }
-.p-divider { border: none; border-top: 1px solid #e8e8e8; margin:min(7.441861vw,32px) 0; }
-.p-next { font-size:min(3.255814vw,14px); line-height:1.8; color:#333; display:flex; gap:min(1.395349vw,6px); align-items:baseline; }
-</style>
-</head>
-<body>
-<div class=&quot;p-article&quot;><img class=&quot;p-header-img&quot; src=&quot;images/htmlimg_3318b761.jpg&quot; alt=&quot;&quot;><div class=&quot;p-body&quot;><h1 class=&quot;p-title&quot;>名を持たぬ哲学者｜第三回：名を呼ばれなかった椅子</h1><div class=&quot;p-author&quot;><div class=&quot;p-author-avatar&quot;></div><div><div class=&quot;p-author-name&quot;>朧木 周吾郎 | SHUGORO OBOROGI</div><div class=&quot;p-author-date&quot;>2026年6月27日 03:31</div></div></div><p class=&quot;p-text-block&quot;>私はその椅子に、何度も座ろうとした。けれど、なぜか座れなかった。</p><p class=&quot;p-text-block&quot;>それは壊れていたわけではない。ただ、座ろうとするたびに、何かがわずかにずれるのだ。身体ではなく、私の“存在”の方が。あの椅子は、誰かのために用意されたまま、名を呼ばれなかったのだと思う。</p><p class=&quot;p-text-block&quot;>“誰かのため”であることと、“誰にも届かない”ことは、ときに隣り合っている。椅子は待ち続けていた。座られることなく、声をかけられることなく。その時間の長さが、あの椅子をあの椅子にしていたのだろう。</p><p class=&quot;p-text-block&quot;>私はそこで静かに立っていた。そして、気づいたのだ。</p><p class=&quot;p-bold-block&quot;>「語られなかった存在こそ、記憶に焼きつく。」</p><p class=&quot;p-text-block&quot;>それは、理解されることを求めない。記録にも、共感にも届かない。ただ、そこにあるというだけで完結するような、孤独な思想。<br></p><p class=&quot;p-text-block&quot;>名を呼ばれなかった椅子は、いまもそこにある。私が座ることを拒んだのではなく、私が“座ろうとしたこと”を受け入れていた。それは、答えのない問いに似ている。</p><hr class=&quot;p-divider&quot;><div class=&quot;p-next&quot;><span>◆</span> 次回：「割れた水盤」──反射を失った記憶と、映らなかった思念について。</div><hr class=&quot;p-divider&quot;></div></div>
-<style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
-(function(){
-  function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }
-  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-init') report(); });
-  window.addEventListener('load', report);
-  if(document.readyState==='complete') report();
-  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
-  var applied = null;
-  function applyScale(s){
-    if(!document.body || applied === s) return;
-    var first = applied === null;
-    applied = s;
-    if(first &amp;&amp; s === 1) return; // 一度も拡大・縮小していなければ、何もしない
-    // body とその中のすべての要素の元の文字の大きさを先に測ってから、まとめて倍にする
-    // （文字を直接持たない段落なども倍にして、行の間隔が文字と同じ割合で変わるようにする）
-    var nodes = [document.body].concat(Array.prototype.slice.call(document.body.querySelectorAll('*'))), i, el;
-    for(i=0;i<nodes.length;i++){
-      if(s === 1) break; // 元に戻すときは、元の大きさを測り直さない
-      el = nodes[i];
-      if(/^(IMG|VIDEO|IFRAME|SVG|SCRIPT|STYLE|PATH|G|CIRCLE|RECT|LINE|POLYGON|POLYLINE|ELLIPSE|USE|DEFS)$/i.test(el.tagName)) continue;
-      if(el.getAttribute('data-asobiva-fs')) continue;
-      el.setAttribute('data-asobiva-fs', getComputedStyle(el).fontSize);
-      // もともとHTMLが持っている文字の大きさの指定（例：プロフィールの「名前 120%」）を覚えておき、100%に戻すときはそれに戻す（v4.7）
-      el.setAttribute('data-asobiva-fs0', el.style.fontSize || '');
-    }
-    for(i=0;i<nodes.length;i++){
-      var base = parseFloat(nodes[i].getAttribute('data-asobiva-fs'));
-      if(isFinite(base)) nodes[i].style.fontSize = s === 1 ? (nodes[i].getAttribute('data-asobiva-fs0') || '') : (base * s) + 'px';
-    }
-    report();
-  }
-  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-scale') applyScale(e.data.scale); });
-  parent.postMessage({ type:'asobiva-need-scale' }, '*');
-})();
-</script></body>
-</html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
-      </div></div>
-    </div><div class="gcar-ui"><button type="button" class="gcar-prev" aria-label="前へ" onclick="asobivaGcar(this,-1)">‹</button><span class="gcar-count">1 / 3</span><button type="button" class="gcar-next" aria-label="次へ" onclick="asobivaGcar(this,1)">›</button></div></div></div>
+    <div class="card-section sp sp-line html-cell" style="--mb:16px"><a class="card" href="asobiva_view.html#f=https%3A%2F%2Fasobiva.i-roiro.com%2F%E5%90%8D%E3%82%92%E6%8C%81%E3%81%9F%E3%81%AC%E5%93%B2%E5%AD%A6%E8%80%85%EF%BD%9C%E7%AC%AC%E4%B8%80%E5%9B%9E%EF%BC%9A%E6%B2%88%E9%BB%99%E3%81%AE%E5%A1%94.html"><img src="images/thumb.jpg" alt="" loading="lazy"></a></div>
+    <div class="card-section sp html-cell" style="--mb:16px"><div class="card"><img src="images/thumb_2.jpg" alt="" loading="lazy"></div></div>
   </div>
   <div class="footer-section sp-top" style="--mb:0px"><footer class="ft-left" style="color:#707070;font-weight:300;--ft-max:600px;--ft-cgap:16px;"><div class="ft-body">本サイトの作品は、作品の制作にAIを使用しています。
 ASOBIVAでは、各コンテンツの一部作品を公開しています。その他の作品は、コンテンツごとにnote・BOOTH・YouTube等の外部サービスにて公開予定です。詳細は各コンテンツページをご確認ください。最新情報はX・Instagramにてお知らせしています。
