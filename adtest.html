@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>広告の試し用 | ASOBIVA</title>
+<style>
+body { margin: 0; background: #fff; color: #333; font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", sans-serif; }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 16px 20px 60px; }
+h1 { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
+.note { font-size: 12px; color: #888; margin: 0 0 20px; line-height: 1.6; }
+.label { font-size: 12px; color: #888; margin: 24px 0 6px; }
+/* ASOBIVA の広告カードと同じ作り（v7.0.1） */
+.ad-card { text-align: center; overflow: hidden; outline: 1px dashed #ddd; }
+.ad-card > * { max-width: 100%; }
+.ad-card > .ad-in { display: inline-block; vertical-align: top; max-width: none; }
+/* サイズ可変を試す枠：囲みを最初から幅いっぱい・左から置く（AdMax が自分で広がれる） */
+.ad-card.wide > .ad-in { display: block; text-align: left; }
+/* 閉じた窓の枠：窓（iframe・外のページが見えない）の中を直接開いたときと同じ広さ（980）にして広告を出し、窓ごとカードの幅まで縮める（asobivaAdFit） */
+.ad-card.big > .ad-in { display: block; width: 980px; text-align: left; }
+.size { font-size: 11px; color: #aaa; margin-top: 4px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>広告の試し用ページ</h1>
+<p class="note">ASOBIVA の広告カードと同じ作りで、広告を並べています。点線がカードの幅です。<br>広告の下に、出ている大きさ（幅×高さ）が出ます。<br>同じ AdMax の広告を3回置いています（3つめは、外のページが見えない小さな窓に入れています）。出ないものがあるときは、同じ広告を1ページに何回も置いたせいかもしれません。</p>
+
+<div class="label">AdMax（今の ASOBIVA と同じ・実サイズ）</div>
+<div class="ad-card"><div class="ad-in">
+<!-- ▼▼ AdMax のコード（ここから） ▼▼ -->
+<!-- admax -->
+<script src="https://adm.shinobi.jp/s/d62f10dea86cd7dbab67bd69598d7ef6"></script>
+<!-- admax -->
+<!-- ▲▲ AdMax のコード（ここまで） ▲▲ -->
+</div></div>
+<div class="size"></div>
+
+<div class="label">AdMax（サイズ可変・幅いっぱいに広がれる形）</div>
+<div class="ad-card wide"><div class="ad-in">
+<!-- ▼▼ AdMax サイズ可変のコード（ここから） ▼▼ -->
+<!-- admax -->
+<script src="https://adm.shinobi.jp/s/d62f10dea86cd7dbab67bd69598d7ef6"></script>
+<!-- admax -->
+<!-- ▲▲ AdMax サイズ可変のコード（ここまで） ▲▲ -->
+</div></div>
+<div class="size"></div>
+
+<div class="label">AdMax（閉じた窓に入れる・外のページが見えない作り）</div>
+<div class="ad-card big"><div class="ad-in">
+<iframe class="ad-frame2" width="980" height="168" scrolling="no" style="border:0;display:block" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox" srcdoc="&lt;html&gt;&lt;head&gt;&lt;meta charset=&quot;UTF-8&quot;&gt;&lt;/head&gt;&lt;body&gt;
+&lt;!-- ▼▼ AdMax 窓のコード（ここから） ▼▼ --&gt;
+&lt;!-- admax --&gt;
+&lt;script src=&quot;https://adm.shinobi.jp/s/d62f10dea86cd7dbab67bd69598d7ef6&quot;&gt;&lt;/script&gt;
+&lt;!-- admax --&gt;
+&lt;!-- ▲▲ AdMax 窓のコード（ここまで） ▲▲ --&gt;
+&lt;script&gt;
+// 広告の大きさを測って、外のページに知らせる（外のページの中は見えない作り）
+(function () {
+  function send() {
+    var E = document.body.querySelectorAll(&#x27;*&#x27;), L = 1e9, T = 1e9, R = -1e9, B = -1e9;
+    for (var j = 0; j &lt; E.length; j++) {
+      if (/^(SCRIPT|STYLE|NOSCRIPT)$/.test(E[j].tagName)) continue;
+      var r = E[j].getBoundingClientRect(); if (r.width &lt; 2 || r.height &lt; 2) continue;
+      L = Math.min(L, r.left); T = Math.min(T, r.top); R = Math.max(R, r.right); B = Math.max(B, r.bottom);
+    }
+    parent.postMessage({ type: &#x27;adtest-size&#x27;, w: R &gt; L ? R - L : 0, h: R &gt; L ? B - T : 0, H: document.documentElement.scrollHeight }, &#x27;*&#x27;);
+  }
+  var k = 0, t = setInterval(function () { send(); if (++k &gt; 40) clearInterval(t); }, 500);
+})();
+&lt;/script&gt;
+&lt;/body&gt;&lt;/html&gt;"></iframe>
+</div></div>
+<div class="size"></div>
+
+<div class="label">Zucks</div>
+<div class="ad-card"><div class="ad-in">
+<!-- ▼▼ Zucks のコード（ここから） ▼▼ -->
+<script type="text/javascript" src="https://j.zucks.net.zimg.jp/j?f=741173"></script>
+<!-- ▲▲ Zucks のコード（ここまで） ▲▲ -->
+</div></div>
+<div class="size"></div>
+
+</div>
+<script>
+function asobivaAdFit() {
+  var C = document.querySelectorAll('.ad-card'), i;
+  function fit(c) {
+    var a = c.querySelector('.ad-in'); if (!a) return;
+    var cs = getComputedStyle(c), cw = c.clientWidth - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
+    var w = a.offsetWidth, h = a.offsetHeight, s = (w > cw + 1 && cw > 0) ? cw / w : 1;
+    var t = s < 1 ? 'scale(' + s + ')' : '';
+    if (a.style.transform === t && a.getAttribute('data-w') === String(w) && a.getAttribute('data-h') === String(h)) return;
+    a.setAttribute('data-w', w); a.setAttribute('data-h', h);
+    a.style.transformOrigin = '0 0'; a.style.transform = t;
+    a.style.marginRight = s < 1 ? (-(w * (1 - s))) + 'px' : '';
+    a.style.marginBottom = s < 1 ? (-(h * (1 - s))) + 'px' : '';
+  }
+  function all() { for (var j = 0; j < C.length; j++) fit(C[j]); }
+  if (window.ResizeObserver) { var ro = new ResizeObserver(all); for (i = 0; i < C.length; i++) { ro.observe(C[i]); var a = C[i].querySelector('.ad-in'); if (a) ro.observe(a); } }
+  window.addEventListener('resize', all); window.addEventListener('load', all);
+  var k = 0, tm = setInterval(function () { all(); if (++k > 20) clearInterval(tm); }, 500);
+  all();
+}
+asobivaAdFit();
+// 出ている大きさを表示する（確認用）
+(function () {
+  function measure(E) {
+    var L = 1e9, T = 1e9, R = -1e9, B = -1e9;
+    for (var j = 0; j < E.length; j++) {
+      if (/^(SCRIPT|STYLE|NOSCRIPT)$/.test(E[j].tagName)) continue;
+      var r = E[j].getBoundingClientRect(); if (r.width < 2 || r.height < 2) continue;
+      L = Math.min(L, r.left); T = Math.min(T, r.top); R = Math.max(R, r.right); B = Math.max(B, r.bottom);
+    }
+    return R > L ? [R - L, B - T] : null;
+  }
+  // 窓の高さを、中の広告の高さに合わせる
+  function frames() {
+    var F = document.querySelectorAll('iframe.ad-frame');
+    for (var j = 0; j < F.length; j++) {
+      try { var b = F[j].contentDocument && F[j].contentDocument.body; if (b) { var h = Math.max(b.scrollHeight, 10); if (Math.abs(F[j].offsetHeight - h) > 1) F[j].style.height = h + 'px'; } } catch (e) {}
+    }
+  }
+  var win2 = null;
+  window.addEventListener('message', function (e) {
+    var f = document.querySelector('iframe.ad-frame2');
+    if (!f || e.source !== f.contentWindow || !e.data || e.data.type !== 'adtest-size') return;
+    win2 = e.data;
+    var h = Math.max(Math.ceil(e.data.H), 10); if (Math.abs(f.offsetHeight - h) > 1) f.style.height = h + 'px';
+    show();
+  });
+  function show() {
+    frames();
+    var C = document.querySelectorAll('.ad-card');
+    for (var i = 0; i < C.length; i++) {
+      // 広告の中身（画像・iframe など）が実際に占めている範囲を測る
+      var s = C[i].nextElementSibling, fr = C[i].querySelector('iframe.ad-frame'), fr2 = C[i].querySelector('iframe.ad-frame2');
+      if (fr2) {
+        var k3 = fr2.getBoundingClientRect().width / 980;
+        if (s) s.textContent = win2 && win2.w > 1 ? Math.round(win2.w * k3) + ' × ' + Math.round(win2.h * k3) + '（窓の中では ' + Math.round(win2.w) + ' × ' + Math.round(win2.h) + '・カードの幅 ' + Math.round(C[i].clientWidth) + '）' : '（まだ出ていません）';
+        continue;
+      }
+      if (fr) { // 窓：中の広告の範囲（窓の中の大きさ）と、画面での大きさ
+        var d = null; try { d = fr.contentDocument; } catch (e) {}
+        var k2 = fr.getBoundingClientRect().width / 980, m = d ? measure(d.body ? d.body.querySelectorAll('*') : [], 0) : null;
+        if (s) s.textContent = m ? Math.round(m[0] * k2) + ' × ' + Math.round(m[1] * k2) + '（窓の中では ' + Math.round(m[0]) + ' × ' + Math.round(m[1]) + '・カードの幅 ' + Math.round(C[i].clientWidth) + '）' : '（まだ出ていません）';
+        continue;
+      }
+      var E = C[i].querySelectorAll('.ad-in *'), L = 1e9, T = 1e9, R = -1e9, B = -1e9;
+      for (var j = 0; j < E.length; j++) {
+        if (/^(SCRIPT|STYLE|NOSCRIPT)$/.test(E[j].tagName)) continue;
+        var r = E[j].getBoundingClientRect(); if (r.width < 2 || r.height < 2) continue;
+        L = Math.min(L, r.left); T = Math.min(T, r.top); R = Math.max(R, r.right); B = Math.max(B, r.bottom);
+      }
+      if (s) s.textContent = R > L ? Math.round(R - L) + ' × ' + Math.round(B - T) + '（カードの幅 ' + Math.round(C[i].clientWidth) + '）' : '（まだ出ていません）';
+    }
+  }
+  var k = 0, t = setInterval(function () { show(); if (++k > 30) clearInterval(t); }, 500);
+  window.addEventListener('resize', show);
+})();
+</script>
+</body>
+</html>

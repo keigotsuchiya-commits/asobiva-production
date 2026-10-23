@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>ASOBIVA</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: #fff; color: #111; font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", sans-serif; }
+body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; }
+.vbar { flex: none; height: calc(44px + env(safe-area-inset-top, 0px)); padding: env(safe-area-inset-top, 0px) max(8px, env(safe-area-inset-right, 0px)) 0 max(8px, env(safe-area-inset-left, 0px)); display: flex; align-items: center; background: #fff; border-bottom: 1px solid #e5e5e5; }
+.vback { display: inline-flex; align-items: center; gap: 4px; height: 36px; padding: 0 10px; border: none; background: none; font: inherit; font-size: 15px; color: #111; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.vback span { font-size: 22px; line-height: 1; margin-top: -2px; }
+.vbody { flex: 1; position: relative; min-height: 0; }
+.vbody > iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: #fff; }
+.vmedia { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 0 env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); }
+.vmedia img, .vmedia video { max-width: 100%; max-height: 100%; display: block; object-fit: contain; }
+.vpdf { position: absolute; inset: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; background: #eee; padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0px)); }
+.vpdf canvas { display: block; margin: 0 auto 8px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+.vmsg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 24px; text-align: center; font-size: 14px; line-height: 1.8; color: #666; }
+.vmsg a { color: #26c; }
+</style>
+</head>
+<body>
+<div class="vbar"><button type="button" class="vback" id="vback" aria-label="戻る"><span>‹</span>戻る</button></div>
+<div class="vbody" id="vbody"></div>
+<script>
+// ASOBIVA の「戻る付き」の画面（ASOBIVA builder が書き出し）。#f= のファイルを、上に「‹ 戻る」の帯を付けて開く
+(function () {
+  var body = document.getElementById('vbody');
+  // 戻る：このサイトのページから来たときはブラウザの「戻る」と同じ。それ以外（直接開いたなど）はトップへ
+  document.getElementById('vback').onclick = function () {
+    var same = false; try { same = !!document.referrer && new URL(document.referrer).host === location.host; } catch (e) {}
+    if (same && history.length > 1) history.back(); else location.href = './';
+  };
+  function msg(t, href) {
+    var d = document.createElement('div'); d.className = 'vmsg'; d.textContent = t;
+    if (href) { d.appendChild(document.createElement('br')); var a = document.createElement('a'); a.href = href; a.textContent = 'ファイルを開く'; d.appendChild(a); }
+    body.innerHTML = ''; body.appendChild(d);
+  }
+  var f = ''; var m = location.hash.match(/[#&]f=([^&]*)/);
+  if (m) { try { f = decodeURIComponent(m[1]); } catch (e) { f = ''; } }
+  // 開いてよいのは、このサイトのファイル（ファイル名・フォルダ名から）と i-roiro.com だけ
+  function ok(u) {
+    if (!u || /[\u0000-\u001f\\]/.test(u)) return false;
+    if (/^https:\/\//i.test(u)) { try { var h = new URL(u).hostname.toLowerCase(); return h === 'i-roiro.com' || /\.i-roiro\.com$/.test(h); } catch (e) { return false; } }
+    return !/^[a-z][a-z0-9+.-]*:/i.test(u) && u.indexOf('//') !== 0;
+  }
+  if (!ok(f)) { msg('開けるファイルが指定されていません。'); return; }
+  var name = f.split('#')[0].split('?')[0].split('/').pop() || f;
+  try { document.title = decodeURIComponent(name) + ' | ASOBIVA'; } catch (e) { document.title = name + ' | ASOBIVA'; }
+  var ext = (name.match(/\.([a-z0-9]+)$/i) || ['', ''])[1].toLowerCase();
+  var el;
+  if (/^(jpe?g|png|gif|webp|avif|svg)$/.test(ext)) {
+    var w = document.createElement('div'); w.className = 'vmedia';
+    el = document.createElement('img'); el.src = f; el.alt = '';
+    el.onerror = function () { msg('ファイルを開けませんでした。', f); };
+    w.appendChild(el); body.appendChild(w);
+  } else if (/^(mp4|m4v|mov|webm)$/.test(ext)) {
+    var w2 = document.createElement('div'); w2.className = 'vmedia';
+    el = document.createElement('video'); el.src = f; el.controls = true; el.setAttribute('playsinline', ''); el.preload = 'metadata';
+    el.onerror = function () { msg('ファイルを開けませんでした。', f); };
+    w2.appendChild(el); body.appendChild(w2);
+  } else if (ext === 'pdf') {
+    // PDF：iPhone の Safari は、窓（iframe）の中だと1ページ目しか見せないので、ページを絵にして縦に並べる（PDF.js）
+    var box = document.createElement('div'); box.className = 'vpdf'; body.appendChild(box);
+    var s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.onerror = function () { msg('PDF を表示する部品を読み込めませんでした。', f); };
+    s.onload = function () {
+      var L = window.pdfjsLib; if (!L) { msg('PDF を表示できませんでした。', f); return; }
+      L.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      L.getDocument(f).promise.then(function (pdf) {
+        var lastW = 0;
+        function render() {
+          var cw = box.clientWidth - 16; if (cw < 50 || Math.abs(cw - lastW) < 2) return; lastW = cw;
+          box.innerHTML = ''; var dpr = Math.min(window.devicePixelRatio || 1, 3), n = 1;
+          (function next() {
+            if (n > pdf.numPages) return;
+            pdf.getPage(n++).then(function (pg) {
+              var v0 = pg.getViewport({ scale: 1 }), sc = cw / v0.width, v = pg.getViewport({ scale: sc * dpr });
+              var c = document.createElement('canvas'); c.width = Math.floor(v.width); c.height = Math.floor(v.height);
+              c.style.width = Math.floor(v0.width * sc) + 'px'; c.style.height = Math.floor(v0.height * sc) + 'px';
+              box.appendChild(c);
+              pg.render({ canvasContext: c.getContext('2d'), viewport: v }).promise.then(next, next);
+            }, next);
+          })();
+        }
+        render();
+        var t = null; window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(render, 300); });
+      }, function () { msg('ファイルを開けませんでした。', f); });
+    };
+    document.head.appendChild(s);
+  } else {
+    el = document.createElement('iframe'); el.src = f; el.setAttribute('allow', 'autoplay; fullscreen'); el.setAttribute('allowfullscreen', '');
+    body.appendChild(el);
+  }
+})();
+</script>
+</body>
+</html>
