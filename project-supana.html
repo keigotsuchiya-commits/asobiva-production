@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>絵本・イラスト|PROJECT SUPANA | ASOBIVA</title>
+<title>絵本・図鑑・イラスト|PROJECT SUPANA | ASOBIVA</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root { --bg:#e0e0e0; --white:#ffffff; --ink:#1a1a1a; --ink-soft:#888; --border:#e0e0e0; --page-max:480px; --cols:1; --header-h:44px; --side-m:24px; --col-gap:24px; --hdr-gap:24px; }
@@ -152,10 +152,11 @@ a.hist-text { text-decoration: underline; text-underline-offset: 3px; text-decor
 /* 広告カード（v7.0）：貼ったコードをそのまま入れる。中身は中央・はみ出さない */
 .ad-card { text-align: center; overflow: hidden; }
 .ad-card > * { max-width: 100%; }
+.ad-card > .ad-in { display: inline-block; vertical-align: top; max-width: none; } /* v7.0.1：幅より大きい広告は、全体をそのまま縮小（asobivaAdFit） */
 .ad-ph { border: 1px dashed #bbb; border-radius: 6px; background: #fafafa; color: #999; font-size: 12px; line-height: 1.6; padding: 22px 12px; text-align: center; }
-/* いいね（v6.8・v6.9 で画像の左下に重ねる形に）：高さ0の行をカードのすぐ下に置き、ボタンをカードの左下の角に重ねる（キャプション・並びに影響しない） */
-.like-row { position: relative; height: 0; margin-left: auto; margin-right: auto; z-index: 3; }
-.like-btn { position: absolute; left: 8px; bottom: 8px; display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 9px; margin: 0; border: none; border-radius: 15px; background: rgba(255, 255, 255, 0.9); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15); font: inherit; font-size: 13px; line-height: 1; color: #555; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+/* いいね（v6.8・v7.1 で下の段の右端に）：カードの段の一番下（キャプションがあればその下）に段を置き、ボタンは右端。画像・HTMLに重ならない */
+.like-row { display: flex; justify-content: flex-end; padding: 6px 8px 0 0; box-sizing: border-box; margin-left: auto; margin-right: auto; }
+.like-btn { position: relative; display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 9px; margin: 0; border: none; border-radius: 15px; background: rgba(255, 255, 255, 0.9); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15); font: inherit; font-size: 13px; line-height: 1; color: #555; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .like-btn svg { width: 17px; height: 17px; display: block; transition: transform 0.15s; }
 .like-btn svg path { fill: none; stroke: currentColor; stroke-width: 1.8; }
 .like-btn.on { color: #e0457b; }
@@ -197,7 +198,7 @@ a.hist-text { text-decoration: underline; text-underline-offset: 3px; text-decor
   <div class="site-header no-line">
     <a class="site-logo" href="index.html"><img src="images/logo_e4981fdc-3cab-4246-80ad-37873a70abd7.jpg" alt="TOP"></a>
     <button class="burger-btn" id="burgerBtn" aria-label="メニュー" onclick="document.getElementById('burgerMenu').classList.toggle('open')"><span></span><span></span><span></span></button>
-    <div class="burger-menu" id="burgerMenu"><div class="nav-list"><div class="nav-top"><a class="nav-link-item" href="index.html">TOP</a><a class="nav-link-item" href="asobiva.html" data-pf="2026-11-17">ASOBIVAとは？</a><a class="nav-link-item" href="asobiva-lab.html" data-pf="2027-03-01">ASOBIVA LAB</a></div><div class="nav-group"><div class="nav-group-label">音楽・映像・写真</div><a class="nav-link-item" href="music.html" data-pf="2026-11-17">0FILE</a><a class="nav-link-item" href="filmography.html" data-pf="2027-03-01">FILMOGRAPHY</a><a class="nav-link-item" href="one-shot.html" data-pf="2027-01-01">ONE SHOT</a></div><div class="nav-group"><div class="nav-group-label">絵本・イラスト</div><a class="nav-link-item" href="ehon.html" data-pf="2026-11-17">絵本コレクション</a><a class="nav-link-item current" href="project-supana.html" data-pf="2027-01-01">PROJECT SUPANA</a></div><div class="nav-group"><div class="nav-group-label">シリーズ連載</div><a class="nav-link-item" href="oborogi.html" data-pf="2027-01-01">名を持たぬ哲学者</a><a class="nav-link-item" href="marumaru.html" data-pf="2026-11-17">〇〇の話</a><a class="nav-link-item" href="n.html" data-pf="2027-01-01">蟲屋Nの昆虫図鑑</a><a class="nav-link-item" href="yokai.html" data-pf="2026-11-17">榊原玄舟の百鬼奇譚</a><a class="nav-link-item" href="page-13.html" data-pf="2027-01-01">ほらばな新聞</a><a class="nav-link-item" href="page-14.html" data-pf="2027-01-01">きょうの田中さん</a></div><div class="nav-group"><div class="nav-group-label">ゲーム・占い</div><a class="nav-link-item" href="game.html" data-pf="2026-11-17">豆太ピコのゲーム</a><a class="nav-link-item" href="pazle.html" data-pf="2027-05-01">あたまの体操パズル</a><a class="nav-link-item" href="shikaku.html" data-pf="2027-05-01">資格試験対策室</a><a class="nav-link-item" href="uranai.html" data-pf="2026-11-17">福徳神社</a></div></div></div>
+    <div class="burger-menu" id="burgerMenu"><div class="nav-list"><div class="nav-top"><a class="nav-link-item" href="index.html">TOP</a><a class="nav-link-item" href="asobiva.html" data-pf="2026-11-17">ASOBIVAとは？</a><a class="nav-link-item" href="asobiva-lab.html" data-pf="2027-03-01">ASOBIVA LAB</a></div><div class="nav-group"><div class="nav-group-label">音楽・映像・写真</div><a class="nav-link-item" href="music.html" data-pf="2026-11-17">0FILE</a><a class="nav-link-item" href="filmography.html" data-pf="2027-03-01">FILMOGRAPHY</a><a class="nav-link-item" href="one-shot.html" data-pf="2027-01-01">ONE SHOT</a></div><div class="nav-group"><div class="nav-group-label">絵本・図鑑・イラスト</div><a class="nav-link-item" href="ehon.html" data-pf="2026-11-17">絵本コレクション</a><a class="nav-link-item current" href="project-supana.html" data-pf="2027-01-01">PROJECT SUPANA</a><a class="nav-link-item" href="n.html" data-pf="2027-01-01">蟲屋Nの昆虫図鑑</a><a class="nav-link-item" href="yokai.html" data-pf="2026-11-17">榊原玄舟の百鬼奇譚</a></div><div class="nav-group"><div class="nav-group-label">シリーズ連載</div><a class="nav-link-item" href="oborogi.html" data-pf="2026-12-01">名を持たぬ哲学者</a><a class="nav-link-item" href="marumaru.html" data-pf="2026-11-17">〇〇の話</a><a class="nav-link-item" href="page-13.html" data-pf="2027-01-01">ほらばな新聞</a><a class="nav-link-item" href="page-14.html" data-pf="2027-01-01">きょうの田中さん</a></div><div class="nav-group"><div class="nav-group-label">学習・シュミレーション</div><a class="nav-link-item" href="shikaku.html" data-pf="2027-05-01">資格試験対策室</a><a class="nav-link-item" href="timelapse.html" data-pf="2027-05-01">TIMELAPSE</a></div><div class="nav-group"><div class="nav-group-label">ゲーム・パズル</div><a class="nav-link-item" href="game.html" data-pf="2026-11-17">豆太ピコのゲーム</a><a class="nav-link-item" href="pazle.html" data-pf="2027-05-01">あたまの体操パズル</a></div><div class="nav-group"><div class="nav-group-label">占い</div><a class="nav-link-item" href="uranai.html" data-pf="2026-11-17">福徳神社</a><a class="nav-link-item" href="page-20.html" data-pf="2027-05-01">占い手帳</a></div></div></div>
   </div>
   <div class="header-pair sp" style="--mb:16px">
     <div class="banner-slot" style="--ar:1.0000;--bps:0.7;--bpw:0.35;"><img src="images/1c75348d-b082-4210-8f98-96bfd298643c_2.jpg" alt=""></div>
@@ -462,7 +463,7 @@ body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;p
 </html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
     <div class="card-section gcar-section sp html-cell" style="--mb:16px"><div class="gcar-card" data-k="0"><div class="gcar-stage">
       <div class="gcar-slide on"><div class="group-card">
-    <div class="card-section sp" style="--mb:0px"><div class="card" style="--ps:0.8;"><img src="images/d1f0a2af-f48d-4f59-a2ad-48388826880d.jpg" alt="" loading="lazy"></div></div>
+    <div class="card-section sp" style="--mb:0px"><div class="card" style="--ps:0.7;--pw:0.7;"><img src="images/d1f0a2af-f48d-4f59-a2ad-48388826880d.jpg" alt="" loading="lazy"></div></div>
     <div class="card-section sp" style="--mb:0px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
 <html lang=&quot;ja&quot;>
 <head>
@@ -533,7 +534,7 @@ body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;p
 </html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
       </div></div>
       <div class="gcar-slide"><div class="group-card">
-    <div class="card-section sp" style="--mb:0px"><div class="card" style="--ps:0.8;"><img src="images/27b8c836-bfd3-475c-9f3c-82ce7ff4675f.jpg" alt="" loading="lazy"></div></div>
+    <div class="card-section sp" style="--mb:0px"><div class="card" style="--ps:0.7;--pw:0.7;"><img src="images/27b8c836-bfd3-475c-9f3c-82ce7ff4675f.jpg" alt="" loading="lazy"></div></div>
     <div class="card-section sp" style="--mb:16px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
 <html lang=&quot;ja&quot;>
 <head>
@@ -604,7 +605,7 @@ body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;p
 </html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
       </div></div>
       <div class="gcar-slide"><div class="group-card">
-    <div class="card-section sp" style="--mb:0px"><div class="card" style="--ps:0.8;"><img src="images/51f2f1c4-065c-44f7-bb94-4cbd9e480e7d.jpg" alt="" loading="lazy"></div></div>
+    <div class="card-section sp" style="--mb:0px"><div class="card" style="--ps:0.7;--pw:0.7;"><img src="images/51f2f1c4-065c-44f7-bb94-4cbd9e480e7d.jpg" alt="" loading="lazy"></div></div>
     <div class="card-section sp" style="--mb:16px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
 <html lang=&quot;ja&quot;>
 <head>
@@ -675,6 +676,74 @@ body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;p
 </html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
       </div></div>
     </div><div class="gcar-ui"><button type="button" class="gcar-prev" aria-label="前へ" onclick="asobivaGcar(this,-1)">‹</button><span class="gcar-count">1 / 3</span><button type="button" class="gcar-next" aria-label="次へ" onclick="asobivaGcar(this,1)">›</button></div></div></div>
+    <div class="card-section sp is-html" style="--mb:16px"><div class="html-card"><iframe srcdoc="<!DOCTYPE html>
+<html lang=&quot;ja&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>Vehicles&amp;amp;Gear</title>
+<link href=&quot;https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&amp;display=swap&quot; rel=&quot;stylesheet&quot;>
+<style>*{box-sizing:border-box;}
+body{background:#fff;color:#111;font-family:'Noto Sans JP',sans-serif;margin:0;padding:0;line-height:1.7;}
+.page{max-width:600px;margin:0 auto;padding:0;}
+.divider-container{width:100%;padding:min(2.325582vw,10px) min(4.651163vw,20px) min(2.325582vw,10px) min(4.651163vw,20px);}
+.divider{width:100%;border:none;border-top:1px solid #17191a;margin:0;}
+.dv-head{display:flex;align-items:center;gap:min(3.720931vw,16px);}
+.dv-head .divider{flex:1 1 0;width:auto;min-width:0;}
+.dv-text{flex:0 1 auto;min-width:0;font-size:min(2.790698vw,12px);font-weight:400;color:#111111;letter-spacing:0.04em;line-height:1.4;overflow-wrap:anywhere;}
+.dv-center .dv-text{text-align:center;}</style>
+</head>
+<body>
+<div class=&quot;page&quot;>
+  <div class=&quot;divider-container&quot;>
+    <div class=&quot;dv-head dv-left&quot;><span class=&quot;dv-text&quot;>Vehicles&amp;amp;Gear</span><hr class=&quot;divider&quot;></div>
+  </div>
+</div>
+<script type=&quot;application/json&quot; id=&quot;dv-data&quot;>{&quot;v&quot;:2,&quot;lineColor&quot;:&quot;#17191a&quot;,&quot;lineStyle&quot;:&quot;solid&quot;,&quot;lineWidth&quot;:1,&quot;mt&quot;:10,&quot;mb&quot;:10,&quot;ml&quot;:20,&quot;mr&quot;:20,&quot;mode&quot;:&quot;left&quot;,&quot;text&quot;:&quot;Vehicles&amp;Gear&quot;,&quot;size&quot;:12,&quot;weight&quot;:400,&quot;color&quot;:&quot;#111111&quot;,&quot;ls&quot;:0.04,&quot;gap&quot;:16}</script>
+<style>html{-webkit-text-size-adjust:100% !important;text-size-adjust:100% !important;}html,body{min-height:0 !important;}.page,.site-frame,.wrap{max-width:none !important;}</style><script>
+(function(){
+  function report(){ parent.postMessage({ type:'asobiva-resize', height: document.body.offsetHeight }, '*'); }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-init') report(); });
+  window.addEventListener('load', report);
+  if(document.readyState==='complete') report();
+  if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  var applied = null;
+  function applyScale(s){
+    if(!document.body || applied === s) return;
+    var first = applied === null;
+    applied = s;
+    if(first &amp;&amp; s === 1) return; // 一度も拡大・縮小していなければ、何もしない
+    // body とその中のすべての要素の元の文字の大きさを先に測ってから、まとめて倍にする
+    // （文字を直接持たない段落なども倍にして、行の間隔が文字と同じ割合で変わるようにする）
+    var nodes = [document.body].concat(Array.prototype.slice.call(document.body.querySelectorAll('*'))), i, el;
+    for(i=0;i<nodes.length;i++){
+      if(s === 1) break; // 元に戻すときは、元の大きさを測り直さない
+      el = nodes[i];
+      if(/^(IMG|VIDEO|IFRAME|SVG|SCRIPT|STYLE|PATH|G|CIRCLE|RECT|LINE|POLYGON|POLYLINE|ELLIPSE|USE|DEFS)$/i.test(el.tagName)) continue;
+      if(el.getAttribute('data-asobiva-fs')) continue;
+      el.setAttribute('data-asobiva-fs', getComputedStyle(el).fontSize);
+      // もともとHTMLが持っている文字の大きさの指定（例：プロフィールの「名前 120%」）を覚えておき、100%に戻すときはそれに戻す（v4.7）
+      el.setAttribute('data-asobiva-fs0', el.style.fontSize || '');
+    }
+    for(i=0;i<nodes.length;i++){
+      var base = parseFloat(nodes[i].getAttribute('data-asobiva-fs'));
+      if(isFinite(base)) nodes[i].style.fontSize = s === 1 ? (nodes[i].getAttribute('data-asobiva-fs0') || '') : (base * s) + 'px';
+    }
+    report();
+  }
+  window.addEventListener('message', function(e){ if(e.data&amp;&amp;e.data.type==='asobiva-scale') applyScale(e.data.scale); });
+  parent.postMessage({ type:'asobiva-need-scale' }, '*');
+})();
+</script></body>
+</html>" loading="lazy" sandbox="allow-scripts allow-popups allow-forms allow-same-origin" allow="autoplay" scrolling="no"></iframe></div></div>
+    <div class="card-section gcar-section sp html-cell" style="--mb:16px"><div class="gcar-card" data-k="0"><div class="gcar-stage">
+      <div class="gcar-slide on"><div class="group-card">
+    <div class="card-section sp" style="--mb:16px"><div class="card"><img src="images/7d110a81-123d-4f72-a080-0dfe26453945.jpg" alt="" loading="lazy"></div></div>
+      </div></div>
+      <div class="gcar-slide"><div class="group-card">
+    <div class="card-section sp" style="--mb:16px"><div class="card"><img src="images/202c02fc-a8dc-4f57-8eb8-5299e90305dd.jpg" alt="" loading="lazy"></div></div>
+      </div></div>
+    </div><div class="gcar-ui"><button type="button" class="gcar-prev" aria-label="前へ" onclick="asobivaGcar(this,-1)">‹</button><span class="gcar-count">1 / 2</span><button type="button" class="gcar-next" aria-label="次へ" onclick="asobivaGcar(this,1)">›</button></div></div></div>
   </div>
   <div class="footer-section sp-top" style="--mb:0px"><footer class="ft-left" style="color:#707070;font-weight:300;--ft-max:600px;--ft-cgap:16px;"><div class="ft-body">本サイトの作品は、作品の制作にAIを使用しています。
 ASOBIVAでは、各コンテンツの一部作品を公開しています。その他の作品は、コンテンツごとにnote・BOOTH・YouTube等の外部サービスにて公開予定です。詳細は各コンテンツページをご確認ください。最新情報はX・Instagramにてお知らせしています。

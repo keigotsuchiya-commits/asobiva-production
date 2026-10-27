@@ -1,7 +1,7 @@
-// ASOBIVA 公開設定（ASOBIVA builder v7.0 が書き出し）
+// ASOBIVA 公開設定（ASOBIVA builder v7.1 が書き出し）
 // 日本時間のその日の日付で、公開期間の外のカード・メニュー・ページを外します。
 // 期間外・非表示のページを直接開いたときは、トップへ移します。ほかのファイルはそのまま返します。
-const PAGES = {"asobiva.html":["2026-11-17",""],"asobiva-lab.html":["2027-03-01",""],"music.html":["2026-11-17",""],"filmography.html":["2027-03-01",""],"one-shot.html":["2027-01-01",""],"ehon.html":["2026-11-17",""],"project-supana.html":["2027-01-01",""],"oborogi.html":["2027-01-01",""],"marumaru.html":["2026-11-17",""],"n.html":["2027-01-01",""],"yokai.html":["2026-11-17",""],"page-13.html":["2027-01-01",""],"page-14.html":["2027-01-01",""],"game.html":["2026-11-17",""],"pazle.html":["2027-05-01",""],"shikaku.html":["2027-05-01",""],"uranai.html":["2026-11-17",""]};
+const PAGES = {"asobiva.html":["2026-11-17",""],"asobiva-lab.html":["2027-03-01",""],"music.html":["2026-11-17",""],"filmography.html":["2027-03-01",""],"one-shot.html":["2027-01-01",""],"ehon.html":["2026-11-17",""],"project-supana.html":["2027-01-01",""],"oborogi.html":["2026-12-01",""],"marumaru.html":["2026-11-17",""],"n.html":["2027-01-01",""],"yokai.html":["2026-11-17",""],"page-13.html":["2027-01-01",""],"page-14.html":["2027-01-01",""],"shikaku.html":["2027-05-01",""],"timelapse.html":["2027-05-01",""],"game.html":["2026-11-17",""],"pazle.html":["2027-05-01",""],"uranai.html":["2026-11-17",""],"page-20.html":["2027-05-01",""]};
 // 確認用の書き出し：下見のアドレス（〇〇.プロジェクト名.pages.dev）では 2027-05-01 の見え方にします。本番のアドレスでは今日の日付のままです。
 const FIX_DAY = '2027-05-01';
 function isPreview(url) { const h = url.hostname.toLowerCase(); return /\.pages\.dev$/.test(h) && h.split('.').length >= 4; }
@@ -12,7 +12,7 @@ function today(env, url) {
 }
 function inPeriod(f, t, d) { return (!f || f <= d) && (!t || d <= t); }
 // いいね（v6.8）：Cloudflare の D1 データベース（変数名 DB）に、カードごとの数を記録します。DB がなければ数を返しません。
-const LIKE_IDS = ["cmutb22kwfmmzq","cmv8uqjyb1zr1u","cmv9do33e4iau5","cmv0mookxrmpr2","cmuwvs5om3k9sr","cmuwuja9nrmmif","cmuv2nfjgcsn2k","cmuv2qpm2jk0ej","cmuwvqfz5ffpao","cmuwvupr3gt7gs","cmuwun1b560gdr","cmuv2rkjicpke1","cmuv2sc4d8p4sm","cmvbemvpbz8rfu","cmur49tn4cshe9","cmuzu09b0wg6me","cmus58dl7tmput","cmus58sk1c2qr3","cmus58sk5dwh3y"];
+const LIKE_IDS = ["cmutb22kwfmmzq","cmv8uqjyb1zr1u","cmv9do33e4iau5","cmv0mookxrmpr2","cmuv2qpm2jk0ej","cmuwvqfz5ffpao","cmuwvs5om3k9sr","cmuwuja9nrmmif","cmuv2nfjgcsn2k","cmuwvupr3gt7gs","cmuwun1b560gdr","cmuv2rkjicpke1","cmuv2sc4d8p4sm","cmvbemvpbz8rfu","cmur49tn4cshe9","cmuzu09b0wg6me","cmus58dl7tmput","cmus58sk1c2qr3","cmus58sk5dwh3y","cmux59rgqn2lhf","cmux7n840ogq4o","cmuq5kubwdbkca","cmuwonb2wdeo26","cmusr1kkab1kcc","cmvb2bz8lhiui6","cmvb31mvvjpard","cmutvd1dbmn42f","cmuy19w23d5tw4"];
 let likeReady = false;
 async function likeDb(env) {
   if (!env || !env.DB) return null;
