@@ -56,9 +56,9 @@ export default {
     if (!f) f = 'index.html'; else if (!/\.html?$/.test(f)) f += '.html';
     const p = PAGES[f];
     if (p && (p === 'hide' || !inPeriod(p[0], p[1], d))) return Response.redirect(new URL('/', url).toString(), 302);
-    // 第317号は大型の埋め込み画像を含む独立HTML。公開期間の要素加工は不要なので、
+    // 第317号・第763号は大型の埋め込み画像を含む独立HTML。公開期間の要素加工は不要なので、
     // HTMLRewriter を通さず元のレスポンスをそのまま配信する。
-    if (f === '第317号.html') return env.ASSETS.fetch(request);
+    if (f === '第317号.html' || f === '第763号.html') return env.ASSETS.fetch(request);
     // 日によって中身が変わるので、ブラウザの「変わっていない（304）」を使わない
     const h = new Headers(request.headers);
     h.delete('If-None-Match'); h.delete('If-Modified-Since');
