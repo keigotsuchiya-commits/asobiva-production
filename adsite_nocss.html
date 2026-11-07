@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASOBIVA</title>
+</head>
+<body>
+<div class="wrap">
+  <div class="site-header">
+    <button class="burger-btn" id="burgerBtn" aria-label="メニュー" onclick="document.getElementById('burgerMenu').classList.toggle('open')"><span></span><span></span><span></span></button>
+    <div class="burger-menu" id="burgerMenu"><div class="nav-list"><div class="nav-top"><a class="nav-link-item current" href="index.html">TOP</a></div></div></div>
+  </div>
+  <div id="cardContainer">
+    <div class="card-section sp is-html" style="--mb:16px"><div class="ad-card"><div class="ad-in">
+<!-- admax -->
+<script src="https://adm.shinobi.jp/s/d62f10dea86cd7dbab67bd69598d7ef6"></script>
+<!-- admax -->
+</div></div></div>
+  </div>
+  <div class="footer-section sp-top" style="--mb:0px"><footer class="ft-center" style="color:#111111;--ft-max:480px;--ft-cgap:16px;"><div class="ft-body">ASOBIVA — i.roiro</div></footer></div>
+</div>
+<script>
+document.addEventListener('click', function(e){ var m=document.getElementById('burgerMenu'), b=document.getElementById('burgerBtn'); if(m && !m.contains(e.target) && !b.contains(e.target)) m.classList.remove('open'); });
+window.addEventListener('message', function(e){
+  if (e.data && e.data.type === 'asobiva-resize') { document.querySelectorAll('.html-card iframe').forEach(function(f){ if (f.contentWindow === e.source) asobivaFitFrame(f, e.data.height); }); }
+  if (e.data && e.data.type === 'asobiva-need-scale' && e.source) asobivaSendScale(e.source);
+});
+function asobivaCarousel(el) {
+  var L = JSON.parse(el.getAttribute('data-images'));
+  var k = (parseInt(el.getAttribute('data-k'), 10) + 1) % L.length;
+  el.setAttribute('data-k', k);
+  el.querySelector('img').src = L[k];
+  var d = el.querySelectorAll('.carousel-dots span');
+  for (var i = 0; i < d.length; i++) d[i].className = i === k ? 'active' : '';
+  var c = el.querySelector('.carousel-count');
+  if (c) c.textContent = (k + 1) + ' / ' + L.length;
+}
+function asobivaGcar(btn, d) {
+  var el = btn.closest('.gcar-card');
+  var S = el.querySelectorAll('.gcar-stage > .gcar-slide'), n = S.length;
+  if (n < 2) return;
+  var k = ((parseInt(el.getAttribute('data-k'), 10) || 0) + d + n) % n;
+  el.setAttribute('data-k', k);
+  for (var i = 0; i < n; i++) S[i].className = 'gcar-slide' + (i === k ? ' on' : '');
+  var c = el.querySelectorAll('.gcar-count'); // 上下に出しているときは両方
+  for (i = 0; i < c.length; i++) c[i].textContent = (k + 1) + ' / ' + n;
+  var nm = el.querySelectorAll('.gcar-names > div'); // 名前（v5.0：帯の下の段）
+  for (i = 0; i < nm.length; i++) nm[i].className = i === k ? 'on' : '';
+}
+function asobivaFitFrame(f, h) {
+  f.style.height = h + 'px';
+  var s = f.closest ? f.closest('.banner-slot') : null;
+  if (!s || !(h > 0)) return 0;
+  var w = f.getBoundingClientRect().width;
+  if (!(w > 0)) return 0;
+  var ar = Math.max(0.5, Math.min(8, w / h));
+  var old = parseFloat(s.style.getPropertyValue('--ar')) || 0;
+  if (Math.abs(old - ar) > old * 0.01) s.style.setProperty('--ar', ar.toFixed(4));
+  return ar;
+}
+function asobivaTextScale(f) {
+  if (!f || f.getAttribute('data-scale') !== '1') return 1;
+  var root = getComputedStyle(document.documentElement);
+  var cols = parseInt(root.getPropertyValue('--cols'), 10) || 1;
+  if (cols <= 1) return 1;
+  // いっぱい・中央のカード、またはその中（カルーセルのグループの中など）にあれば --ts-wide
+  var wide = !!(f.closest && f.closest('.card-section.is-html'));
+  var v = parseFloat(root.getPropertyValue(wide ? '--ts-wide' : '--ts-cell'));
+  return isFinite(v) && v > 0 ? v : 1;
+}
+function asobivaSendScale(target) {
+  Array.prototype.forEach.call(document.querySelectorAll('.html-card iframe'), function (f) {
+    if (target && f.contentWindow !== target) return;
+    try { if (f.contentWindow) f.contentWindow.postMessage({ type: 'asobiva-scale', scale: asobivaTextScale(f) }, '*'); } catch (e) {}
+  });
+}
+function asobivaLayout(force) {
+  var c = document.getElementById('cardContainer');
+  if (!c) return;
+  var cols = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--cols'), 10) || 1;
+  if (!force && c.getAttribute('data-cols') === String(cols)) return;
+  c.setAttribute('data-cols', String(cols));
+  var kids = Array.prototype.slice.call(c.children);
+  // 「並べる」カルーセル（v5.4）：中の1枚ずつ（.gcar-slide）を、ページのカードと同じように並べる。まず前の並びを消す
+  var spread = kids.filter(function (el) { return el.classList.contains('gcar-spread'); });
+  spread.forEach(function (el) {
+    Array.prototype.forEach.call(el.querySelectorAll('.gcar-stage > .gcar-slide'), function (s) {
+      s.classList.remove('in-row', 'row-lead', 'sp', 'sp-line', 'sp-dot');
+      s.removeAttribute('data-own-mb'); s.removeAttribute('data-own-line'); s.style.removeProperty('--mb');
+      s.removeAttribute('data-rgp'); s.style.removeProperty('--ri');
+    });
+  });
+  kids.forEach(function (el) {
+    el.classList.remove('in-row', 'row-lead');
+    el.removeAttribute('data-rgp'); el.style.removeProperty('--ri'); // 段の列の間（v5.5）
+    if (!el.hasAttribute('data-own-mb')) return;
+    el.style.setProperty('--mb', el.getAttribute('data-own-mb') || '0px');
+    el.classList.remove('sp-line', 'sp-dot');
+    var own = el.getAttribute('data-own-line');
+    if (own) el.classList.add(own);
+    el.removeAttribute('data-own-mb');
+    el.removeAttribute('data-own-line');
+  });
+  // data-nla のカード（見出しなど・v6.5、縦画面も v6.6）：すぐ上の段（段でなければその1枚）の線を出さない。下の余白はそのまま。
+  // 自分の設定は data-own-* に退避（向きが変わると元に戻してから、もう一度決める）
+  function hideAbove(list, rows) {
+    list.forEach(function (el, i) {
+      if (!i || !el.hasAttribute('data-nla')) return;
+      var prev = list[i - 1], grp = [prev];
+      if (rows && prev.classList.contains('in-row')) for (var k = 0; k < rows.length; k++) if (rows[k].indexOf(prev) >= 0) { grp = rows[k]; break; }
+      grp.forEach(function (x) {
+        if (!x.classList.contains('sp-line') && !x.classList.contains('sp-dot')) return;
+        if (!x.hasAttribute('data-own-mb') && !x.classList.contains('gcar-slide')) {
+          x.setAttribute('data-own-mb', x.style.getPropertyValue('--mb') || '0px');
+          x.setAttribute('data-own-line', x.classList.contains('sp-line') ? 'sp-line' : 'sp-dot');
+        }
+        x.classList.remove('sp-line', 'sp-dot');
+      });
+    });
+  }
+  if (cols <= 1) { hideAbove(kids, null); return; }
+  // 横画面：「並べる」カルーセルは、入れ物の代わりに中の1枚ずつを並べる。下の余白・線はカルーセルの設定
+  var items = [];
+  kids.forEach(function (el) {
+    if (!el.classList.contains('gcar-spread')) { items.push(el); return; }
+    Array.prototype.forEach.call(el.querySelectorAll('.gcar-stage > .gcar-slide'), function (s) {
+      s.classList.add('sp');
+      if (el.classList.contains('sp-line')) s.classList.add('sp-line');
+      else if (el.classList.contains('sp-dot')) s.classList.add('sp-dot');
+      s.style.setProperty('--mb', el.style.getPropertyValue('--mb') || '0px');
+      items.push(s);
+    });
+  });
+  // 段に分ける。段の線は左端のカードが段の幅いっぱいに引く
+  var rows = [], row = null;
+  items.forEach(function (el) {
+    if (!el.classList.contains('gcar-slide') && (!el.classList.contains('card-section') || el.classList.contains('is-html'))) { row = null; return; }
+    if (!row || row.length >= cols) {
+      row = []; rows.push(row); el.classList.add('row-lead');
+      // 段の列の間のパターン（v5.5）：段の左端のカードの data-rg（カルーセルの1枚なら、そのカルーセルの）
+      var src = el.classList.contains('gcar-slide') ? el.closest('.gcar-section') : el;
+      el._rgp = (src && src.getAttribute('data-rg')) || '';
+    }
+    var lead = row.length ? row[0] : el;
+    if (lead._rgp) { el.setAttribute('data-rgp', lead._rgp); el.style.setProperty('--ri', String(row.length)); }
+    el.classList.add('in-row');
+    row.push(el);
+  });
+  // 段の下の余白・ライン：段の最初のカード（いつも）か、最後のカード（ページの設定 data-rowsp="last"・v6.1）の設定を、段のすべてのカードに使う。
+  // ほかのカードは自分の設定を data-own-* に退避（縦画面に戻すと元に戻る）
+  var useLast = c.getAttribute('data-rowsp') === 'last';
+  rows.forEach(function (r) {
+    var from = useLast ? r[r.length - 1] : r[0];
+    var mb = from.style.getPropertyValue('--mb') || '0px';
+    var line = from.classList.contains('sp-line') ? 'sp-line' : from.classList.contains('sp-dot') ? 'sp-dot' : '';
+    r.forEach(function (el) {
+      if (el === from) return;
+      el.setAttribute('data-own-mb', el.style.getPropertyValue('--mb') || '0px');
+      el.setAttribute('data-own-line', el.classList.contains('sp-line') ? 'sp-line' : el.classList.contains('sp-dot') ? 'sp-dot' : '');
+      el.style.setProperty('--mb', mb);
+      el.classList.remove('sp-line', 'sp-dot');
+      if (line) el.classList.add(line);
+    });
+  });
+  hideAbove(items, rows);
+}
+function asobivaTidy() {
+  var c = document.getElementById('cardContainer');
+  if (!c) return;
+  var i, j, el, list;
+  list = c.querySelectorAll('.gcar-slide');
+  for (i = 0; i < list.length; i++) { el = list[i].querySelector('.group-card'); if (!el || !el.children.length) list[i].parentNode.removeChild(list[i]); }
+  list = c.children;
+  for (i = list.length - 1; i >= 0; i--) {
+    el = list[i];
+    var g = el.querySelector('.group-card');
+    if (el.classList.contains('card-section') && !el.classList.contains('gcar-section') && g && !g.children.length) { c.removeChild(el); continue; }
+    var car = el.querySelector('.gcar-card');
+    if (!car) continue;
+    var S = car.querySelectorAll('.gcar-stage > .gcar-slide');
+    if (!S.length) { c.removeChild(el); continue; }
+    var ui = car.querySelectorAll('.gcar-ui');
+    if (S.length < 2) for (j = 0; j < ui.length; j++) ui[j].parentNode.removeChild(ui[j]);
+    car.setAttribute('data-k', '0');
+    for (j = 0; j < S.length; j++) S[j].className = 'gcar-slide' + (j ? '' : ' on');
+    var cn = car.querySelectorAll('.gcar-count');
+    for (j = 0; j < cn.length; j++) cn[j].textContent = '1 / ' + S.length;
+    // 名前の段は、残った1枚ずつの名前で作り直す（1枚だけ・名前がなければ消す）
+    var nb = car.querySelector('.gcar-names');
+    if (nb) {
+      var any = false;
+      for (j = 0; j < S.length; j++) if (S[j].getAttribute('data-name')) any = true;
+      if (S.length < 2 || !any) nb.parentNode.removeChild(nb);
+      else {
+        nb.innerHTML = '';
+        for (j = 0; j < S.length; j++) { var d = document.createElement('div'); if (!j) d.className = 'on'; d.textContent = S[j].getAttribute('data-name') || ''; nb.appendChild(d); }
+      }
+    }
+  }
+  if (!c.children.length) { el = document.createElement('div'); el.className = 'empty-state'; el.textContent = '準備中です'; c.appendChild(el); }
+  list = document.querySelectorAll('.nav-group');
+  for (i = 0; i < list.length; i++) if (!list[i].querySelector('.nav-link-item')) list[i].parentNode.removeChild(list[i]);
+}
+function asobivaHistTrim() {
+  var L = document.querySelectorAll('.hist-list'), i, j;
+  for (i = 0; i < L.length; i++) {
+    var li = L[i].children;
+    for (j = 0; j < li.length; j++) li[j].style.display = j < 5 ? '' : 'none';
+    var em = L[i].parentNode.querySelector('.hist-empty');
+    if (em) em.hidden = li.length > 0;
+  }
+}
+asobivaTidy();
+asobivaHistTrim();
+function asobivaLikes() {
+  var B = document.querySelectorAll('.like-btn[data-like-id]'), i;
+  if (!B.length) return;
+  var ids = [], counts = null;
+  for (i = 0; i < B.length; i++) { var x = B[i].getAttribute('data-like-id'); if (ids.indexOf(x) < 0) ids.push(x); }
+  function liked(id) { try { return localStorage.getItem('asoLike:' + id) === '1'; } catch (e) { return false; } }
+  function setLiked(id, v) { try { if (v) localStorage.setItem('asoLike:' + id, '1'); else localStorage.removeItem('asoLike:' + id); } catch (e) {} }
+  function paint() {
+    for (var j = 0; j < B.length; j++) {
+      var id = B[j].getAttribute('data-like-id'), on = liked(id);
+      B[j].className = 'like-btn' + (on ? ' on' : '');
+      B[j].setAttribute('aria-pressed', on ? 'true' : 'false');
+      B[j].querySelector('.like-n').textContent = counts && typeof counts[id] === 'number' ? String(counts[id]) : '';
+    }
+  }
+  for (i = 0; i < B.length; i++) B[i].addEventListener('click', function (e) {
+    e.preventDefault(); e.stopPropagation();
+    var id = this.getAttribute('data-like-id'), on = !liked(id);
+    setLiked(id, on);
+    if (counts) counts[id] = Math.max(0, (counts[id] || 0) + (on ? 1 : -1));
+    paint();
+    if (!counts) return;
+    fetch('/api/like', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id, d: on ? 1 : -1 }) })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { if (d && typeof d.n === 'number') { counts[id] = d.n; paint(); } })
+      .catch(function () {});
+  });
+  paint();
+  if (!/^https?:$/.test(location.protocol) || !window.fetch) return;
+  fetch('/api/likes?ids=' + encodeURIComponent(ids.join(',')), { cache: 'no-store' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) { if (d && typeof d === 'object') { counts = d; paint(); } })
+    .catch(function () {});
+}
+asobivaLikes();
+asobivaLayout(true);
+asobivaSendScale();
+function asobivaWatchViewport() {
+  var t = null;
+  function run() { asobivaLayout(false); asobivaSendScale(); }
+  function soon() { if (t) cancelAnimationFrame(t); t = requestAnimationFrame(run); }
+  function settle() { soon(); setTimeout(run, 300); setTimeout(run, 800); }
+  window.addEventListener('resize', soon);
+  window.addEventListener('orientationchange', settle);
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', soon);
+  if (window.matchMedia) {
+    var mq = window.matchMedia('(min-width: 768px)');
+    if (mq.addEventListener) mq.addEventListener('change', settle);
+    else if (mq.addListener) mq.addListener(settle);
+  }
+}
+asobivaWatchViewport();
+function asobivaAdFit() {
+  var C = document.querySelectorAll('.ad-card'), i;
+  function fit(c) {
+    var a = c.querySelector('.ad-in'); if (!a) return;
+    var cs = getComputedStyle(c), cw = c.clientWidth - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
+    var w = a.offsetWidth, h = a.offsetHeight, s = (w > cw + 1 && cw > 0) ? cw / w : 1;
+    var t = s < 1 ? 'scale(' + s + ')' : '';
+    if (a.style.transform === t && a.getAttribute('data-w') === String(w) && a.getAttribute('data-h') === String(h)) return;
+    a.setAttribute('data-w', w); a.setAttribute('data-h', h);
+    a.style.transformOrigin = '0 0'; a.style.transform = t;
+    a.style.marginRight = s < 1 ? (-(w * (1 - s))) + 'px' : '';
+    a.style.marginBottom = s < 1 ? (-(h * (1 - s))) + 'px' : '';
+  }
+  function all() { for (var j = 0; j < C.length; j++) fit(C[j]); }
+  if (window.ResizeObserver) { var ro = new ResizeObserver(all); for (i = 0; i < C.length; i++) { ro.observe(C[i]); var a = C[i].querySelector('.ad-in'); if (a) ro.observe(a); } }
+  window.addEventListener('resize', all); window.addEventListener('load', all);
+  var k = 0, tm = setInterval(function () { all(); if (++k > 20) clearInterval(tm); }, 500);
+  all();
+}
+asobivaAdFit();
+</script>
+</body>
+</html>
