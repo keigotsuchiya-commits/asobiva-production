@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASOBIVA</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root { --bg:#e0e0e0; --white:#ffffff; --ink:#1a1a1a; --ink-soft:#888; --border:#e0e0e0; --page-max:480px; --cols:1; --header-h:44px; --side-m:24px; --col-gap:24px; --hdr-gap:24px; }
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--white); color: var(--ink); min-height: 100vh; }
+.wrap { max-width: var(--page-max); margin: 0 auto; padding-top: var(--header-h); background: var(--white); min-height: 100vh; }
+.site-header { display:flex; align-items:center; justify-content:flex-end; padding:0 16px; height:var(--header-h); background:var(--white); border-bottom:1px solid var(--border); position:fixed; top:0; left:0; right:0; z-index:100; max-width:var(--page-max); margin:0 auto; }
+/* ヘッダーのロゴ（左端・押すとトップ）と、下の線のオン・オフ（v3.1） */
+.site-logo { margin-right: auto; display: flex; align-items: center; height: 100%; }
+.site-logo[hidden] { display: none; }
+.site-logo img { height: calc(var(--header-h) * var(--logo-pct, 0.6)); width: auto; display: block; }
+.site-header.no-line { border-bottom-color: transparent; }
+.burger-btn { background:none; border:none; cursor:pointer; padding:4px; display:flex; flex-direction:column; gap:5px; align-items:flex-end; }
+.burger-btn span { display:block; height:1.5px; background:var(--ink); border-radius:1px; }
+.burger-btn span:nth-child(1) { width:20px; }
+.burger-btn span:nth-child(2) { width:14px; }
+.burger-btn span:nth-child(3) { width:20px; }
+.burger-menu { display:none; position:absolute; top:100%; right:12px; background:var(--white); border:1px solid var(--border); border-radius:10px; box-shadow:0 4px 16px rgba(0,0,0,0.1); overflow-x:hidden; overflow-y:auto; -webkit-overflow-scrolling:touch; max-height:calc(100vh - var(--header-h, 44px) - 24px); max-height:calc(100dvh - var(--header-h, 44px) - 24px); z-index:200; width:max-content; min-width:160px; max-width:calc(100vw - 24px); }
+.burger-menu.open { display:block; }
+.nav-list { padding:6px 0; }
+.nav-link-item { display:block; width:100%; padding:7px 18px 7px 30px; font-size:13px; font-weight:400; line-height:1.5; color:var(--ink); text-align:left; text-decoration:none; word-break:break-word; }
+.nav-link-item:hover { background:var(--bg); }
+.nav-link-item.current { font-weight:700; background:#f4f4f4; box-shadow:inset 3px 0 0 var(--ink); }
+.nav-group-label { padding:12px 18px 2px; font-size:11px; line-height:1.5; color:#666; letter-spacing:.06em; }
+.nav-top .nav-link-item { padding-left:18px; }
+.nav-group + .nav-group, .nav-top + .nav-group { border-top:1px solid #eee; margin-top:6px; }
+.header-pair { display:flex; flex-direction:column; background:var(--white); }
+.banner-slot { width:100%; min-height:80px; background:var(--white); display:flex; align-items:center; justify-content:center; }
+.banner-slot img { width:100%; height:auto; display:block; }
+.banner-slot > .html-card { width:100%; }
+@media (max-width: 767.98px) { .banner-slot > img, .banner-slot > .html-card { width: calc(100% * var(--bps, 1)); } }
+@media (min-width: 768px) { .banner-slot > img, .banner-slot > .html-card { width: calc(100% * var(--bpw, 1)); } }
+.card-section { background: var(--white); }
+.sp { position:relative; padding-bottom:var(--mb, 0px); }
+.sp-top { position:relative; padding-top:var(--mb, 0px); }
+.sp.sp-line::after, .sp.sp-dot::after, .sp-top.sp-line::before, .sp-top.sp-dot::before { content:''; position:absolute; left:0; right:0; height:0; z-index:2; pointer-events:none; }
+.sp.sp-line::after, .sp.sp-dot::after { bottom:calc(var(--mb, 0px) / 2); transform:translateY(50%); }
+.sp-top.sp-line::before, .sp-top.sp-dot::before { top:calc(var(--mb, 0px) / 2); transform:translateY(-50%); }
+.sp-line::after, .sp-line::before { border-top:1px solid var(--line-c, var(--ink)); }
+.sp.sp-line::after { transform:translateY(50%) scaleY(var(--line-s, 1)); }
+.sp-top.sp-line::before { transform:translateY(-50%) scaleY(var(--line-s, 1)); }
+.sp-dot::after, .sp-dot::before { border-top:1px dashed rgba(0,0,0,0.2); }
+.card { width:100%; display:block; text-decoration:none; background:var(--white); overflow:hidden; }
+.card img { width:100%; height:auto; display:block; }
+.html-card { width:100%; position:relative; background:var(--white); overflow:hidden; }
+.html-link-overlay { position:absolute; inset:0; z-index:4; display:block; }
+.html-card iframe { display:block; width:100%; height:60px; border:none; background:var(--white); overflow:hidden; }
+/* 縦画面だけ、カード（HTML・画像・画像のカルーセル）を幅の --ps 倍にして真ん中に置く（カードごとの「縦画面の大きさ」。v3.3〜） */
+@media (max-width: 767.98px) {
+  .html-card > iframe { width: calc(100% * var(--ps, 1)) !important; margin: 0 auto; }
+  .card-section > .card, .card-section > .carousel-card, .card-section > .like-row:not(.like-flow) { width: calc(100% * var(--ps, 1)); margin-left: auto; margin-right: auto; }
+}
+/* 横画面・PCは「横画面の大きさ」（--pw）。カードの幅（1マス・いっぱい・中央）に対する割合（v3.7） */
+@media (min-width: 768px) {
+  .html-card > iframe { width: calc(100% * var(--pw, 1)) !important; margin: 0 auto; }
+  .card-section > .card, .card-section > .carousel-card, .card-section > .like-row:not(.like-flow) { width: calc(100% * var(--pw, 1)); margin-left: auto; margin-right: auto; }
+  .card-section.html-center > .card, .card-section.html-center > .carousel-card, .card-section.html-center > .like-row:not(.like-flow) { width: calc(min(100%, 480px) * var(--pw, 1)); }
+}
+
+.carousel-card { width:100%; position:relative; background:var(--white); overflow:hidden; cursor:pointer; }
+.carousel-card img { width:100%; height:auto; display:block; }
+.carousel-dots { position:absolute; bottom:10px; left:0; right:0; display:flex; justify-content:center; gap:6px; pointer-events:none; }
+.carousel-dots span { width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,0.55); }
+.carousel-dots span.active { background:#fff; transform:scale(1.25); }
+.carousel-count { position:absolute; top:10px; left:10px; font-size:10px; letter-spacing:0.05em; color:#fff; background:rgba(0,0,0,0.45); padding:3px 8px; border-radius:20px; pointer-events:none; }
+.empty-state { padding:60px 24px; text-align:center; color:var(--ink-soft); font-size:13px; line-height:2; background:var(--white); }
+.footer-section { background: var(--white); }
+footer { padding:16px; text-align:center; font-size:10px; letter-spacing:0.1em; color:#111111; background:var(--white); white-space:pre-line; line-height:1.8; }
+footer .ft-body, footer .ft-c { white-space:pre-line; line-height:1.8; }
+footer .ft-c { text-align:center; }
+footer .ft-body + .ft-c { margin-top:var(--ft-cgap, 16px); }
+footer.ft-left .ft-body { text-align:left; }
+footer.ft-block .ft-body { max-width:var(--ft-max, 480px); margin:0 auto; text-align:left; }
+#cardContainer { display:grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); background: var(--white); }
+#cardContainer > * { grid-column: 1 / -1; min-width:0; }
+#cardContainer > .card-section.in-row { grid-column: auto; }
+/* 段の線：段の左端のカードが、段の幅いっぱいに引く（列の間の余白や空いたマスもまたいで1本の線にする） */
+#cardContainer > .in-row.sp:not(.row-lead)::after { display: none; }
+/* ラインの左右の余白（v5.7）：縦画面 --line-mp・横画面 --line-ml（サイト設定。最初は0）。段の線は、段の両端から同じだけ内側 */
+#cardContainer { --line-m: var(--line-mp, 0px); }
+@media (min-width: 768px) { #cardContainer { --line-m: var(--line-ml, 0px); } }
+#cardContainer .sp.sp-line::after, #cardContainer .sp.sp-dot::after { left: var(--line-m, 0px); right: var(--line-m, 0px); }
+/* ラインの上の余白（v5.8）：カードとラインの間をサイト全体で同じに（--line-t）。下の余白（--mb）が小さいときは、下の余白のいちばん下。
+   設定がない（--line-t がない）ときは、今までどおり下の余白の真ん中（mb − mb/2） */
+#cardContainer .sp.sp-line::after, #cardContainer .sp.sp-dot::after { bottom: calc(var(--mb, 0px) - min(var(--line-t, calc(var(--mb, 0px) / 2)), var(--mb, 0px))); }
+#cardContainer > .row-lead.sp::after { right: auto; width: calc((100% + var(--col-gap, 0px)) * var(--cols) - var(--col-gap, 0px) - 2 * var(--line-m, 0px)); }
+/* 段ごとの列の間（v5.5）：グリッドの列の間は全体で1つ（--col-gap）なので、パターンB・Cの段は、マスの左右の余白を足し引きして
+   「段の幅を同じ数に分け、間をその値にした」位置・幅にする。--ri＝段の中の何番目か（0から）。付けるのは asobivaLayout */
+#cardContainer [data-rgp="B"] { --rg: var(--gap-b, 48px); }
+#cardContainer [data-rgp="C"] { --rg: var(--gap-c, 80px); }
+#cardContainer [data-rgp].in-row { margin-left: calc((var(--rg) - var(--col-gap, 0px)) * var(--ri, 0) / var(--cols)); margin-right: calc((var(--rg) - var(--col-gap, 0px)) * (var(--cols) - 1 - var(--ri, 0)) / var(--cols)); }
+#cardContainer [data-rgp].in-row.row-lead.sp::after { right: auto; width: calc((100% + var(--rg)) * var(--cols) - var(--rg) - 2 * var(--line-m, 0px)); }
+.group-card { width:100%; }
+/* ── グループのカルーセル：1回に1グループを表示。高さは一番高いグループ（重ねて置き、見えない物は隠す） ── */
+.gcar-card { width: 100%; position: relative; background: var(--white); }
+.gcar-stage { display: grid; }
+.gcar-slide { grid-area: 1 / 1; min-width: 0; visibility: hidden; }
+.gcar-slide.on { visibility: visible; }
+.gcar-ui { display: flex; align-items: center; justify-content: space-between; height: 40px; }
+.gcar-ui button { width: 44px; height: 40px; border: none; background: none; font-size: 26px; line-height: 1; color: var(--ink); cursor: pointer; padding: 0; font-family: inherit; }
+.gcar-count { font-size: 12px; letter-spacing: 0.05em; color: var(--ink-soft); }
+/* カルーセルの名前（v5.0）：帯（‹ 1 / 3 ›）の一段下。UIが「上」のときは帯の一段上。
+   名前の段の高さは一番長い名前に合わせる（重ねて置き、今の1枚の名前だけ見せる）ので、切り替えても高さが変わらない */
+.gcar-names { display: grid; }
+.gcar-names > div { grid-area: 1 / 1; min-width: 0; font-size: var(--cap-p, 13px); font-weight: 700; letter-spacing: 0.04em; line-height: 1.5; color: var(--ink); text-align: center; padding: 0 16px 10px; overflow-wrap: anywhere; visibility: hidden; }
+.gcar-names > div.on { visibility: visible; }
+.gcar-names.top > div { padding: 10px 16px 0; align-self: end; }
+/* カードのキャプション（v5.1）：カードのすぐ下に真ん中そろえ。文字はカルーセルの名前と同じ（大きさは縦画面・横画面で別の設定） */
+.card-cap { display: block; text-align: center; font-size: var(--cap-p, 13px); font-weight: 700; letter-spacing: 0.04em; line-height: 1.5; color: var(--ink); padding: 8px 16px 0; overflow-wrap: anywhere; white-space: pre-line; text-decoration: none; }
+@media (min-width: 768px) { .card-cap, .gcar-names > div, .gcar-cell-name { font-size: var(--cap-l, 13px); } }
+/* グループのカルーセル「横画面・PCでは並べる」（v5.4）：横画面では、カルーセルの入れ物をなくして（display: contents）
+   1グループずつを1マスとしてページの列に並べる。中身は1つのまま（HTMLカードを2回読み込まない）。名前は各マスの下 */
+.gcar-cell-name { display: none; font-size: var(--cap-p, 13px); font-weight: 700; letter-spacing: 0.04em; line-height: 1.5; color: var(--ink); text-align: center; padding: 8px 16px 0; overflow-wrap: anywhere; }
+@media (min-width: 768px) {
+  .gcar-section.gcar-spread, .gcar-spread > .gcar-card, .gcar-spread .gcar-stage { display: contents; }
+  .gcar-spread .gcar-ui, .gcar-spread .gcar-names { display: none; }
+  .gcar-section.gcar-spread::after { display: none; } /* 入れ物の線は使わない（1枚ずつのマスが引く） */
+  .gcar-spread .gcar-slide { visibility: visible; grid-area: auto; min-width: 0; }
+  .gcar-spread .gcar-cell-name { display: block; font-size: var(--cap-l, 13px); } /* 横画面の大きさ（v5.4.1：縦画面の値になっていたのを直す） */
+  #cardContainer .gcar-slide.in-row.sp:not(.row-lead)::after { display: none; }
+  #cardContainer .gcar-slide.row-lead.sp::after { right: auto; width: calc((100% + var(--col-gap, 0px)) * var(--cols) - var(--col-gap, 0px) - 2 * var(--line-m, 0px)); }
+}
+/* キャプションの揃え・位置（v5.2）。左揃えは、カードの左端に合わせる（カードと同じ幅にして、左右の余白をなくす） */
+.card-cap.cap-top { padding-top: 0; padding-bottom: 8px; }
+.card-cap.cap-left { text-align: left; padding-left: 0; padding-right: 0; margin-left: auto; margin-right: auto; }
+.card-section.html-center > .card-cap.cap-left { max-width: 480px; }
+/* 左揃えの左右の余白（v5.3）：カードの幅に対する割合（--ci ％）。内側の span の % はキャプション（＝カードの幅）が基準 */
+.card-cap > .cap-in { display: block; padding: 0 calc(var(--ci, 0) * 1%); }
+/* 文字のカード（v6.7） */
+.text-card { padding: 0 var(--tpad, 16px); }
+.text-card .text-body { white-space: pre-wrap; overflow-wrap: anywhere; font-size: var(--tsp, 15px); line-height: 1.8; letter-spacing: 0.02em; color: var(--ink); text-align: left; }
+.text-card.ta-c .text-body { text-align: center; }
+.text-card[data-tw] .text-body { font-family: 'AsoCapHS', -apple-system, BlinkMacSystemFont, sans-serif; }
+.text-card[data-tw="3"] .text-body { font-weight: 300; } .text-card[data-tw="4"] .text-body { font-weight: 400; } .text-card[data-tw="5"] .text-body { font-weight: 500; }
+.text-card[data-tw="6"] .text-body { font-weight: 600; } .text-card[data-tw="7"] .text-body { font-weight: 700; } .text-card[data-tw="8"] .text-body { font-weight: 800; }
+/* 更新履歴のカード（v6.7） */
+.hist-card { padding: 0 16px; }
+.hist-title { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; color: var(--ink); margin-bottom: 4px; }
+.hist-list { list-style: none; margin: 0; padding: 0; }
+.hist-list li { display: flex; gap: 14px; padding: 7px 0; border-top: 1px solid #e6e6e6; font-size: 13px; line-height: 1.6; }
+.hist-list li:first-child { border-top: none; }
+.hist-date { flex: none; color: #888; font-variant-numeric: tabular-nums; }
+.hist-text { color: var(--ink); text-decoration: none; overflow-wrap: anywhere; }
+a.hist-text { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #ccc; }
+.hist-empty { font-size: 12px; color: #888; padding: 7px 0; }
+/* 広告カード（v7.0）：貼ったコードをそのまま入れる。中身は中央・はみ出さない */
+.ad-card { text-align: center; overflow: hidden; }
+.ad-card > * { max-width: 100%; }
+.ad-card > .ad-in { display: inline-block; vertical-align: top; max-width: none; } /* v7.0.1：幅より大きい広告は、全体をそのまま縮小（asobivaAdFit） */
+.ad-ph { border: 1px dashed #bbb; border-radius: 6px; background: #fafafa; color: #999; font-size: 12px; line-height: 1.6; padding: 22px 12px; text-align: center; }
+/* いいね（v6.8・v6.9 で画像の左下に重ねる形に）：高さ0の行をカードのすぐ下に置き、ボタンをカードの左下の角に重ねる（キャプション・並びに影響しない） */
+.like-row { position: relative; height: 0; margin-left: auto; margin-right: auto; z-index: 3; }
+.like-btn { position: absolute; left: 8px; bottom: 8px; display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 9px; margin: 0; border: none; border-radius: 15px; background: rgba(255, 255, 255, 0.9); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15); font: inherit; font-size: 13px; line-height: 1; color: #555; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.like-btn svg { width: 17px; height: 17px; display: block; transition: transform 0.15s; }
+.like-btn svg path { fill: none; stroke: currentColor; stroke-width: 1.8; }
+.like-btn.on { color: #e0457b; }
+.like-btn.on svg path { fill: currentColor; }
+.like-btn:active svg { transform: scale(0.85); }
+.like-n { font-variant-numeric: tabular-nums; }
+.like-n:empty { display: none; }
+/* 文字のカードは文字に重ならないよう、下に並べる */
+.like-row.like-flow { height: auto; padding: 4px var(--tpad, 16px) 0; }
+.like-row.like-flow .like-btn { position: static; }
+@media (min-width: 768px) { .text-card .text-body { font-size: var(--tsl, 17px); } .hist-list li { font-size: 14px; } .hist-title { font-size: 14px; } }
+@media (max-width: 767.98px) {
+  body:not(.admin-mode) .card-section > .card-cap.cap-left { width: calc(100% * var(--ps, 1)); }
+  body:not(.admin-mode) .card-section.html-center > .card-cap.cap-left.cap-html { max-width: none; width: calc(min(100%, 480px) * var(--ps, 1)); }
+}
+@media (min-width: 768px) {
+  body:not(.admin-mode) .card-section > .card-cap.cap-left { width: calc(100% * var(--pw, 1)); }
+  body:not(.admin-mode) .card-section.html-center > .card-cap.cap-left { width: calc(min(100%, 480px) * var(--pw, 1)); }
+}
+.card-section.html-center .html-card, .card-section.html-center > .card, .card-section.html-center > .carousel-card, .card-section.html-center > .like-row:not(.like-flow), .card-section.html-center > .gcar-card { max-width:480px; margin:0 auto; }
+@media (min-width: 768px) {
+  :root { --page-max:1200px; --cols:3; }
+  :root.cols-2 { --cols:2; }
+  .wrap { width: calc(100% - var(--side-m) * 2); }
+  .site-header { left: var(--side-m); right: var(--side-m); }
+  #cardContainer { column-gap: var(--col-gap); }
+  .header-pair { flex-direction:row; column-gap: var(--hdr-gap); }
+  .header-pair .banner-slot { flex: var(--ar, 1) 1 0; min-width:0; }
+  .header-pair.split .banner-slot { flex: var(--sf, 1) 1 0; }
+  .header-pair .banner-slot.sp { padding-bottom:0; }
+  .header-pair .banner-slot.sp::after { display:none; }
+}
+:root { --side-m:24px; --col-gap:24px; --gap-b:48px; --gap-c:80px; --hdr-gap:24px; --line-s:1; --line-c:#1a1a1a; --line-mp:0px; --line-ml:0px; --header-h:44px; --logo-pct:0.6; --ts-wide:1.3; --ts-cell:1; --cap-p:13px; --cap-l:13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="site-header">
+    <button class="burger-btn" id="burgerBtn" aria-label="メニュー" onclick="document.getElementById('burgerMenu').classList.toggle('open')"><span></span><span></span><span></span></button>
+    <div class="burger-menu" id="burgerMenu"><div class="nav-list"><div class="nav-top"><a class="nav-link-item current" href="index.html">TOP</a></div></div></div>
+  </div>
+  <div id="cardContainer">
+    <div class="card-section sp is-html" style="--mb:16px"><div class="ad-card"><div class="ad-in">
+<!-- admax -->
+<script src="https://adm.shinobi.jp/s/d62f10dea86cd7dbab67bd69598d7ef6"></script>
+<!-- admax -->
+</div></div></div>
+  </div>
+  <div class="footer-section sp-top" style="--mb:0px"><footer class="ft-center" style="color:#111111;--ft-max:480px;--ft-cgap:16px;"><div class="ft-body">ASOBIVA — i.roiro</div></footer></div>
+</div>
+</body>
+</html>
